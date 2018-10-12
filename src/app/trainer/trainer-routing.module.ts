@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { SimpleComponent } from './simple.component';
+import { TrainerComponent } from './trainer.component';
 
 const routes: Routes = [
-  { path: 'simple', component: SimpleComponent }
+  { path: 'simple', component: TrainerComponent }
 ];
 
 @NgModule({
@@ -13,4 +13,4 @@ const routes: Routes = [
   ],
   declarations: []
 })
-export class SimpleRoutingModule { }
+export class TrainerRoutingModule { }

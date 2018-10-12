@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { SimpleRequest } from './simple-request';
+import { TrainerRequest } from './trainer-request';
 import { ChangeDetectorRef } from '@angular/core';
 import { GoogleAuthService } from '../google-auth.service';
 
 @Component({
   selector: 'app-simple',
-  templateUrl: './simple.component.html',
-  styleUrls: ['./simple.component.css']
+  templateUrl: './trainer.component.html',
+  styleUrls: ['./trainer.component.css']
 })
-export class SimpleComponent implements OnInit {
+export class TrainerComponent implements OnInit {
 
-  public model = new SimpleRequest();
+  public model = new TrainerRequest();
   public output: string;
 
   constructor(private cd: ChangeDetectorRef,

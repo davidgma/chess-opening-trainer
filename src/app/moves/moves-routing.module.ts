@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import {HooksComponent } from './hooks.component';
+import {MovesComponent } from './moves.component';
 
 const routes: Routes = [
-  { path: 'hooks', component: HooksComponent }
+  { path: 'hooks', component: MovesComponent }
 ];
 
 @NgModule({
@@ -13,4 +13,4 @@ const routes: Routes = [
   ],
   declarations: []
 })
-export class HooksRoutingModule { }
+export class MovesRoutingModule { }

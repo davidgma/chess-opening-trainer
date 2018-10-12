@@ -5,27 +5,27 @@ import { PageNotFoundComponent } from './not-found.component';
 import { AppComponent } from './app.component';
 import { GoogleAuthService } from './google-auth.service';
 import { JsLoaderService } from './js-loader.service';
-import { SimpleComponent } from './simple/simple.component';
-import { HooksComponent } from './hooks/hooks.component';
+import { TrainerComponent } from './trainer/trainer.component';
+import { MovesComponent } from './moves/moves.component';
 import { AboutComponent } from './about/about.component';
 import { AppRoutingModule } from './app-routing.module';
-import { SimpleRoutingModule } from './simple/simple-routing.module';
-import { HooksRoutingModule } from './hooks/hooks-routing.module';
+import { TrainerRoutingModule } from './trainer/trainer-routing.module';
+import { MovesRoutingModule } from './moves/moves-routing.module';
 import { AboutRoutingModule } from './about/about-routing.module';
 
 @NgModule({
   imports: [
     BrowserModule,
     FormsModule,
-    SimpleRoutingModule,
-    HooksRoutingModule,
+    TrainerRoutingModule,
+    MovesRoutingModule,
     AboutRoutingModule,
     AppRoutingModule
   ],
   declarations: [
     AppComponent,
-    SimpleComponent,
-    HooksComponent,
+    TrainerComponent,
+    MovesComponent,
     AboutComponent,
     PageNotFoundComponent
     ],

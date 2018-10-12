@@ -2,11 +2,11 @@ import { Component, OnInit, EventEmitter } from '@angular/core';
 import { GoogleAuthService } from '../google-auth.service';
 
 @Component({
-    selector: 'app-hooks',
-    templateUrl: './hooks.component.html',
-    styleUrls: ['./hooks.component.css']
+    selector: 'app-moves',
+    templateUrl: './moves.component.html',
+    styleUrls: ['./moves.component.css']
 })
-export class HooksComponent {
+export class MovesComponent {
     public output: Array<string> = new Array<string>();
 
     constructor(public gdata: GoogleAuthService) {
@@ -53,4 +53,4 @@ export class HooksComponent {
         this.output.push("Sign in to see what information it provides.");
     }
 
-} // End of class HooksComponent
+} // End of class MovesComponent
