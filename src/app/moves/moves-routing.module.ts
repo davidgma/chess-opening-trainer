@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import {MovesComponent } from './moves.component';
 
 const routes: Routes = [
-  { path: 'hooks', component: MovesComponent }
+  { path: 'moves', component: MovesComponent }
 ];
 
 @NgModule({

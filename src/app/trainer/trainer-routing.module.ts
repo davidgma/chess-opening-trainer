@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TrainerComponent } from './trainer.component';
 
 const routes: Routes = [
-  { path: 'simple', component: TrainerComponent }
+  { path: 'trainer', component: TrainerComponent }
 ];
 
 @NgModule({
