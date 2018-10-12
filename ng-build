@@ -13,7 +13,7 @@ else
 fi
 
 echo $message
-ng build --base-href "https://davidgma.github.io/google-sheets-demo/"
+ng build --base-href "https://davidgma.github.io/chess-opening-trainer/"
 git add *
 git commit -a -m "${message}"
 git push
