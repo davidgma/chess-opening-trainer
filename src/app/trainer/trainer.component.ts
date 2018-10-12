@@ -13,15 +13,19 @@ export class TrainerComponent implements OnInit {
 
   public model = new TrainerRequest();
   public output: string;
-  public board1: ChessBoardInstance;
+  public board: ChessBoardInstance;
 
   constructor(private cd: ChangeDetectorRef,
     public gauth: GoogleAuthService) {
     this.output = "this is very much work-in-progress.";
-    this.board1 = ChessBoard('board1', 'start');
+    
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    //this.board = 
+    ChessBoard('board', {'position': 'start'});
+
+   }
 
   
 } // End of class TrainerComponent
