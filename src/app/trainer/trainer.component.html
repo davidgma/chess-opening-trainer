@@ -1,4 +1,21 @@
 <br>
-trainer
-<div id="board" style="width: 400px"></div>
+<svg [attr.width]="squareSize*8" [attr.height]="squareSize*8">
+    <rect *ngFor="let square of squares" 
+    [attr.class]="square.cssClass" 
+    [attr.width]="squareSize" 
+    [attr.height]="squareSize"
+    [attr.x]="squareSize * square.svgX"
+    [attr.y]="squareSize * square.svgY"
+    >
+  </rect>
+ 
+
+</svg>
+
+
+<br>
+
+
+
+
 <pre>{{ output }}</pre>
