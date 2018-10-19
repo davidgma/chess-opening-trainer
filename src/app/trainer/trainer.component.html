@@ -1,14 +1,13 @@
 <br>
 <svg [attr.width]="squareSize*8" [attr.height]="squareSize*8">
-    <rect *ngFor="let square of squares" 
-    [attr.class]="square.cssClass" 
-    [attr.width]="squareSize" 
-    [attr.height]="squareSize"
-    [attr.x]="squareSize * square.svgX"
-    [attr.y]="squareSize * square.svgY"
-    >
+  <rect *ngFor="let square of squares" [attr.class]="square.cssClass" [attr.width]="squareSize" [attr.height]="squareSize"
+    [attr.x]="squareSize * square.svgX" [attr.y]="squareSize * square.svgY">
   </rect>
- 
+  <g class="king" *ngFor="let square of squares" >
+    <path *ngFor="let d of square.svgPiece"
+    [attr.d]="d" [attr.x]="squareSize * square.svgX" [attr.y]="squareSize * square.svgY">
+    </path>
+  </g>
 
 </svg>
 
