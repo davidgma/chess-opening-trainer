@@ -1,8 +1,23 @@
+export enum Colour {
+    black,
+    white
+}
+
+export enum Piece {
+    king,
+    queen,
+    rook,
+    bishop,
+    knight,
+    pawn
+}
+
 export class ChessSquare {
     public static files = ["a", "b", "c", "d", "e", "f", "g", "h"];
     public svgX: number;
     public svgY: number;
-    public isWhite: boolean;
+    public squareColour: Colour;
+    public pieceColour: Colour = Colour.white;
 
     // coordinate must be in form a1
     constructor(public coordinate: string, public squareSize: number) {
@@ -11,23 +26,20 @@ export class ChessSquare {
         this.svgY = 8 - row;
         if (this.isEven(this.svgX)) {
             if (this.isEven(row)) {
-                this.isWhite = true;
+                this.squareColour = Colour.white;
             }
             else {
-                this.isWhite = false;
+                this.squareColour = Colour.black;
             }
         }
         else {
             if (this.isEven(row)) {
-                this.isWhite = false;
+                this.squareColour = Colour.black;
             }
             else {
-                this.isWhite = true;
+                this.squareColour = Colour.white;
             }
         }
-
-        //this.toString();
-        //console.log(this.addXY(this.pawn));
     }
 
     isEven(num): boolean {
@@ -35,7 +47,8 @@ export class ChessSquare {
     }
 
     get cssClass(): string {
-        return "chess-square-" + (this.isWhite ? "white" : "black");
+        return "chess-square-"
+            + ((this.squareColour == Colour.white) ? "white" : "black");
     }
 
     /*
@@ -46,15 +59,33 @@ export class ChessSquare {
         + "svgY=" + this.svgY + ". "
         + "colour=" + (this.isWhite ? "white": "black") + ". "
         ;
-    }
-    */
+    } */
 
+    private _svgPiece = new Array<SvgPath>();
     get svgPiece(): Array<SvgPath> {
-        let ret = new Array<SvgPath>();
-        for (let sp of this.pawn) {
-            ret.push(new SvgPath(this.addXY(sp.d), sp.className));
+        return this._svgPiece;
+    }
+
+    private _piece: Piece;
+    get piece(): Piece {
+        return this._piece;
+    }
+    set piece(value: Piece) {
+        this._svgPiece.length = 0;
+        let svgData = new Array<SvgPath>();
+        switch (value) {
+            case Piece.pawn:
+                if (this.pieceColour == Colour.black)
+                    svgData = this.blackPawn;
+                break;
+            case Piece.king:
+                if (this.pieceColour == Colour.black)
+                    svgData = this.blackKing;
         }
-        return ret;
+        for (let sp of svgData) {
+            this._svgPiece.push(new SvgPath(this.addXY(sp.d), sp.className));
+        }
+        this._piece = value;
     }
 
     private addXY(d: string) {
@@ -98,15 +129,15 @@ export class ChessSquare {
         return ret;
     }
 
-    get pawn(): Array<SvgPath> {
+    get blackPawn(): Array<SvgPath> {
         let ret = new Array<SvgPath>();
         ret.push(new SvgPath("M 22,9 C 19.79,9 18,10.79 18,13 C 18,13.89 18.29,14.71 18.78,15.38 C 16.83,16.5 15.5,18.59 15.5,21 C 15.5,23.03 16.44,24.84 17.91,26.03 C 14.91,27.09 10.5,31.58 10.5,39.5 L 33.5,39.5 C 33.5,31.58 29.09,27.09 26.09,26.03 C 27.56,24.84 28.5,23.03 28.5,21 C 28.5,18.59 27.17,16.5 25.22,15.38 C 25.71,14.71 26,13.89 26,13 C 26,10.79 24.21,9 22,9 z",
-        "black-piece black-body"));
+            "black-piece black-body"));
         return ret;
     }
 
 
-    get king(): Array<SvgPath> {
+    get blackKing(): Array<SvgPath> {
         let ret = new Array<SvgPath>();
         ret.push(new SvgPath("M 22.5,11.63 L 22.5,6 ",
             "black-piece"));

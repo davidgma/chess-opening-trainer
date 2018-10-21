@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TrainerRequest } from './trainer-request';
 import { ChangeDetectorRef } from '@angular/core';
 import { GoogleAuthService } from '../google-auth.service';
-import { ChessSquare } from './chess-square';
+import { ChessSquare, Piece, Colour } from './chess-square';
 
 @Component({
   selector: 'app-trainer',
@@ -14,21 +14,31 @@ export class TrainerComponent implements OnInit {
   public model = new TrainerRequest();
   public output: string;
   public squareSize = 50;
-  public squares = new Array<ChessSquare>()
+  public squaresMap = new Map<string, ChessSquare>();
 
   constructor(private cd: ChangeDetectorRef,
     public gauth: GoogleAuthService) {
-    this.output = "this is very much work-in-progress.";
-    for (let i = 0; i < 8; i++) {
-      for (let j = 0; j < 8; j++) {
-        this.squares.push(new ChessSquare(ChessSquare.files[i]
-          + (j + 1).toString(), this.squareSize));
-      }
-    }
+   
   }
 
   ngOnInit() {
- 
+    this.output = "this is very much work-in-progress.";
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 8; j++) {
+        let coord = ChessSquare.files[i]
+        + (j + 1).toString();
+        let cs = new ChessSquare(coord, this.squareSize);
+        this.squaresMap.set(coord, cs);
+        if (coord == "a7") {
+          cs.pieceColour = Colour.black;
+          cs.piece = Piece.pawn;
+        }
+        if (coord == "e8") {
+          cs.pieceColour = Colour.black;
+          cs.piece = Piece.king;
+        }
+      }
+    }
   }
 
 
