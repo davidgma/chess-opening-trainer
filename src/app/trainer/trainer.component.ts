@@ -37,6 +37,11 @@ export class TrainerComponent implements OnInit {
           cs.pieceColour = Colour.black;
           cs.piece = Piece.king;
         }
+        if (coord == "d8") {
+          cs.pieceColour = Colour.black;
+          cs.piece = Piece.queen;
+        }
+        
       }
     }
   }

@@ -5,7 +5,15 @@
     [attr.width]="squareSize" [attr.height]="squareSize" [attr.x]="squareSize * square.value.svgX"
       [attr.y]="squareSize * square.value.svgY">
     </rect>
-    <path *ngFor="let svgPath of square.value.svgPiece" [attr.d]="svgPath.d" [attr.class]="svgPath.className" />
+    <path *ngFor="let svgPath of square.value.svgData.paths" 
+    [attr.d]="svgPath.d" [attr.class]="svgPath.className" />
+    
+    <circle *ngFor="let circle of square.value.svgData.circles"
+    [attr.cx]="circle.cx"
+    [attr.cy]="circle.cy"
+    [attr.r]="circle.r"
+    [attr.classname]="circle.className" />
+
   </g>
 </svg>
 
