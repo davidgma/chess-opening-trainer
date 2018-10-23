@@ -29,7 +29,7 @@ export class TrainerComponent implements OnInit {
         + (j + 1).toString();
         let cs = new ChessSquare(coord, this.squareSize);
         this.squaresMap.set(coord, cs);
-        if (coord == "a7") {
+        if (coord[1] == "7") {
           cs.pieceColour = Colour.black;
           cs.piece = Piece.pawn;
         }
@@ -41,6 +41,19 @@ export class TrainerComponent implements OnInit {
           cs.pieceColour = Colour.black;
           cs.piece = Piece.queen;
         }
+        if (coord == "a8"|| coord == "h8") {
+          cs.pieceColour = Colour.black;
+          cs.piece = Piece.rook;
+        }
+        if (coord == "b8" || coord == "g8") {
+          cs.pieceColour = Colour.black;
+          cs.piece = Piece.knight;
+        }
+        if (coord == "c8" || coord == "f8") {
+          cs.pieceColour = Colour.black;
+          cs.piece = Piece.bishop;
+        }
+        
         
       }
     }

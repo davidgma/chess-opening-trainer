@@ -1,7 +1,6 @@
 export class SvgPath {
-    constructor(public d: string, public className: string) {
-
-    }
+    public transform: string = "";
+    constructor(public d: string, public className: string) {}
 }
 
 export class SvgCircle {

@@ -64,3 +64,9 @@
     fill:none;
     stroke:#ffffff;
   }
+
+  .white-line-inner {
+    fill:#ffffff;
+    stroke: none;
+  }
+
