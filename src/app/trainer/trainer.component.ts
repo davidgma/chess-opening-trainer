@@ -33,12 +33,24 @@ export class TrainerComponent implements OnInit {
           cs.pieceColour = Colour.black;
           cs.piece = Piece.pawn;
         }
+        if (coord[1] == "2") {
+          cs.pieceColour = Colour.white;
+          cs.piece = Piece.pawn;
+        }
         if (coord == "e8") {
           cs.pieceColour = Colour.black;
           cs.piece = Piece.king;
         }
+        if (coord == "e1") {
+          cs.pieceColour = Colour.white;
+          cs.piece = Piece.king;
+        }
         if (coord == "d8") {
           cs.pieceColour = Colour.black;
+          cs.piece = Piece.queen;
+        }
+        if (coord == "d1") {
+          cs.pieceColour = Colour.white;
           cs.piece = Piece.queen;
         }
         if (coord == "a8"|| coord == "h8") {
