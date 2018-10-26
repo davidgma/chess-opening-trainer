@@ -85,3 +85,7 @@
     stroke: none;
   }
 
+  .draggable {
+    cursor: -webkit-grab;
+  }
+

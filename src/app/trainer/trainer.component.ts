@@ -18,7 +18,7 @@ export class TrainerComponent implements OnInit {
 
   constructor(private cd: ChangeDetectorRef,
     public gauth: GoogleAuthService) {
-   
+
   }
 
   ngOnInit() {
@@ -26,7 +26,7 @@ export class TrainerComponent implements OnInit {
     for (let i = 0; i < 8; i++) {
       for (let j = 0; j < 8; j++) {
         let coord = ChessSquare.files[i]
-        + (j + 1).toString();
+          + (j + 1).toString();
         let cs = new ChessSquare(coord, this.squareSize);
         this.squaresMap.set(coord, cs);
         if (coord[1] == "7") {
@@ -53,22 +53,54 @@ export class TrainerComponent implements OnInit {
           cs.pieceColour = Colour.white;
           cs.piece = Piece.queen;
         }
-        if (coord == "a8"|| coord == "h8") {
+        if (coord == "a8" || coord == "h8") {
           cs.pieceColour = Colour.black;
+          cs.piece = Piece.rook;
+        }
+        if (coord == "a1" || coord == "h1") {
+          cs.pieceColour = Colour.white;
           cs.piece = Piece.rook;
         }
         if (coord == "b8" || coord == "g8") {
           cs.pieceColour = Colour.black;
           cs.piece = Piece.knight;
         }
+        if (coord == "b1" || coord == "g1") {
+          cs.pieceColour = Colour.white;
+          cs.piece = Piece.knight;
+        }
         if (coord == "c8" || coord == "f8") {
           cs.pieceColour = Colour.black;
           cs.piece = Piece.bishop;
         }
-        
-        
+        if (coord == "c1" || coord == "f1") {
+          cs.pieceColour = Colour.white;
+          cs.piece = Piece.bishop;
+        }
+
+
       }
     }
+
+
+  } // end of ngOnInit
+
+  mouseDown(event: MouseEvent) {
+    console.log("mouse pressed down");
+    console.log("target: " + event.target);
+    
+  }
+
+  mouseMove(event: MouseEvent) {
+    console.log("mouse moved");
+  }
+
+  mouseUp(event: MouseEvent) {
+    console.log("mouse released");
+  }
+
+  mouseLeave(event: MouseEvent) {
+    console.log("mouse leave event occurred");
   }
 
 

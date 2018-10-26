@@ -1,20 +1,21 @@
 <br>
-<svg [attr.width]="squareSize*8" [attr.height]="squareSize*8">
+<svg [attr.width]="squareSize*8" [attr.height]="squareSize*8"
+(mousemove)="mouseMove($event)"
+    (mouseup)="mouseUp($event)"
+    (mouseleave)="mouseLeave($event)">
   <g *ngFor="let square of squaresMap | keyvalue">
-    <rect [attr.class]="square.value.cssClass" 
-    [attr.width]="squareSize" [attr.height]="squareSize" [attr.x]="squareSize * square.value.svgX"
+    <rect [attr.class]="square.value.cssClass" [attr.width]="squareSize" [attr.height]="squareSize" [attr.x]="squareSize * square.value.svgX"
       [attr.y]="squareSize * square.value.svgY">
     </rect>
-    <path *ngFor="let svgPath of square.value.svgData.paths" 
-    [attr.d]="svgPath.d" [attr.class]="svgPath.className"
-    [attr.transform]="svgPath.transform" />
+    <g class="draggable" (mousedown)="mouseDown($event)"
     
-    <circle *ngFor="let circle of square.value.svgData.circles"
-    [attr.cx]="circle.cx"
-    [attr.cy]="circle.cy"
-    [attr.r]="circle.r"
-    [attr.classname]="circle.className" />
+    >
+      <path *ngFor="let svgPath of square.value.svgData.paths" [attr.d]="svgPath.d" [attr.class]="svgPath.className"
+        [attr.transform]="svgPath.transform" />
 
+      <circle *ngFor="let circle of square.value.svgData.circles" [attr.cx]="circle.cx" [attr.cy]="circle.cy" [attr.r]="circle.r"
+        [attr.classname]="circle.className" />
+    </g>
   </g>
 </svg>
 
