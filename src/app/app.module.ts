@@ -12,6 +12,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { TrainerRoutingModule } from './trainer/trainer-routing.module';
 import { MovesRoutingModule } from './moves/moves-routing.module';
 import { AboutRoutingModule } from './about/about-routing.module';
+import { ChessboardComponent } from './chessboard/chessboard.component';
 
 @NgModule({
   imports: [
@@ -27,7 +28,8 @@ import { AboutRoutingModule } from './about/about-routing.module';
     TrainerComponent,
     MovesComponent,
     AboutComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    ChessboardComponent
     ],
   bootstrap: [AppComponent],
   providers: [

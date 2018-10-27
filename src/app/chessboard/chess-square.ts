@@ -17,21 +17,11 @@ SvgData
 - paths: Array<SvgPath>
 */
 
-import { SvgData, SvgPath, SvgCircle } from './svg-data';
+import { SvgData, SvgPath, SvgCircle } from '../trainer/svg-data';
+import { ChessboardComponent} from './chessboard.component';
+import { Colour, Piece} from './chess-enums';
 
-export enum Colour {
-    black,
-    white
-}
 
-export enum Piece {
-    king,
-    queen,
-    rook,
-    bishop,
-    knight,
-    pawn
-}
 
 export class ChessSquare {
     public static files = ["a", "b", "c", "d", "e", "f", "g", "h"];
@@ -41,7 +31,9 @@ export class ChessSquare {
     public pieceColour: Colour = Colour.white;
 
     // coordinate must be in form a1
-    constructor(public coordinate: string, public squareSize: number) {
+    constructor(public coordinate: string, public parent: ChessboardComponent) {
+        //console.log("window width = " + window.innerWidth);
+        //console.log("window height = " + window.innerHeight);
         this.svgX = ChessSquare.files.indexOf(coordinate[0]);
         let row = Number.parseInt(coordinate[1]);
         this.svgY = 8 - row;
@@ -62,6 +54,9 @@ export class ChessSquare {
             }
         }
     }
+
+    
+    
 
     isEven(num): boolean {
         return (num % 2) == 0;
@@ -108,13 +103,13 @@ export class ChessSquare {
             case Piece.queen:
                 if (this.pieceColour == Colour.black)
                     sd = this.blackQueen;
-                else 
+                else
                     sd = this.whiteQueen;
                 break;
             case Piece.rook:
                 if (this.pieceColour == Colour.black)
                     sd = this.blackRook;
-                else    
+                else
                     sd = this.whiteRook;
                 break;
             case Piece.bishop:
@@ -138,8 +133,8 @@ export class ChessSquare {
         }
         for (let c of sd.circles) {
             this.svgData.circles.push(new SvgCircle(
-                c.cx + this.svgX * this.squareSize,
-                c.cy + this.svgY * this.squareSize,
+                c.cx + this.svgX * this.parent.squareSize,
+                c.cy + this.svgY * this.parent.squareSize,
                 c.r,
                 c.className
             ));
@@ -171,7 +166,7 @@ export class ChessSquare {
             if (inXNumber) {
                 if (char == ",") {
                     ret += (Number.parseFloat(coord)
-                        + (this.svgX * this.squareSize)).toString() + ",";
+                        + (this.svgX * this.parent.squareSize)).toString() + ",";
                     inXNumber = false;
                     inYNumber = true;
                     coord = "";
@@ -183,7 +178,7 @@ export class ChessSquare {
             else if (inYNumber) {
                 if (char == " ") {
                     ret += (Number.parseFloat(coord)
-                        + (this.svgY * this.squareSize)).toString() + " ";
+                        + (this.svgY * this.parent.squareSize)).toString() + " ";
                     inYNumber = false;
                     coord = "";
                 }
@@ -390,7 +385,7 @@ export class ChessSquare {
         // top circle:
         ret.paths.push(new SvgPath("M 25,8 A 2.5,2.5 0 1 1  20,8 A 2.5,2.5 0 1 1  25,8 z",
             "white-body"));
-            // middle cross and line:
+        // middle cross and line:
         ret.paths.push(new SvgPath("M 17.5,26 L 27.5,26 M 15,30 L 30,30 M 22.5,15.5 L 22.5,20.5 M 20,18 L 25,18 ",
             "white-piece  black-line"));
 
@@ -435,5 +430,12 @@ export class ChessSquare {
 
         return ret;
     }
-}
+
+    mouseDown(event: MouseEvent) {
+        console.log("mouse pressed down for " + this.coordinate);
+        //console.log("target: " + event.target);
+
+    }
+
+} // End of ChessSquare class
 
