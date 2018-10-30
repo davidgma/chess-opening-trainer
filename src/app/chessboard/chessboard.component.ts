@@ -18,7 +18,9 @@ export class ChessboardComponent implements OnInit {
             for (let j = 0; j < 8; j++) {
                 let coord = ChessSquare.files[i]
                     + (j + 1).toString();
-                let cs = new ChessSquare(coord, this);
+                let cs = new ChessSquare(coord);
+                cs.squareSize = this.squareSize;
+                cs.init();
                 this.squaresMap.set(coord, cs);
             }
         }
@@ -28,6 +30,8 @@ export class ChessboardComponent implements OnInit {
 
     } // end of ngOnInit
 
+    // this is needed in the component because the template
+    // needs it to calculate the total svg size of the area.
     get squareSize(): number {
         let ss = 50;
         if (window.innerHeight > window.innerWidth) {
@@ -36,6 +40,7 @@ export class ChessboardComponent implements OnInit {
         else {
             ss = Math.round((window.innerHeight * .9) / 8)
         }
+        // ss = ss / 1.5;
         //console.log("squareSize: " + ss.toString());
         return ss;
     }
@@ -44,9 +49,7 @@ export class ChessboardComponent implements OnInit {
         console.log("mouse moved");
     }
 
-    mouseUp(event: MouseEvent) {
-        console.log("mouse released");
-    }
+   
 
     mouseLeave(event: MouseEvent) {
         console.log("mouse leave event occurred");
