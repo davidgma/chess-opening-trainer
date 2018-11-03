@@ -27,29 +27,45 @@ export class ChessboardComponent implements OnInit {
     }
 
     ngOnInit() {
+        window.addEventListener("resize", ($event) => {
+            this.cd.detectChanges();
+        });
 
     } // end of ngOnInit
 
     // this is needed in the component because the template
     // needs it to calculate the total svg size of the area.
     get squareSize(): number {
-        let ss = 50;
-        // if (window.innerHeight > window.innerWidth) {
-        //     ss = Math.round((window.innerWidth * .85) / 8)
-        // }
-        // else {
-        //     ss = Math.round((window.innerHeight * .9) / 8)
-        // }
-        // ss = ss / 1.3;
-        // console.log("squareSize: " + ss.toString());
+       let ss = 50;
         return ss;
+    }
+
+    get viewBox(): string {
+        let vb = "0 0 800 800"
+        if (window.innerHeight > window.innerWidth) {
+            console.log("window.innerWidth=" + window.innerWidth);
+            let factor = 1.7;
+            vb = "0 0 " 
+            
+            + (window.innerWidth * factor).toString()
+            + " " + (window.innerWidth * factor).toString();
+            
+        }
+        else {
+            console.log("window.innerHeight=" + window.innerHeight);
+            let factor = 1.7;
+            vb = "0 0 " 
+            + (window.innerHeight * factor).toString()
+            + " " + (window.innerHeight * factor).toString();
+        }
+        return vb
     }
 
     mouseMove(event: MouseEvent) {
         console.log("mouse moved");
     }
 
-   
+
 
     mouseLeave(event: MouseEvent) {
         console.log("mouse leave event occurred");

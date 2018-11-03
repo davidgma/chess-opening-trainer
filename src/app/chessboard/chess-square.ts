@@ -133,7 +133,7 @@ export class ChessSquare {
             ));
         }
         // Resize the piece relative to a standard of 50
-        this.resizePiece(this.squareSize / 50);
+        //this.resizePiece(this.squareSize / 50);
         // Change the starting position to be in the right square.
         this.movePiece(this.svgXOffset, this.svgYOffset);
         this._piece = value;

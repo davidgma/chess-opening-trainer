@@ -1,4 +1,4 @@
-<svg [attr.width]="squareSize*8" [attr.height]="squareSize*8" (mousemove)="mouseMove($event)" (mouseleave)="mouseLeave($event)">
+<svg (mousemove)="mouseMove($event)" (mouseleave)="mouseLeave($event)" [attr.viewBox]="viewBox">
   <g *ngFor="let square of squaresMap | keyvalue" (mouseup)="square.value.mouseUp($event)">
     <rect [attr.class]="square.value.cssClass" [attr.width]="square.value.squareSize" [attr.height]="square.value.squareSize"
       [attr.x]="square.value.svgXOffset" [attr.y]="square.value.svgYOffset">
