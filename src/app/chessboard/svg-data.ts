@@ -1,14 +1,20 @@
 export class SvgPath {
     public transform: string = "";
-    constructor(public d: string, public className: string) {}
+    public origD: string;
+    constructor(public d: string, public className: string) {
+        this.origD = d;
+    }
 }
 
 export class SvgCircle {
+    public origCx: number;
+    public origCy: number;
     constructor(public cx: number, 
         public cy: number,
         public r: number,
         public className: string) {
-
+            this.origCx = cx;
+            this.origCy = cy;
     }
 }
 
