@@ -34,12 +34,12 @@ export class ChessboardComponent implements OnInit {
     // needs it to calculate the total svg size of the area.
     get squareSize(): number {
         let ss = 50;
-        if (window.innerHeight > window.innerWidth) {
-            ss = Math.round((window.innerWidth * .85) / 8)
-        }
-        else {
-            ss = Math.round((window.innerHeight * .9) / 8)
-        }
+        // if (window.innerHeight > window.innerWidth) {
+        //     ss = Math.round((window.innerWidth * .85) / 8)
+        // }
+        // else {
+        //     ss = Math.round((window.innerHeight * .9) / 8)
+        // }
         // ss = ss / 1.3;
         // console.log("squareSize: " + ss.toString());
         return ss;
