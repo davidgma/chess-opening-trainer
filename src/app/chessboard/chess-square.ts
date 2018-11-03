@@ -5,7 +5,7 @@ It keeps track of what piece is on it.
 
 import { SvgData, SvgPath, SvgCircle, SvgPieces } from './svg-data';
 //import { ChessboardComponent} from './chessboard.component';
-import { Colour, Piece} from './chess-enums';
+import { Colour, Piece } from './chess-enums';
 
 
 
@@ -21,7 +21,7 @@ export class ChessSquare {
     constructor(public coordinate: string) {
         //console.log("window width = " + window.innerWidth);
         //console.log("window height = " + window.innerHeight);
-        
+
     }
 
     init() {
@@ -48,7 +48,7 @@ export class ChessSquare {
             }
         }
     }
-    
+
 
     isEven(num): boolean {
         return (num % 2) == 0;
@@ -117,7 +117,7 @@ export class ChessSquare {
                     sd = SvgPieces.whiteKnight;
                 break;
         }
-         
+
         // copy the piece svg data to internal svgData variable
         for (let sp of sd.paths) {
             let svp = new SvgPath(sp.d, sp.className);
@@ -133,7 +133,7 @@ export class ChessSquare {
             ));
         }
         // Resize the piece relative to a standard of 50
-        this.resizePiece(this.squareSize/50);
+        this.resizePiece(this.squareSize / 50);
         // Change the starting position to be in the right square.
         this.movePiece(this.svgXOffset, this.svgYOffset);
         this._piece = value;
@@ -142,7 +142,7 @@ export class ChessSquare {
     private movePiece(x: number, y: number) {
         // Adjust svg values for actual placement of the square
         for (let sp of this.svgData.paths) {
-            sp.d = this.incrementXY(sp.d, x, y);
+            sp.d = this.incrementDXY(sp.d, x, y);
         }
         for (let c of this.svgData.circles) {
             c.cx += x;
@@ -154,15 +154,18 @@ export class ChessSquare {
     private resizePiece(ratio: number) {
 
         for (let sp of this.svgData.paths) {
-            sp.d = this.resizeXY(sp.d, ratio);
+            sp.d = this.resizeDXY(sp.d, ratio);
+            sp.transform = this.resizeTXY(sp.transform, ratio);
         }
         for (let c of this.svgData.circles) {
             c.cx *= ratio;
             c.cy *= ratio;
         }
+        // this.tempTransform("translate(7,-4.5)");
     }
 
-    private incrementXY(d: string, x: number, y: number) {
+
+    private incrementDXY(d: string, x: number, y: number): string {
         let ret: string = "";
         let inXNumber = false;
         let inYNumber = false;
@@ -217,7 +220,27 @@ export class ChessSquare {
         return ret;
     }
 
-    private resizeXY(d: string, ratio: number) {
+    private resizeTXY(transform: string, ratio: number) {
+        let re = /^(translate\()([-0-9\.]+)(\,)([-0-9\.]+)(\))$/;
+        let ret = "";
+        if (re.test(transform)) {
+            console.log(transform + "contains a transform");
+            ret = transform.replace(re,
+                (match: string,
+                    p1: string, p2: string, p3: string,
+                    p4: string, p5: string) => {
+                    let p2B =
+                        (Number.parseFloat(p2) * ratio).toString();
+                    let p4B =
+                        (Number.parseFloat(p4) * ratio).toString();
+                    return [p1, p2B, p3, p4B, p5].join('');
+                });
+            console.log(ret);
+        }
+        return ret;
+    }
+
+    private resizeDXY(d: string, ratio: number) {
         let ret: string = "";
         let inXNumber = false;
         let inYNumber = false;
@@ -253,7 +276,7 @@ export class ChessSquare {
             else if (inYNumber) {
                 if (char == " ") {
                     ret += (Number.parseFloat(coord)
-                       * ratio).toString() + " ";
+                        * ratio).toString() + " ";
                     inYNumber = false;
                     coord = "";
                 }

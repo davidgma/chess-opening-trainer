@@ -40,8 +40,8 @@ export class ChessboardComponent implements OnInit {
         else {
             ss = Math.round((window.innerHeight * .9) / 8)
         }
-        // ss = ss / 1.5;
-        //console.log("squareSize: " + ss.toString());
+        // ss = ss / 1.3;
+        // console.log("squareSize: " + ss.toString());
         return ss;
     }
 
