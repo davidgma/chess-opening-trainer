@@ -12,6 +12,9 @@ import { ChessSquare } from './chess-square';
 export class ChessboardComponent implements OnInit {
 
     public squaresMap = new Map<string, ChessSquare>();
+    public mouseMoveLocal = new EventEmitter<MouseEvent>();
+    public mouseUpLocal = new EventEmitter<MouseEvent>();
+    public moving = false;
 
     // this is needed in the component because the template
     // needs it to calculate the total svg size of the area.
@@ -52,7 +55,7 @@ export class ChessboardComponent implements OnInit {
         if (window.innerHeight > window.innerWidth) {
             // console.log("window.innerWidth=" + window.innerWidth);
             //this.wholeSize = window.innerWidth * .8;
-            this.wholeSize = 300;
+            this.wholeSize = 280;
         }
         else {
             // console.log("window.innerHeight=" + window.innerHeight);
@@ -74,13 +77,11 @@ export class ChessboardComponent implements OnInit {
     }
 
     mouseMove(event: MouseEvent) {
-        console.log("mouse moved");
+        this.mouseMoveLocal.emit(event);
     }
 
-
-
     mouseLeave(event: MouseEvent) {
-        console.log("mouse leave event occurred");
+        //console.log("mouse leave event occurred");
     }
 
 

@@ -7,6 +7,7 @@ import { SvgData, SvgPath, SvgCircle, SvgPieces } from './svg-data';
 //import { ChessboardComponent} from './chessboard.component';
 import { Colour, Piece } from './chess-enums';
 import { ChessboardComponent } from './chessboard.component';
+import { EventEmitter } from '@angular/core';
 
 
 
@@ -20,6 +21,7 @@ export class ChessSquare {
     public column: number;
     public scale: number; // amount to scale pieces by
     public transform: string; // transform applied to whole piece
+    //private mouseUpLocal = new EventEmitter<MouseEvent>();
 
     // coordinate must be in form a1
     constructor(public coordinate: string, public parent: ChessboardComponent) {
@@ -35,15 +37,15 @@ export class ChessSquare {
     }
 
     get pieceXOffset(): number {
-        return this.column 
-        * this.parent.squareSize
-        / this.scale;
+        return this.column
+            * this.parent.squareSize
+            / this.scale;
     }
 
     get pieceYOffset(): number {
-        return (8 - this.row) 
-        * this.parent.squareSize
-        / this.scale;
+        return (8 - this.row)
+            * this.parent.squareSize
+            / this.scale;
     }
 
     get squareXOffset(): number {
@@ -60,9 +62,9 @@ export class ChessSquare {
         // Change the starting position to be in the right square.
         this.scale = this.parent.wholeSize / 400;
         this.transform = "scale(" + this.scale.toString()
-        + "," + this.scale.toString() + ")";
+            + "," + this.scale.toString() + ")";
         this.movePiece(this.pieceXOffset, this.pieceYOffset);
-        
+
     }
 
     init() {
@@ -182,7 +184,7 @@ export class ChessSquare {
         }
     }
 
-  
+
 
 
     private incrementDXY(d: string, x: number, y: number): string {
@@ -239,16 +241,34 @@ export class ChessSquare {
         }
         return ret;
     }
-   
 
+    // The mouseDown event is only activated for a chess piece, so
+    // in effect it always signals the start of the move of a piece
     mouseDown(event: MouseEvent) {
         console.log("mouse pressed down for " + this.coordinate);
-        //console.log("target: " + event.target);
+        this.parent.moving = true;
+        // subscribe to the move event from the parent
+        let sub = this.parent.mouseMoveLocal.subscribe((event) => {
+            console.log("mouse moved local");
+        });
+
+        // subscribe to the mouse up event
+        let sub2 = this.parent.mouseUpLocal.subscribe((event) => {
+            //console.log("mouseUp local event received");
+            sub.unsubscribe();
+            sub2.unsubscribe();
+        });
 
     }
 
+    // The mouseUp event can happen anywhere on the board but
+    // should only do something when a piece is being moved
     mouseUp(event: MouseEvent) {
-        console.log("mouse released for " + this.coordinate);
+        if (this.parent.moving) {
+            this.parent.mouseUpLocal.emit(event);
+            console.log("mouse released for " + this.coordinate);
+            this.parent.moving = false;
+        }
     }
 
 } // End of ChessSquare class
