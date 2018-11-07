@@ -5,28 +5,25 @@ It keeps track of what piece is on it.
 
 import { SvgData, SvgPath, SvgCircle, SvgPieces } from './svg-data';
 //import { ChessboardComponent} from './chessboard.component';
-import { Colour, Piece } from './chess-enums';
+import { Colour, Piece, files } from './chess-enums';
 import { ChessboardComponent } from './chessboard.component';
 import { EventEmitter } from '@angular/core';
 
 
 
 export class ChessSquare {
-    public static files = ["a", "b", "c", "d", "e", "f", "g", "h"];
+    
     public squareColour: Colour;
     public pieceColour: Colour = Colour.white;
-    //public svgXOffset: number;
-    //public svgYOffset: number;
     public row: number;
     public column: number;
     public scale: number; // amount to scale pieces by
     public transform: string; // transform applied to whole piece
-    //private mouseUpLocal = new EventEmitter<MouseEvent>();
 
     // coordinate must be in form a1
     constructor(public coordinate: string, public parent: ChessboardComponent) {
         // Work out which vertical column (file) of the board the square is on (1 - 8)
-        this.column = ChessSquare.files.indexOf(this.coordinate[0]);
+        this.column = files.indexOf(this.coordinate[0]);
         // Work out which horizontal row of the board the the square is on (1 - 8)
         this.row = Number.parseInt(this.coordinate[1]);
         this.adjustPosition();
@@ -38,16 +35,12 @@ export class ChessSquare {
 
     // Where the piece starts in the svg region
     get pieceXOffset(): number {
-        return this.column
-            * this.parent.squareSize
-            / this.scale;
+        return this.squareXOffset / this.scale;
     }
 
     // Where the piece starts in the svg region
     get pieceYOffset(): number {
-        return (8 - this.row)
-            * this.parent.squareSize
-            / this.scale;
+        return this.squareYOffset / this.scale;
     }
 
     // Where the square starts in the svg region
@@ -177,6 +170,10 @@ export class ChessSquare {
         this._piece = value;
     }
 
+    public removePiece() {
+        this.svgData = new SvgData();
+    }
+
     // Moves the piece relative to its original position
     private movePiece(x: number, y: number) {
         // Adjust svg values for actual placement of the square
@@ -188,19 +185,6 @@ export class ChessSquare {
             c.cy = c.origCy + y;
         }
     }
-
-    // Move piece relative to where it is now
-    private movePieceR(x: number, y: number) {
-        for (let sp of this.svgData.paths) {
-            sp.d = this.incrementDXY(sp.d, x, y);
-        }
-        for (let c of this.svgData.circles) {
-            c.cx = c.cx + x;
-            c.cy = c.cy + y;
-        }
-    }
-
-
 
 
     private incrementDXY(d: string, x: number, y: number): string {
@@ -265,6 +249,7 @@ export class ChessSquare {
         let initialClientX = eventD.clientX;
         let initialClientY = eventD.clientY;
         this.parent.moving = true;
+        this.parent.movingFrom = this;
         // subscribe to the move event from the parent
         let sub = this.parent.mouseMoveLocal.subscribe((eventM) => {
             this.movePiece(
