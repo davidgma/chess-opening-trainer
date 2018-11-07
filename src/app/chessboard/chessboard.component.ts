@@ -84,6 +84,15 @@ export class ChessboardComponent implements OnInit {
         //console.log("mouse leave event occurred");
     }
 
+    mouseUp(event: MouseEvent) {
+        console.log("in mouseUp event comp");
+        if (this.moving) {
+            this.mouseUpLocal.emit(event);
+            //console.log("mouse released for " + this.coordinate);
+            this.moving = false;
+        }
+    }
+
 
 } // End of class TrainerComponent
 
