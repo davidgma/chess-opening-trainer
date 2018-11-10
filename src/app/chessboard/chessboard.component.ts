@@ -1,8 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+/// //<reference path="./chess.d.ts" />
+/// //<reference path="./test.d.ts" />
+
+import { Component, OnInit, OnDestroy, SystemJsNgModuleLoader } from '@angular/core';
 import { ChangeDetectorRef, EventEmitter } from '@angular/core';
 import { ChessSquare } from './chess-square';
-import { files } from './chess-enums'
-
+import { files } from './chess-enums';
+import { Chess } from './chess';
 
 @Component({
     selector: 'chessboard',
@@ -33,6 +36,9 @@ export class ChessboardComponent implements OnInit {
                 this.squaresMap.set(coord, cs);
             }
         }
+        // https://github.com/jhlywa/chess.js
+        let chess = new Chess();
+        console.log("fen: " + chess.fen);
     }
 
     public resize = new EventEmitter<void>();;
@@ -86,7 +92,7 @@ export class ChessboardComponent implements OnInit {
 
     movePiece(from: ChessSquare, to: ChessSquare) {
         console.log("moving from " + from.coordinate
-        + " to " + to.coordinate);
+            + " to " + to.coordinate);
         to.pieceColour = from.pieceColour;
         to.piece = from.piece;
         from.removePiece();

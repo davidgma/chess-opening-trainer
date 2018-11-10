@@ -4,12 +4,9 @@ It keeps track of what piece is on it.
 */
 
 import { SvgData, SvgPath, SvgCircle, SvgPieces } from './svg-data';
-//import { ChessboardComponent} from './chessboard.component';
 import { Colour, Piece, files } from './chess-enums';
 import { ChessboardComponent } from './chessboard.component';
 import { EventEmitter } from '@angular/core';
-
-
 
 export class ChessSquare {
     
@@ -19,7 +16,8 @@ export class ChessSquare {
     public column: number;
     public scale: number; // amount to scale pieces by
     public transform: string; // transform applied to whole piece
-
+    public svgData = new SvgData();
+    
     // coordinate must be in form a1
     constructor(public coordinate: string, public parent: ChessboardComponent) {
         // Work out which vertical column (file) of the board the square is on (1 - 8)
@@ -37,8 +35,6 @@ export class ChessSquare {
     get pieceXOffset(): number {
         return this.squareXOffset / this.scale;
     }
-
-    // Where the piece starts in the svg region
     get pieceYOffset(): number {
         return this.squareYOffset / this.scale;
     }
@@ -47,24 +43,21 @@ export class ChessSquare {
     get squareXOffset(): number {
         return this.column * this.parent.squareSize;
     }
-
-    // Where the square starts in the svg region
     get squareYOffset(): number {
         return (8 - this.row) * this.parent.squareSize;
     }
 
 
     adjustPosition() {
-        // console.log("in adjust position");
         // Change the starting position to be in the right square.
         this.scale = this.parent.wholeSize / 400;
         this.transform = "scale(" + this.scale.toString()
             + "," + this.scale.toString() + ")";
         this.movePiece(this.pieceXOffset, this.pieceYOffset);
-
     }
 
     init() {
+        // work out whether it's a dark or light square
         if (this.isEven(this.column)) {
             if (this.isEven(this.row)) {
                 this.squareColour = Colour.white;
@@ -102,9 +95,6 @@ export class ChessSquare {
         + "colour=" + (this.isWhite ? "white": "black") + ". "
         ;
     } */
-
-    public svgData = new SvgData();
-
 
     private _piece: Piece;
     get piece(): Piece {
