@@ -4,14 +4,14 @@ It keeps track of what piece is on it.
 */
 
 import { SvgData, SvgPath, SvgCircle, SvgPieces } from './svg-data';
-import { Colour, Piece, files } from './chess-enums';
+import { Colour, PieceType, files } from './chess-enums';
 import { ChessboardComponent } from './chessboard.component';
 import { EventEmitter } from '@angular/core';
 
 export class ChessSquare {
     
     public squareColour: Colour;
-    public pieceColour: Colour = Colour.white;
+    public pieceColour: Colour = Colour.WHITE;
     public row: number;
     public column: number;
     public scale: number; // amount to scale pieces by
@@ -60,18 +60,18 @@ export class ChessSquare {
         // work out whether it's a dark or light square
         if (this.isEven(this.column)) {
             if (this.isEven(this.row)) {
-                this.squareColour = Colour.white;
+                this.squareColour = Colour.WHITE;
             }
             else {
-                this.squareColour = Colour.black;
+                this.squareColour = Colour.BLACK;
             }
         }
         else {
             if (this.isEven(this.row)) {
-                this.squareColour = Colour.black;
+                this.squareColour = Colour.BLACK;
             }
             else {
-                this.squareColour = Colour.white;
+                this.squareColour = Colour.WHITE;
             }
         }
     }
@@ -83,7 +83,7 @@ export class ChessSquare {
 
     get cssClass(): string {
         return "chess-square-"
-            + ((this.squareColour == Colour.white) ? "white" : "black");
+            + ((this.squareColour == Colour.WHITE) ? "white" : "black");
     }
 
     /*
@@ -96,46 +96,46 @@ export class ChessSquare {
         ;
     } */
 
-    private _piece: Piece;
-    get piece(): Piece {
-        return this._piece;
+    private _pieceType: PieceType;
+    get pieceType(): PieceType {
+        return this._pieceType;
     }
-    set piece(value: Piece) {
+    set pieceType(value: PieceType) {
         this.svgData = new SvgData();
         let sd = new SvgData();
         switch (value) {
-            case Piece.pawn:
-                if (this.pieceColour == Colour.black)
+            case PieceType.PAWN:
+                if (this.pieceColour == Colour.BLACK)
                     sd = SvgPieces.blackPawn;
                 else
                     sd = SvgPieces.whitePawn;
                 break;
-            case Piece.king:
-                if (this.pieceColour == Colour.black)
+            case PieceType.KING:
+                if (this.pieceColour == Colour.BLACK)
                     sd = SvgPieces.blackKing;
                 else
                     sd = SvgPieces.whiteKing;
                 break;
-            case Piece.queen:
-                if (this.pieceColour == Colour.black)
+            case PieceType.QUEEN:
+                if (this.pieceColour == Colour.BLACK)
                     sd = SvgPieces.blackQueen;
                 else
                     sd = SvgPieces.whiteQueen;
                 break;
-            case Piece.rook:
-                if (this.pieceColour == Colour.black)
+            case PieceType.ROOK:
+                if (this.pieceColour == Colour.BLACK)
                     sd = SvgPieces.blackRook;
                 else
                     sd = SvgPieces.whiteRook;
                 break;
-            case Piece.bishop:
-                if (this.pieceColour == Colour.black)
+            case PieceType.BISHOP:
+                if (this.pieceColour == Colour.BLACK)
                     sd = SvgPieces.blackBishop;
                 else
                     sd = SvgPieces.whiteBishop;
                 break;
-            case Piece.knight:
-                if (this.pieceColour == Colour.black)
+            case PieceType.KNIGHT:
+                if (this.pieceColour == Colour.BLACK)
                     sd = SvgPieces.blackKnight;
                 else
                     sd = SvgPieces.whiteKnight;
@@ -157,7 +157,7 @@ export class ChessSquare {
             ));
         }
         this.adjustPosition();
-        this._piece = value;
+        this._pieceType = value;
     }
 
     public removePiece() {

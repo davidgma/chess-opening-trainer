@@ -1,3 +1,4 @@
+import { Colour, PieceType } from './chess-enums';
 /*
  * Copyright (c) 2016, Jeff Hlywa (jhlywa@gmail.com)
  * All rights reserved.
@@ -48,17 +49,12 @@ export class Chess {
 
     /* jshint indent: false */
 
-    public BLACK = 'b';
-    public WHITE = 'w';
+    // public BLACK = 'b';
+    // public WHITE = 'w';
 
     public EMPTY = -1;
 
-    public PAWN = 'p';
-    public KNIGHT = 'n';
-    public BISHOP = 'b';
-    public ROOK = 'r';
-    public QUEEN = 'q';
-    public KING = 'k';
+    
 
     SYMBOLS = 'pnbrqkPNBRQK';
 
@@ -164,10 +160,10 @@ export class Chess {
         { square: this.SQUARES.h8, flag: this.BITS.KSIDE_CASTLE }]
     };
 
-    board = new Array(128);
+    board = new Array<ChessPiece>(128);
     kings = { w: this.EMPTY, b: this.EMPTY };
-    public turn = this.WHITE;
-    castling = { w: 0, b: 0 };
+    public turn = Colour.WHITE;
+    castling: Castling = { w: 0, b: 0 };
     ep_square = this.EMPTY;
     half_moves = 0;
     move_number = 1;
@@ -188,7 +184,7 @@ export class Chess {
     public clear() {
         this.board = new Array(128);
         this.kings = { w: this.EMPTY, b: this.EMPTY };
-        this.turn = this.WHITE;
+        this.turn = Colour.WHITE;
         this.castling = { w: 0, b: 0 };
         this.ep_square = this.EMPTY;
         this.half_moves = 0;
@@ -221,7 +217,7 @@ export class Chess {
             } else if (this.is_digit(piece)) {
                 square += parseInt(piece, 10);
             } else {
-                var color = (piece < 'a') ? this.WHITE : this.BLACK;
+                var color = (piece < 'a') ? Colour.WHITE : Colour.BLACK;
                 this.put({ type: piece.toLowerCase(), color: color }, this.algebraic(square));
                 square++;
             }
@@ -256,8 +252,8 @@ export class Chess {
      * ... we should rewrite this, and ditch the silly error_number field while
      * we're at it
      */
-    public validate_fen(fen) {
-        var errors = {
+    public validate_fen(fen): FenValidationResult {
+        let errors = {
             0: 'No errors.',
             1: 'FEN string must contain six space-delimited fields.',
             2: '6th field (move number) must be a positive integer.',
@@ -348,7 +344,7 @@ export class Chess {
         var empty = 0;
         var fen = '';
 
-        for (var i = this.SQUARES.a8; i <= this.SQUARES.h1; i++) {
+        for (let i = this.SQUARES.a8; i <= this.SQUARES.h1; i++) {
             if (this.board[i] == null) {
                 empty++;
             } else {
@@ -359,7 +355,7 @@ export class Chess {
                 var color = this.board[i].color;
                 var piece = this.board[i].type;
 
-                fen += (color === this.WHITE) ?
+                fen += (color === Colour.WHITE) ?
                     piece.toUpperCase() : piece.toLowerCase();
             }
 
@@ -378,10 +374,10 @@ export class Chess {
         }
 
         var cflags = '';
-        if (this.castling[this.WHITE] & this.BITS.KSIDE_CASTLE) { cflags += 'K'; }
-        if (this.castling[this.WHITE] & this.BITS.QSIDE_CASTLE) { cflags += 'Q'; }
-        if (this.castling[this.BLACK] & this.BITS.KSIDE_CASTLE) { cflags += 'k'; }
-        if (this.castling[this.BLACK] & this.BITS.QSIDE_CASTLE) { cflags += 'q'; }
+        if (this.castling[Colour.WHITE] & this.BITS.KSIDE_CASTLE) { cflags += 'K'; }
+        if (this.castling[Colour.WHITE] & this.BITS.QSIDE_CASTLE) { cflags += 'Q'; }
+        if (this.castling[Colour.BLACK] & this.BITS.KSIDE_CASTLE) { cflags += 'k'; }
+        if (this.castling[Colour.BLACK] & this.BITS.QSIDE_CASTLE) { cflags += 'q'; }
 
         /* do we have an empty castling flag? */
         cflags = cflags || '-';
@@ -442,13 +438,13 @@ export class Chess {
         var sq = this.SQUARES[square];
 
         /* don't let the user place more than one king */
-        if (piece.type == this.KING &&
+        if (piece.type == PieceType.KING &&
             !(this.kings[piece.color] == this.EMPTY || this.kings[piece.color] == sq)) {
             return false;
         }
 
         this.board[sq] = { type: piece.type, color: piece.color };
-        if (piece.type === this.KING) {
+        if (piece.type === PieceType.KING) {
             this.kings[piece.color] = sq;
         }
 
@@ -460,7 +456,7 @@ export class Chess {
     public remove(square) {
         var piece = this.get(square);
         this.board[this.SQUARES[square]] = null;
-        if (piece && piece.type === this.KING) {
+        if (piece && piece.type === PieceType.KING) {
             this.kings[piece.color] = this.EMPTY;
         }
 
@@ -489,7 +485,7 @@ export class Chess {
         if (board[to]) {
             move.captured = board[to].type;
         } else if (flags & this.BITS.EP_CAPTURE) {
-            move.captured = this.PAWN;
+            move.captured = PieceType.PAWN;
         }
         return move;
     }
@@ -541,7 +537,7 @@ export class Chess {
                 continue;
             }
 
-            if (piece.type === this.PAWN) {
+            if (piece.type === PieceType.PAWN) {
                 /* single square, non-capturing */
                 var square = i + this.PAWN_OFFSETS[us][0];
                 if (this.board[square] == null) {
@@ -667,12 +663,12 @@ export class Chess {
         } else {
             var disambiguator = this.get_disambiguator(move, sloppy);
 
-            if (move.piece !== this.PAWN) {
+            if (move.piece !== PieceType.PAWN) {
                 output += move.piece.toUpperCase() + disambiguator;
             }
 
             if (move.flags & (this.BITS.CAPTURE | this.BITS.EP_CAPTURE)) {
-                if (move.piece === this.PAWN) {
+                if (move.piece === PieceType.PAWN) {
                     output += this.algebraic(move.from)[0];
                 }
                 output += 'x';
@@ -716,11 +712,11 @@ export class Chess {
             var index = difference + 119;
 
             if (this.ATTACKS[index] & (1 << this.SHIFTS[piece.type])) {
-                if (piece.type === this.PAWN) {
+                if (piece.type === PieceType.PAWN) {
                     if (difference > 0) {
-                        if (piece.color === this.WHITE) return true;
+                        if (piece.color === Colour.WHITE) return true;
                     } else {
-                        if (piece.color === this.BLACK) return true;
+                        if (piece.color === Colour.BLACK) return true;
                     }
                     continue;
                 }
@@ -774,7 +770,7 @@ export class Chess {
             if (piece) {
                 pieces[piece.type] = (piece.type in pieces) ?
                     pieces[piece.type] + 1 : 1;
-                if (piece.type === this.BISHOP) {
+                if (piece.type === PieceType.BISHOP) {
                     bishops.push(sq_color);
                 }
                 num_pieces++;
@@ -785,11 +781,11 @@ export class Chess {
         if (num_pieces === 2) { return true; }
 
         /* k vs. kn .... or .... k vs. kb */
-        else if (num_pieces === 3 && (pieces[this.BISHOP] === 1 ||
-            pieces[this.KNIGHT] === 1)) { return true; }
+        else if (num_pieces === 3 && (pieces[PieceType.BISHOP] === 1 ||
+            pieces[PieceType.KNIGHT] === 1)) { return true; }
 
         /* kb vs. kb where any number of bishops are all on the same color */
-        else if (num_pieces === pieces[this.BISHOP] + 2) {
+        else if (num_pieces === pieces[PieceType.BISHOP] + 2) {
             var sum = 0;
             var len = bishops.length;
             for (var i = 0; i < len; i++) {
@@ -850,7 +846,7 @@ export class Chess {
     }
 
     make_move(move) {
-        var us = this.turn;
+        var us: Colour = this.turn;
         var them = this.swap_color(us);
         this.push(move);
 
@@ -859,7 +855,7 @@ export class Chess {
 
         /* if ep capture, remove the captured pawn */
         if (move.flags & this.BITS.EP_CAPTURE) {
-            if (this.turn === this.BLACK) {
+            if (this.turn === Colour.BLACK) {
                 this.board[move.to - 16] = null;
             } else {
                 this.board[move.to + 16] = null;
@@ -872,7 +868,7 @@ export class Chess {
         }
 
         /* if we moved the king */
-        if (this.board[move.to].type === this.KING) {
+        if (this.board[move.to].type === PieceType.KING) {
             this.kings[this.board[move.to].color] = move.to;
 
             /* if we castled, move the rook next to the king */
@@ -926,7 +922,7 @@ export class Chess {
         }
 
         /* reset the 50 move counter if a pawn is moved or a piece is captured */
-        if (move.piece === this.PAWN) {
+        if (move.piece === PieceType.PAWN) {
             this.half_moves = 0;
         } else if (move.flags & (this.BITS.CAPTURE | this.BITS.EP_CAPTURE)) {
             this.half_moves = 0;
@@ -934,7 +930,7 @@ export class Chess {
             this.half_moves++;
         }
 
-        if (this.turn === this.BLACK) {
+        if (this.turn === Colour.BLACK) {
             this.move_number++;
         }
         this.turn = this.swap_color(this.turn);
@@ -963,12 +959,12 @@ export class Chess {
             this.board[move.to] = { type: move.captured, color: them };
         } else if (move.flags & this.BITS.EP_CAPTURE) {
             var index;
-            if (us === this.BLACK) {
+            if (us === Colour.BLACK) {
                 index = move.to - 16;
             } else {
                 index = move.to + 16;
             }
-            this.board[index] = { type: this.PAWN, color: them };
+            this.board[index] = { type: PieceType.PAWN, color: them };
         }
 
 
@@ -1058,7 +1054,7 @@ export class Chess {
             } else {
                 var piece = this.board[i].type;
                 var color = this.board[i].color;
-                var symbol = (color === this.WHITE) ?
+                var symbol = (color === Colour.WHITE) ?
                     piece.toUpperCase() : piece.toLowerCase();
                 s += ' ' + symbol + ' ';
             }
@@ -1130,7 +1126,7 @@ export class Chess {
     }
 
     swap_color(c) {
-        return c === this.WHITE ? this.BLACK : this.WHITE;
+        return c === Colour.WHITE ? Colour.BLACK : Colour.WHITE;
     }
 
     is_digit(c) {
@@ -1571,7 +1567,29 @@ export class Chess {
         return move_history;
     }
 
-};
+} // End of Chess class
+
+export class FenValidationResult {
+    //{ valid: true, error_number: 0, error: errors[0] };
+    valid: boolean;
+    error_number: number;
+    error: string;
+}
+
+export class ChessPiece {
+    color;
+    type;
+}
+
+// enum Colour {
+//     WHITE = 'w',
+//     BLACK = 'b'
+// }
+
+class Castling {
+    w: any;
+    b: any;
+}
 
 
 

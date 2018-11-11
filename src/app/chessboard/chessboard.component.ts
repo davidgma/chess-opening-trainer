@@ -5,7 +5,7 @@ import { Component, OnInit, OnDestroy, SystemJsNgModuleLoader } from '@angular/c
 import { ChangeDetectorRef, EventEmitter } from '@angular/core';
 import { ChessSquare } from './chess-square';
 import { files } from './chess-enums';
-import { Chess } from './chess';
+import { Chess, FenValidationResult, ChessPiece } from './chess';
 
 @Component({
     selector: 'chessboard',
@@ -19,6 +19,7 @@ export class ChessboardComponent implements OnInit {
     public mouseUpLocal = new EventEmitter<MouseEvent>();
     public moving = false;
     public movingFrom: ChessSquare;
+    public chess: Chess;
 
     // this is needed in the component because the template
     // needs it to calculate the total svg size of the area.
@@ -37,8 +38,46 @@ export class ChessboardComponent implements OnInit {
             }
         }
         // https://github.com/jhlywa/chess.js
-        let chess = new Chess();
-        console.log("fen: " + chess.fen);
+        this.chess = new Chess();
+        
+    }
+
+    public load(fen: string) {
+        let r: FenValidationResult = this.chess.validate_fen(fen);
+        if (! r.valid) {
+            throw new Error("Error: Invalid Fen. Fen='" + fen 
+            + "', error=" + r.error );
+        }
+        console.log("fen is valid");
+        this.chess.load(fen);
+        // Set board pieces to be the same
+        for (let key of Object.keys(this.chess.SQUARES)) {
+            let coord: string = key;
+            let index: number = this.chess.SQUARES[key];
+            let piece: ChessPiece = this.chess.board[index];
+            let cs = this.squaresMap.get(coord);
+            // console.log("coord: " + coord 
+            // + ", index: " + index
+            // );
+            if ( (typeof piece) != 'undefined') {
+                // console.log("piece: " + piece.type
+                // + ", piece colour: " + piece.color);
+                cs.pieceColour = piece.color;
+                cs.pieceType = piece.type;
+            }
+            else {
+                // console.log("empty square");
+                cs.removePiece();
+            }
+            
+        }
+        // for (let i = this.chess.SQUARES.a8; i <= this.chess.SQUARES.h1; i++) {
+        //     let p: ChessPiece = this.chess.board[i];
+        //     console.log("piece: " + p.type);
+        // }
+        this.squaresMap.forEach((cs: ChessSquare, key: string) => {
+
+        });
     }
 
     public resize = new EventEmitter<void>();;
@@ -94,7 +133,7 @@ export class ChessboardComponent implements OnInit {
         console.log("moving from " + from.coordinate
             + " to " + to.coordinate);
         to.pieceColour = from.pieceColour;
-        to.piece = from.piece;
+        to.pieceType = from.pieceType;
         from.removePiece();
     }
 
