@@ -4,7 +4,7 @@
 import { Component, OnInit, OnDestroy, SystemJsNgModuleLoader } from '@angular/core';
 import { ChangeDetectorRef, EventEmitter } from '@angular/core';
 import { ChessSquare } from './chess-square';
-import { files } from './chess-enums';
+import { files, Move } from './chess-enums';
 import { Chess, FenValidationResult, ChessPiece } from './chess';
 
 @Component({
@@ -39,14 +39,14 @@ export class ChessboardComponent implements OnInit {
         }
         // https://github.com/jhlywa/chess.js
         this.chess = new Chess();
-        
+
     }
 
     public load(fen: string) {
         let r: FenValidationResult = this.chess.validate_fen(fen);
-        if (! r.valid) {
-            throw new Error("Error: Invalid Fen. Fen='" + fen 
-            + "', error=" + r.error );
+        if (!r.valid) {
+            throw new Error("Error: Invalid Fen. Fen='" + fen
+                + "', error=" + r.error);
         }
         console.log("fen is valid");
         this.chess.load(fen);
@@ -59,7 +59,7 @@ export class ChessboardComponent implements OnInit {
             // console.log("coord: " + coord 
             // + ", index: " + index
             // );
-            if ( (typeof piece) != 'undefined') {
+            if ((typeof piece) != 'undefined') {
                 // console.log("piece: " + piece.type
                 // + ", piece colour: " + piece.color);
                 cs.pieceColour = piece.color;
@@ -69,7 +69,7 @@ export class ChessboardComponent implements OnInit {
                 // console.log("empty square");
                 cs.removePiece();
             }
-            
+
         }
         // for (let i = this.chess.SQUARES.a8; i <= this.chess.SQUARES.h1; i++) {
         //     let p: ChessPiece = this.chess.board[i];
@@ -125,7 +125,21 @@ export class ChessboardComponent implements OnInit {
             console.log("mouse released at " + coord);
             this.mouseUpLocal.emit(event);
             this.moving = false;
-            this.movePiece(this.movingFrom, this.squaresMap.get(coord));
+            // check whether the move is valid
+            let move = new Move(this.movingFrom.coordinate,
+                coord);
+            let chessMove = this.chess.move(move);
+            console.log("chessmove: " + JSON.stringify(chessMove));
+            if (chessMove == null) {
+                //console.log("invalid move");
+                // return the piece to where it was
+                this.movingFrom.moveBack();
+            }
+            else {
+                this.movePiece(this.movingFrom, this.squaresMap.get(coord));
+            }
+
+
         }
     }
 

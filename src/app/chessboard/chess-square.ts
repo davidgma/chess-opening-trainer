@@ -164,6 +164,15 @@ export class ChessSquare {
         this.svgData = new SvgData();
     }
 
+    // called after an invalid move
+    public moveBack() {
+        let initialColour = this.pieceColour;
+        let initialType = this.pieceType;
+        this.svgData = new SvgData();
+        this.pieceColour = initialColour;
+        this.pieceType = initialType;
+    }
+
     // Moves the piece relative to its original position
     private movePiece(x: number, y: number) {
         // Adjust svg values for actual placement of the square
@@ -235,6 +244,7 @@ export class ChessSquare {
     // The mouseDown event is only activated for a chess piece, so
     // in effect it always signals the start of the move of a piece
     mouseDown(eventD: MouseEvent) {
+
         console.log("mouse pressed down for " + this.coordinate);
         let initialClientX = eventD.clientX;
         let initialClientY = eventD.clientY;

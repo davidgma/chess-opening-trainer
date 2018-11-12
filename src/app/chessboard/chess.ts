@@ -1,4 +1,4 @@
-import { Colour, PieceType } from './chess-enums';
+import { Colour, PieceType, Move } from './chess-enums';
 /*
  * Copyright (c) 2016, Jeff Hlywa (jhlywa@gmail.com)
  * All rights reserved.
@@ -465,7 +465,7 @@ export class Chess {
         return piece;
     }
 
-    build_move(board, from, to, flags, promotion) {
+    build_move(board, from, to, flags, promotion?) {
         var move = {
             color: this.turn,
             from: from,
@@ -490,19 +490,21 @@ export class Chess {
         return move;
     }
 
-    generate_moves(options?) {
-        function add_move(board, moves, from, to, flags) {
-            /* if pawn promotion */
-            if (board[from].type === this.PAWN &&
-                (this.rank(to) === this.RANK_8 || this.rank(to) === this.RANK_1)) {
-                var pieces = [this.QUEEN, this.ROOK, this.BISHOP, this.KNIGHT];
-                for (var i = 0, len = pieces.length; i < len; i++) {
-                    moves.push(this.build_move(board, from, to, flags, pieces[i]));
-                }
-            } else {
-                moves.push(this.build_move(board, from, to, flags));
+    private add_move(board, moves, from, to, flags) {
+        /* if pawn promotion */
+        if (board[from].type === PieceType.PAWN &&
+            (this.rank(to) === this.RANK_8 || this.rank(to) === this.RANK_1)) {
+            var pieces = [PieceType.QUEEN, PieceType.ROOK, PieceType.BISHOP, PieceType.KNIGHT];
+            for (var i = 0, len = pieces.length; i < len; i++) {
+                moves.push(this.build_move(board, from, to, flags, pieces[i]));
             }
+        } else {
+            moves.push(this.build_move(board, from, to, flags));
         }
+    }
+
+    generate_moves(options?) {
+        
 
         var moves = [];
         var us = this.turn;
@@ -541,12 +543,12 @@ export class Chess {
                 /* single square, non-capturing */
                 var square = i + this.PAWN_OFFSETS[us][0];
                 if (this.board[square] == null) {
-                    add_move(this.board, moves, i, square, this.BITS.NORMAL);
+                    this.add_move(this.board, moves, i, square, this.BITS.NORMAL);
 
                     /* double square */
                     var square = i + this.PAWN_OFFSETS[us][1];
                     if (second_rank[us] === this.rank(i) && this.board[square] == null) {
-                        add_move(this.board, moves, i, square, this.BITS.BIG_PAWN);
+                        this.add_move(this.board, moves, i, square, this.BITS.BIG_PAWN);
                     }
                 }
 
@@ -557,9 +559,9 @@ export class Chess {
 
                     if (this.board[square] != null &&
                         this.board[square].color === them) {
-                        add_move(this.board, moves, i, square, this.BITS.CAPTURE);
+                        this.add_move(this.board, moves, i, square, this.BITS.CAPTURE);
                     } else if (square === this.ep_square) {
-                        add_move(this.board, moves, i, this.ep_square, this.BITS.EP_CAPTURE);
+                        this.add_move(this.board, moves, i, this.ep_square, this.BITS.EP_CAPTURE);
                     }
                 }
             } else {
@@ -572,10 +574,10 @@ export class Chess {
                         if (square & 0x88) break;
 
                         if (this.board[square] == null) {
-                            add_move(this.board, moves, i, square, this.BITS.NORMAL);
+                            this.add_move(this.board, moves, i, square, this.BITS.NORMAL);
                         } else {
                             if (this.board[square].color === us) break;
-                            add_move(this.board, moves, i, square, this.BITS.CAPTURE);
+                            this.add_move(this.board, moves, i, square, this.BITS.CAPTURE);
                             break;
                         }
 
@@ -600,7 +602,7 @@ export class Chess {
                     !this.attacked(them, this.kings[us]) &&
                     !this.attacked(them, castling_from + 1) &&
                     !this.attacked(them, castling_to)) {
-                    add_move(this.board, moves, this.kings[us], castling_to,
+                    this.add_move(this.board, moves, this.kings[us], castling_to,
                         this.BITS.KSIDE_CASTLE);
                 }
             }
@@ -616,7 +618,7 @@ export class Chess {
                     !this.attacked(them, this.kings[us]) &&
                     !this.attacked(them, castling_from - 1) &&
                     !this.attacked(them, castling_to)) {
-                    add_move(this.board, moves, this.kings[us], castling_to,
+                    this.add_move(this.board, moves, this.kings[us], castling_to,
                         this.BITS.QSIDE_CASTLE);
                 }
             }
@@ -1480,7 +1482,7 @@ export class Chess {
         return this.set_header(arguments);
     }
 
-    public move(move, options) {
+    public move(move: Move | string, options?) {
         /* The move function can be called with in the following parameters:
                  *
                  * .move('Nxb7')      <- where 'move' is a case-sensitive SAN string
