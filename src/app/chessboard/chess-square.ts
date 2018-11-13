@@ -9,7 +9,7 @@ import { ChessboardComponent } from './chessboard.component';
 import { EventEmitter } from '@angular/core';
 
 export class ChessSquare {
-    
+
     public squareColour: Colour;
     public pieceColour: Colour = Colour.WHITE;
     public row: number;
@@ -17,18 +17,32 @@ export class ChessSquare {
     public scale: number; // amount to scale pieces by
     public transform: string; // transform applied to whole piece
     public svgData = new SvgData();
-    
+
     // coordinate must be in form a1
     constructor(public coordinate: string, public parent: ChessboardComponent) {
-        // Work out which vertical column (file) of the board the square is on (1 - 8)
-        this.column = files.indexOf(this.coordinate[0]);
-        // Work out which horizontal row of the board the the square is on (1 - 8)
-        this.row = Number.parseInt(this.coordinate[1]);
-        this.adjustPosition();
         // Listen for a change in screen size
         this.parent.resize.subscribe(() => {
             this.adjustPosition();
         });
+
+        this.calculateRowColumn();
+        this.adjustPosition();
+    }
+
+    public calculateRowColumn() {
+        // Work out which vertical column (file) of the board the square is on (0 - 7)
+        this.column = files.indexOf(this.coordinate[0]);
+        if (this.parent.boardSide == Colour.BLACK) {
+            this.column = 7 - this.column;
+        }
+        // Work out which horizontal row of the board the the square is on (1 - 8)
+        this.row = Number.parseInt(this.coordinate[1]);
+        if (this.parent.boardSide == Colour.BLACK) {
+            this.row = 9 - this.row;
+        }
+                // console.log("coord: " + coordinate + ", column: " + this.column
+        // + ", row:" + this.row);
+
     }
 
     // Where the piece starts in the svg region
@@ -162,9 +176,11 @@ export class ChessSquare {
 
     public removePiece() {
         this.svgData = new SvgData();
+        this._pieceType = null;
+        console.log("piece removed from " + this.coordinate);
     }
 
-    // called after an invalid move
+    // called after an invalid move and flip of board side
     public moveBack() {
         let initialColour = this.pieceColour;
         let initialType = this.pieceType;

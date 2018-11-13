@@ -1,10 +1,8 @@
-/// //<reference path="./chess.d.ts" />
-/// //<reference path="./test.d.ts" />
 
 import { Component, OnInit, OnDestroy, SystemJsNgModuleLoader } from '@angular/core';
 import { ChangeDetectorRef, EventEmitter } from '@angular/core';
 import { ChessSquare } from './chess-square';
-import { files, Move } from './chess-enums';
+import { files, Move, Colour } from './chess-enums';
 import { Chess, FenValidationResult, ChessPiece } from './chess';
 
 @Component({
@@ -20,6 +18,7 @@ export class ChessboardComponent implements OnInit {
     public moving = false;
     public movingFrom: ChessSquare;
     public chess: Chess;
+    public boardSide: Colour = Colour.WHITE;
 
     // this is needed in the component because the template
     // needs it to calculate the total svg size of the area.
@@ -40,6 +39,15 @@ export class ChessboardComponent implements OnInit {
         // https://github.com/jhlywa/chess.js
         this.chess = new Chess();
 
+    }
+
+    public flipBoard() {
+        this.boardSide == Colour.WHITE ? this.boardSide = Colour.BLACK
+            : this.boardSide = Colour.WHITE;
+        this.squaresMap.forEach((cs: ChessSquare, key: string) => {
+            cs.calculateRowColumn();
+            cs.moveBack();
+        });
     }
 
     public load(fen: string) {
@@ -119,8 +127,15 @@ export class ChessboardComponent implements OnInit {
     mouseUp(event: MouseEvent) {
 
         if (this.moving) {
-            let column = files[Math.floor(event.offsetX / this.squareSize)];
+            let column =
+                files[Math.floor(event.offsetX / this.squareSize)];
             let row = 8 - Math.floor(event.offsetY / this.squareSize);
+            if (this.boardSide == Colour.BLACK) {
+                let columnNumber = 7 - files.indexOf(column);
+                column = files[columnNumber];
+                row = 9 - row;
+            }
+
             let coord = column + row.toString();
             console.log("mouse released at " + coord);
             this.mouseUpLocal.emit(event);
@@ -134,11 +149,13 @@ export class ChessboardComponent implements OnInit {
                 //console.log("invalid move");
                 // return the piece to where it was
                 this.movingFrom.moveBack();
+
             }
             else {
                 this.movePiece(this.movingFrom, this.squaresMap.get(coord));
+                //this.flipBoard();
+                console.log(this.chess.fen);
             }
-
 
         }
     }
