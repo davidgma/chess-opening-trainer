@@ -13,6 +13,7 @@ import { TrainerRoutingModule } from './trainer/trainer-routing.module';
 import { MovesRoutingModule } from './moves/moves-routing.module';
 import { AboutRoutingModule } from './about/about-routing.module';
 import { ChessboardComponent } from './chessboard/chessboard.component';
+import { HeaderComponent } from './header/header.component';
 
 @NgModule({
   imports: [
@@ -29,7 +30,8 @@ import { ChessboardComponent } from './chessboard/chessboard.component';
     MovesComponent,
     AboutComponent,
     PageNotFoundComponent,
-    ChessboardComponent
+    ChessboardComponent,
+    HeaderComponent
     ],
   bootstrap: [AppComponent],
   providers: [

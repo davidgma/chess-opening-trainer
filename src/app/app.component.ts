@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GoogleAuthService } from './google-auth.service';
 import { ChangeDetectorRef } from '@angular/core';
-
 declare global {
   interface Window { onSignIn: (googleuser: any) => void; }
 }
@@ -37,4 +36,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() { }
+
+  
 }

@@ -1,10 +1,11 @@
 import { NgModule }             from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PageNotFoundComponent }    from './not-found.component';
+import { HeaderComponent } from './header/header.component';
 
 const appRoutes: Routes = [
-  { path: 'privacy',   redirectTo: 'privacy.html' },
-  { path: '',   redirectTo: '', pathMatch: 'full' },
+  //{ path: '',   redirectTo: '', pathMatch: 'full' },
+  { path: '', component: HeaderComponent },
   { path: '**', component: PageNotFoundComponent }
 ];
 
