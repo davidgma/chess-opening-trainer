@@ -6,7 +6,7 @@ It keeps track of what piece is on it.
 import { SvgData, SvgPath, SvgCircle, SvgPieces } from './svg-data';
 import { Colour, PieceType, files } from './chess-enums';
 import { ChessboardComponent } from './chessboard.component';
-import { EventEmitter } from '@angular/core';
+//import { EventEmitter } from '@angular/core';
 
 export class ChessSquare {
 
@@ -177,17 +177,17 @@ export class ChessSquare {
     public removePiece() {
         this.svgData = new SvgData();
         this._pieceType = null;
-        console.log("piece removed from " + this.coordinate);
+        //console.log("piece removed from " + this.coordinate);
     }
 
-    // called after an invalid move and flip of board side
-    public moveBack() {
-        let initialColour = this.pieceColour;
-        let initialType = this.pieceType;
-        this.svgData = new SvgData();
-        this.pieceColour = initialColour;
-        this.pieceType = initialType;
-    }
+    // // called after an invalid move and flip of board side
+    // public moveBack() {
+    //     let initialColour = this.pieceColour;
+    //     let initialType = this.pieceType;
+    //     this.svgData = new SvgData();
+    //     this.pieceColour = initialColour;
+    //     this.pieceType = initialType;
+    // }
 
     // Moves the piece relative to its original position
     private movePiece(x: number, y: number) {

@@ -4,6 +4,7 @@ import { ChangeDetectorRef, EventEmitter } from '@angular/core';
 import { ChessSquare } from './chess-square';
 import { files, Move, Colour } from './chess-enums';
 import { Chess, FenValidationResult, ChessPiece } from './chess';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
     selector: 'chessboard',
@@ -19,6 +20,7 @@ export class ChessboardComponent implements OnInit {
     public movingFrom: ChessSquare;
     public chess: Chess;
     public boardSide: Colour = Colour.WHITE;
+    public moveMade: EventEmitter<Move> = new EventEmitter<Move>();
 
     // this is needed in the component because the template
     // needs it to calculate the total svg size of the area.
@@ -38,7 +40,9 @@ export class ChessboardComponent implements OnInit {
         }
         // https://github.com/jhlywa/chess.js
         this.chess = new Chess();
-
+        this.chess.onChange.subscribe(() => {
+            this.positionPieces();
+        });
     }
 
     public flipBoard() {
@@ -46,11 +50,12 @@ export class ChessboardComponent implements OnInit {
             : this.boardSide = Colour.WHITE;
         this.squaresMap.forEach((cs: ChessSquare, key: string) => {
             cs.calculateRowColumn();
-            cs.moveBack();
+            //cs.moveBack();
+            this.positionPieces();
         });
     }
 
-    public load(fen: string) {
+    public load(fen: string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
         let r: FenValidationResult = this.chess.validate_fen(fen);
         if (!r.valid) {
             throw new Error("Error: Invalid Fen. Fen='" + fen
@@ -59,6 +64,16 @@ export class ChessboardComponent implements OnInit {
         console.log("fen is valid");
         this.chess.load(fen);
         // Set board pieces to be the same
+        this.positionPieces();
+
+        // Reminder of how to iterate through a Map:
+        // this.squaresMap.forEach((cs: ChessSquare, key: string) => {
+        // });
+    }
+
+    // Puts the pieces on the board in line with the chess position
+    public positionPieces() {
+        //console.log("positionPieces called");
         for (let key of Object.keys(this.chess.SQUARES)) {
             let coord: string = key;
             let index: number = this.chess.SQUARES[key];
@@ -67,11 +82,16 @@ export class ChessboardComponent implements OnInit {
             // console.log("coord: " + coord 
             // + ", index: " + index
             // );
-            if ((typeof piece) != 'undefined') {
+            if ((typeof piece) != 'undefined'
+            && piece != null) {
                 // console.log("piece: " + piece.type
                 // + ", piece colour: " + piece.color);
-                cs.pieceColour = piece.color;
-                cs.pieceType = piece.type;
+                //if (cs.pieceColour != piece.color
+                  //  || cs.pieceType != piece.type) {
+                        cs.pieceColour = piece.color;
+                        cs.pieceType = piece.type;
+                   // }
+                
             }
             else {
                 // console.log("empty square");
@@ -79,13 +99,6 @@ export class ChessboardComponent implements OnInit {
             }
 
         }
-        // for (let i = this.chess.SQUARES.a8; i <= this.chess.SQUARES.h1; i++) {
-        //     let p: ChessPiece = this.chess.board[i];
-        //     console.log("piece: " + p.type);
-        // }
-        this.squaresMap.forEach((cs: ChessSquare, key: string) => {
-
-        });
     }
 
     public resize = new EventEmitter<void>();;
@@ -146,28 +159,17 @@ export class ChessboardComponent implements OnInit {
             let chessMove = this.chess.move(move);
             console.log("chessmove: " + JSON.stringify(chessMove));
             if (chessMove == null) {
-                //console.log("invalid move");
-                // return the piece to where it was
-                this.movingFrom.moveBack();
-
+                this.positionPieces();
+                console.log("invalid move");
             }
-            else {
-                this.movePiece(this.movingFrom, this.squaresMap.get(coord));
+            else { // valid move
+                this.moveMade.emit(move);
+                //this.movePiece(this.movingFrom, this.squaresMap.get(coord));
                 //this.flipBoard();
-                console.log(this.chess.fen);
+                //console.log(this.chess.fen);
             }
-
         }
     }
-
-    movePiece(from: ChessSquare, to: ChessSquare) {
-        console.log("moving from " + from.coordinate
-            + " to " + to.coordinate);
-        to.pieceColour = from.pieceColour;
-        to.pieceType = from.pieceType;
-        from.removePiece();
-    }
-
 
 } // End of class TrainerComponent
 

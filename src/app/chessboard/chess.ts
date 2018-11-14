@@ -1,4 +1,6 @@
 import { Colour, PieceType, Move } from './chess-enums';
+import { EventEmitter } from '@angular/core';
+
 /*
  * Copyright (c) 2016, Jeff Hlywa (jhlywa@gmail.com)
  * All rights reserved.
@@ -53,8 +55,8 @@ export class Chess {
     // public WHITE = 'w';
 
     public EMPTY = -1;
+    public onChange: EventEmitter<void> = new EventEmitter<void>();
 
-    
 
     SYMBOLS = 'pnbrqkPNBRQK';
 
@@ -243,7 +245,7 @@ export class Chess {
         this.move_number = parseInt(tokens[5], 10);
 
         this.update_setup(this.generate_fen());
-
+        this.onChange.emit();
         return true;
     }
 
@@ -449,7 +451,6 @@ export class Chess {
         }
 
         this.update_setup(this.generate_fen());
-
         return true;
     }
 
@@ -461,7 +462,6 @@ export class Chess {
         }
 
         this.update_setup(this.generate_fen());
-
         return piece;
     }
 
@@ -504,7 +504,7 @@ export class Chess {
     }
 
     generate_moves(options?) {
-        
+
 
         var moves = [];
         var us = this.turn;
@@ -983,7 +983,6 @@ export class Chess {
             this.board[castling_to] = this.board[castling_from];
             this.board[castling_from] = null;
         }
-
         return move;
     }
 
@@ -1528,12 +1527,13 @@ export class Chess {
         var pretty_move = this.make_pretty(move_obj);
 
         this.make_move(move_obj);
-
+        this.onChange.emit();
         return pretty_move;
     }
 
     public undo() {
         var move = this.undo_move();
+        this.onChange.emit();
         return (move) ? this.make_pretty(move) : null;
     }
 

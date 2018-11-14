@@ -14,6 +14,7 @@ import { MovesRoutingModule } from './moves/moves-routing.module';
 import { AboutRoutingModule } from './about/about-routing.module';
 import { ChessboardComponent } from './chessboard/chessboard.component';
 import { HeaderComponent } from './header/header.component';
+import { DataService } from './data.service';
 
 @NgModule({
   imports: [
@@ -36,6 +37,7 @@ import { HeaderComponent } from './header/header.component';
   bootstrap: [AppComponent],
   providers: [
     JsLoaderService,
-    GoogleAuthService]
+    GoogleAuthService,
+    DataService]
 })
 export class AppModule { }
