@@ -24,7 +24,7 @@ export class TrainerComponent implements OnInit {
   ngOnInit() {
 
     this.output = "this is very much work-in-progress.";
-    //this.runSequence("Sicilian Dragon Initial");
+    // this.runSequence("Sicilian Dragon Initial");
     this.runSequence("Sicilian Dragon Bishop Advance");
 
   } // end of ngOnInit
