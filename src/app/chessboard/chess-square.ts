@@ -261,7 +261,7 @@ export class ChessSquare {
     // in effect it always signals the start of the move of a piece
     mouseDown(eventD: MouseEvent) {
 
-        console.log("mouse pressed down for " + this.coordinate);
+        //console.log("mouse pressed down for " + this.coordinate);
         let initialClientX = eventD.clientX;
         let initialClientY = eventD.clientY;
         this.parent.moving = true;
@@ -285,7 +285,7 @@ export class ChessSquare {
     // The mouseUp event can happen anywhere on the board but
     // should only do something when a piece is being moved
     mouseUp(event: MouseEvent) {
-        console.log("mouse released for " + this.coordinate);
+        //console.log("mouse released for " + this.coordinate);
     }
 
 } // End of ChessSquare class

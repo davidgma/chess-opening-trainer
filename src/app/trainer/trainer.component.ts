@@ -24,7 +24,8 @@ export class TrainerComponent implements OnInit {
   ngOnInit() {
 
     this.output = "this is very much work-in-progress.";
-    this.runSequence("Sicilian Mainline");
+    //this.runSequence("Sicilian Dragon Initial");
+    this.runSequence("Sicilian Dragon Bishop Advance");
 
   } // end of ngOnInit
 
@@ -42,7 +43,7 @@ export class TrainerComponent implements OnInit {
     let stepCount = 0;
 
     this.board.moveMade.subscribe((move: Move) => {
-      console.log("move made: " + move.from + move.to);
+      //console.log("move made: " + move.from + move.to);
       if (stepCount < seq.steps.length) {
         let step = seq.steps[stepCount];
         //console.log("step: " + step.move);
@@ -67,8 +68,12 @@ export class TrainerComponent implements OnInit {
           this.board.chess.undo();
           console.log("incorrect move. s/b "
             + step.move.from + step.move.to);
+          stepCount--;
         }
         stepCount++;
+        if (stepCount == seq.steps.length) {
+          console.log("End of sequence");
+        }
       }
       else {
         console.log("End of sequence");

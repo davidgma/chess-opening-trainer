@@ -1,0 +1,22 @@
+<app-header></app-header>
+<br>
+<chessboard></chessboard>
+<br>
+<button (click)="flipBoard()">Flip
+</button>
+<button (click)="resetMoves()">Reset Moves
+</button>
+
+<pre>{{ output }}</pre>
+
+<form (ngSubmit)="onFenSubmit()" #fenForm="ngForm">
+	<div class="form-group">
+		<label>Enter a fen to start sequence.</label>
+		<input type="text" class="form-control" id="fen" required [(ngModel)]="model.fen" name="fen" #fen="ngModel">
+	</div>
+
+	
+
+	<button type="submit" class="btn btn-success">Submit</button>
+
+</form>

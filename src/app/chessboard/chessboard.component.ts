@@ -150,14 +150,14 @@ export class ChessboardComponent implements OnInit {
             }
 
             let coord = column + row.toString();
-            console.log("mouse released at " + coord);
+            //console.log("mouse released at " + coord);
             this.mouseUpLocal.emit(event);
             this.moving = false;
             // check whether the move is valid
             let move = new Move(this.movingFrom.coordinate,
                 coord);
             let chessMove = this.chess.move(move);
-            console.log("chessmove: " + JSON.stringify(chessMove));
+            //console.log("chessmove: " + JSON.stringify(chessMove));
             if (chessMove == null) {
                 this.positionPieces();
                 console.log("invalid move");

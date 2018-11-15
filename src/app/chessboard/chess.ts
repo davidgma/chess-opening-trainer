@@ -633,7 +633,7 @@ export class Chess {
 
         /* filter out illegal moves */
         var legal_moves = [];
-        for (var i = 0, len = moves.length; i < len; i++) {
+        for (let i = 0, len = moves.length; i < len; i++) {
             this.make_move(moves[i]);
             if (!this.king_attacked(us)) {
                 legal_moves.push(moves[i]);

@@ -15,6 +15,8 @@ import { AboutRoutingModule } from './about/about-routing.module';
 import { ChessboardComponent } from './chessboard/chessboard.component';
 import { HeaderComponent } from './header/header.component';
 import { DataService } from './data.service';
+import { BuilderRoutingModule } from './builder/builder-routing.module';
+import { BuilderComponent } from './builder/builder.component';
 
 @NgModule({
   imports: [
@@ -23,6 +25,7 @@ import { DataService } from './data.service';
     TrainerRoutingModule,
     MovesRoutingModule,
     AboutRoutingModule,
+    BuilderRoutingModule,
     AppRoutingModule
   ],
   declarations: [
@@ -32,7 +35,8 @@ import { DataService } from './data.service';
     AboutComponent,
     PageNotFoundComponent,
     ChessboardComponent,
-    HeaderComponent
+    HeaderComponent,
+    BuilderComponent
     ],
   bootstrap: [AppComponent],
   providers: [
