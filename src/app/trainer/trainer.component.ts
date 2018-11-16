@@ -85,7 +85,7 @@ export class TrainerComponent implements OnInit {
           if (stepCount < this.sequence.steps.length) {
             step = this.sequence.steps[stepCount];
             let m = this.board.chess.move(step.move);
-            //console.log("fen after move: " + this.board.chess.fen);
+            console.log("fen after move: " + this.board.chess.fen);
           }
           else {
             this.output.push("End of sequence");

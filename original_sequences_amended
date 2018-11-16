@@ -107,8 +107,6 @@ start: 1 ((1st), d2d4 (Queen's Pawn)): 5 (f7f5, c1g5 (Dutch)): 43 (g7g6, b1c3 (D
 start: 1 ((1st), d2d4 (Queen's Pawn)): 7 (d7d6, g1f3 (Neo-Old Indian)): 44 (g7g6, c2c4 (Neo-old Indian Modern)): 107 (f8g7, b1c3 (Neo-Old Indian Modern))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 7 (d7d6, g1f3 (Neo-Old Indian)): 44 (g7g6, c2c4 (Neo-old Indian Modern)): 108 (f7f5, b1c3 (Neo-Old Indian Modern))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 7 (d7d6, g1f3 (Neo-Old Indian)): 44 (g7g6, c2c4 (Neo-old Indian Modern)): 109 (g8f6, b1c3 (Kings Indian))
-
-
 start: 1 ((1st), d2d4 (Queen's Pawn)): 5 (f7f5, c1g5 (Dutch)): 45 (g8f6, g5f6 (Dutch)): 110 (e7f6, e2e3 (Dutch))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 5 (f7f5, c1g5 (Dutch)): 46 (h7h6, g5d2 (Dutch)): 111 (g8f6, e2e3 (Dutch))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 5 (f7f5, c1g5 (Dutch)): 46 (h7h6, g5d2 (Dutch)): 112 (e7e6, e2e4 (Dutch))
@@ -120,6 +118,9 @@ start: 1 ((1st), d2d4 (Queen's Pawn)): 6 (g7g6, e2e4 (Modern Defence)): 48 (d7d6
 start: 1 ((1st), d2d4 (Queen's Pawn)): 7 (d7d6, g1f3 (Neo-Old Indian)): 49 (c8g4, h2h3 (Neo-Old Indian, Wade)): 119 (g4f3, g2f3 (Neo-Old Indian Wade))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 7 (d7d6, g1f3 (Neo-Old Indian)): 49 (c8g4, h2h3 (Neo-Old Indian, Wade)): 120 (g4h5, g2g4 (Neo-Old Indian Wade))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 8 (c7c5, d4d5 (Old Benoni)): 50 (e7e5, c2c4 (Old Benoni: Czech)): 121 (d7d6, b1c3 (Old Benoni Czech))
+
+================
+4 moves as black
 start: 10 (d2d4, g8f6 (Queen's Pawn)): 19 (c2c4, e7e6 (Queen's Pawn)): 53 (g1f3, d7d5 (Neo-Indian)): 124 (b1c3, c7c5 (Queens Gambit Declined))
 start: 10 (d2d4, g8f6 (Queen's Pawn)): 19 (c2c4, e7e6 (Queen's Pawn)): 53 (g1f3, d7d5 (Neo-Indian)): 125 (c4d5, e6d5 (Queens Gambit Declined))
 start: 10 (d2d4, g8f6 (Queen's Pawn)): 19 (c2c4, e7e6 (Queen's Pawn)): 53 (g1f3, d7d5 (Neo-Indian)): 126 (c1g5, d5c4 (Queens Gambit Declined))
@@ -175,6 +176,8 @@ start: 15 (b2b3, e7e5 (Nimzowitsch-Larsen)): 31 (c1b2, b8c6 (Nimzowitsch-Larsen)
 start: 15 (b2b3, e7e5 (Nimzowitsch-Larsen)): 31 (c1b2, b8c6 (Nimzowitsch-Larsen)): 81 (e2e3, g8f6 (Nimzowitsch-Larsen, Modern Variation)): 174 (f1b5, f8d6 (Nimzowitsch-Larsen Attack, Modern Variation))
 start: 15 (b2b3, e7e5 (Nimzowitsch-Larsen)): 31 (c1b2, b8c6 (Nimzowitsch-Larsen)): 81 (e2e3, g8f6 (Nimzowitsch-Larsen, Modern Variation)): 175 (g1f3, e5e4 (Nimzowitsch-Larsen Attack, Modern Variation))
 start: 15 (b2b3, e7e5 (Nimzowitsch-Larsen)): 31 (c1b2, b8c6 (Nimzowitsch-Larsen)): 81 (e2e3, g8f6 (Nimzowitsch-Larsen, Modern Variation)): 176 (c2c4, d7d5 (Nimzowitsch-Larsen Attack, Modern Variation))
+===========================
+5 moves as white
 start: 1 ((1st), d2d4 (Queen's Pawn)): 2 (g8f6, g1f3 (Queen's Pawn Indian)): 32 (g7g6, c2c4 (East Indian)): 77 (c7c6, b1c3 (Kings Indian)): 177 (d7d6, e2e4 (Kings Indian))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 2 (g8f6, g1f3 (Queen's Pawn Indian)): 32 (g7g6, c2c4 (East Indian)): 77 (c7c6, b1c3 (Kings Indian)): 178 (d7d5, d1b3 (GrÃ¼nfeld, Schlechter Variation))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 2 (g8f6, g1f3 (Queen's Pawn Indian)): 32 (g7g6, c2c4 (East Indian)): 77 (c7c6, b1c3 (Kings Indian)): 179 (d8b6, c4c5 (Kings Indian))
@@ -258,12 +261,13 @@ start: 1 ((1st), d2d4 (Queen's Pawn)): 5 (f7f5, c1g5 (Dutch)): 43 (g7g6, b1c3 (D
 start: 1 ((1st), d2d4 (Queen's Pawn)): 5 (f7f5, c1g5 (Dutch)): 43 (g7g6, b1c3 (Dutch)): 106 (f8g7, e2e3 (Dutch)): 262 (d7d5, g1f3 (Dutch))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 7 (d7d6, g1f3 (Neo-Old Indian)): 44 (g7g6, c2c4 (Neo-old Indian Modern)): 107 (f8g7, b1c3 (Neo-Old Indian Modern)): 264 (b8d7, e2e4 (Neo-Old Indian Modern))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 7 (d7d6, g1f3 (Neo-Old Indian)): 44 (g7g6, c2c4 (Neo-old Indian Modern)): 107 (f8g7, b1c3 (Neo-Old Indian Modern)): 265 (c8g4, e2e3 (Neo-Old Indian Modern))
-start: 1 ((1st), d2d4 (Queen's Pawn)): 7 (d7d6, g1f3 (Neo-Old Indian)): 44 (g7g6, c2c4 (Neo-old Indian Modern)): 108 (f7f5, b1c3 (Neo-Old Indian Modern)): 266 (g8f6, e2e3 (Neo-Old Indian Modern))
+
 done:
+start: 1 ((1st), d2d4 (Queen's Pawn)): 7 (d7d6, g1f3 (Neo-Old Indian)): 44 (g7g6, c2c4 (Neo-old Indian Modern)): 108 (f7f5, b1c3 (Neo-Old Indian Modern)): 266 (g8f6, e2e3 (Neo-Old Indian Modern))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 7 (d7d6, g1f3 (Neo-Old Indian)): 44 (g7g6, c2c4 (Neo-old Indian Modern)): 108 (f7f5, b1c3 (Neo-Old Indian Modern)): 267 (f8g7, e2e4 (Neo-Old Indian Modern))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 7 (d7d6, g1f3 (Neo-Old Indian)): 44 (g7g6, c2c4 (Neo-old Indian Modern)): 109 (g8f6, b1c3 (Kings Indian)): 269 (c8f5, f3g5 (Kings Indian))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 7 (d7d6, g1f3 (Neo-Old Indian)): 44 (g7g6, c2c4 (Neo-old Indian Modern)): 109 (g8f6, b1c3 (Kings Indian)): 270 (b8d7, e2e4 (Kings Indian))
 
 all French Defence and Sicilian Defence removed.
 
-
+355 - 120 = 235 
