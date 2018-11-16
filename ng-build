@@ -24,7 +24,7 @@ pids=`ps -e -o pid,args | grep "$server" | cut -d' ' -f2`
 pid=$( echo $pids | cut -d' ' -f1)
 #echo $pid
 kill $pid
-$server -h ~/local/web/chess-opening-trainer
+screen -d -m bash -c "$server -h ~/local/web/chess-opening-trainer; exec sh"
 
 # Build for github
 ng build --base-href "https://davidgma.github.io/chess-opening-trainer/"
