@@ -17,6 +17,8 @@ import { HeaderComponent } from './header/header.component';
 import { DataService } from './data.service';
 import { BuilderRoutingModule } from './builder/builder-routing.module';
 import { BuilderComponent } from './builder/builder.component';
+import { MatTableModule } from '@angular/material';
+
 
 @NgModule({
   imports: [
@@ -26,7 +28,8 @@ import { BuilderComponent } from './builder/builder.component';
     MovesRoutingModule,
     AboutRoutingModule,
     BuilderRoutingModule,
-    AppRoutingModule
+    AppRoutingModule,
+    MatTableModule
   ],
   declarations: [
     AppComponent,

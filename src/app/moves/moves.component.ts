@@ -1,56 +1,32 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
-import { GoogleAuthService } from '../google-auth.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { DataService, Sequence } from '../data.service';
+import { MatTable } from '@angular/material';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'app-moves',
     templateUrl: './moves.component.html',
     styleUrls: ['./moves.component.css']
 })
-export class MovesComponent {
-    public output: Array<string> = new Array<string>();
+export class MovesComponent implements OnInit {
+    public dataSource: Array<Sequence> = new Array<Sequence>();
+    displayedColumns: string[] = ['name', 'practice'];
+    @ViewChild(MatTable) table: MatTable<any>;
 
-    constructor(public gdata: GoogleAuthService) {
-        this.output.push("Sign in to see what information it provides.");
-        // Check whether it's already signed in, otherwise wait for it
-        // to be.
-        if (this.gdata.isSignedIn) {
-            this.showData();
-        }
-        // Listen for the signin
-        this.gdata.signIn.subscribe(() => {
-            this.showData();
-        });
-        // Listen for signout
-        this.gdata.signedOut.subscribe(() => {
-            this.clearData();
-        });
+    constructor(public dataService: DataService, private router: Router) {
+        this.dataSource = dataService.sequencies;
 
     }
 
-    ngOnInit() { }
-
-    showData() {
-        // Useful data for your client-side scripts:
-        let profile = this.gdata.googleUser.getBasicProfile();
-        this.output.length = 0;
-        this.output.push("Here are some of the data available from OAuth:");
-        this.output.push("(But note that you don't need to code with any of it to access spreadsheets - Google handles it all for you.)");
-        this.output.push("ID: " + profile.getId());
-        // Don't send this directly to your server!
-        this.output.push('Full Name: ' + profile.getName());
-        this.output.push('Given Name: ' + profile.getGivenName());
-        this.output.push('Family Name: ' + profile.getFamilyName());
-        this.output.push("Image URL: " + profile.getImageUrl());
-        this.output.push("Email: " + profile.getEmail());
-
-        // The ID token you need to pass to your backend:
-        let id_token = this.gdata.googleUser.getAuthResponse().id_token;
-        this.output.push("ID Token: " + id_token);
+    ngOnInit() {
+        console.log("datasource.length: " + this.dataSource.length);
     }
 
-    clearData() {
-        this.output.length = 0;
-        this.output.push("Sign in to see what information it provides.");
+    practice(seq: Sequence): void {
+        console.log("practice sequence " + seq.name + "...");
+        this.router.navigate(['/trainer', 
+        {name: seq.name, header: 'showHeader'}]);
     }
+
 
 } // End of class MovesComponent

@@ -2,10 +2,13 @@
 <br>
 <chessboard></chessboard>
 <br>
-<button (click)="flipBoard()">Flip
-</button>
-<button (click)="resetMoves()">Reset Moves
-</button>
+<div class="btn-toolbar">
+	<button (click)="flipBoard()" class="btn btn-primary">Flip
+	</button>
+	<button (click)="resetMoves()" class="btn btn-primary">Reset Moves
+	</button>
+</div>
+
 
 <pre>{{ output }}</pre>
 
@@ -15,7 +18,7 @@
 		<input type="text" class="form-control" id="fen" required [(ngModel)]="model.fen" name="fen" #fen="ngModel">
 	</div>
 
-	
+
 
 	<button type="submit" class="btn btn-success">Submit</button>
 

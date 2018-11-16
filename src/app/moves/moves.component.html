@@ -1,5 +1,22 @@
 <app-header></app-header>
 <br>
-<section *ngFor="let line of output">
-    {{ line }}
-</section>
+<p>Select the sequence you want to practice from the list below.</p>
+<table mat-table [dataSource]="dataSource" class="table">
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let sequence"> {{sequence.name}} </td>
+    </ng-container>
+
+    <!-- Practice Column -->
+    <ng-container matColumnDef="practice">
+        <th mat-header-cell *matHeaderCellDef> </th>
+        <td mat-cell *matCellDef="let sequence">
+            <button type="button" 
+            (click)="practice(sequence)">Practice</button>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (dblclick)="dblclick()"></tr>
+</table>

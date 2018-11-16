@@ -53,7 +53,7 @@ export class DataService {
                 seq.addStep(parts[i], "");
             }
             this.sequencies.push(seq);
-            console.log("Sequence added: " + seq.name);
+            //console.log("Sequence added: " + seq.name);
         }
     }
 }

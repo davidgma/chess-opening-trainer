@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CommonModule } from '@angular/common';
 import { TrainerComponent } from './trainer.component';
 
 const routes: Routes = [
+  { path: 'trainer/:name', component: TrainerComponent },
   { path: 'trainer', component: TrainerComponent }
 ];
 
