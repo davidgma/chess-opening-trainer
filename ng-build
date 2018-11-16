@@ -14,11 +14,17 @@ fi
 
 echo $message
 
-# Create a local copy
+# Create a local copy and serve it
 ng build
 rm -r ~/local/web/chess-opening-trainer
 mkdir -p ~/local/web/chess-opening-trainer
 cp ./dist/*  ~/local/web/chess-opening-trainer
+server="busybox httpd -p 4201"
+pids=`ps -e -o pid,args | grep "$server" | cut -d' ' -f2`
+pid=$( echo $pids | cut -d' ' -f1)
+#echo $pid
+kill $pid
+$server -h ~/local/web/chess-opening-trainer
 
 # Build for github
 ng build --base-href "https://davidgma.github.io/chess-opening-trainer/"
