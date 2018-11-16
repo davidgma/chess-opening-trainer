@@ -15,7 +15,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 })
 export class TrainerComponent implements OnInit {
 
-  public output: string;
+  public output = new Array<string>();
   @ViewChild(ChessboardComponent) board: ChessboardComponent;
   public name: string;
   public sequence: Sequence;
@@ -24,10 +24,10 @@ export class TrainerComponent implements OnInit {
     public gauth: GoogleAuthService,
     private dataService: DataService,
     private route: ActivatedRoute) { }
-    public showHeader = true;
+  public showHeader = true;
 
   ngOnInit() {
-
+    this.output.push("Select a sequence from the Moves page.");
     // get the parameters, if any
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.name = params.get('name');
@@ -37,25 +37,25 @@ export class TrainerComponent implements OnInit {
       }
       else if (params.get("header") == "hideHeader") {
         this.showHeader = false;
-      } 
+      }
       if (this.name == null) {
-        console.log("No sequence selected. Select one in the Moves section.");
+        this.output.push("No sequence selected. Select one in the Moves section.");
       }
       else {
-        console.log("Sequence name: " + this.name);
+        this.output.length = 0;
+        this.output.push("Sequence name: " + this.name);
         // Check the sequence is in the sequences data
         this.sequence = this.dataService.findSequence(this.name);
         if (this.sequence == null) {
-          console.log("The sequence '" + this.name + "' cant be found.");
+          this.output.push("The sequence '" + this.name + "' cant be found.");
         }
         else {
-          console.log("sequence found: " + this.sequence.name);
+          //this.output.length = 0;
+          //this.output.push("Sequence found: " + this.sequence.name);
           this.runSequence();
         }
       }
     });
-
-    this.output = "Select a sequence from the Moves page.";
 
   } // end of ngOnInit
 
@@ -67,8 +67,7 @@ export class TrainerComponent implements OnInit {
     if (this.board.chess.turn == Colour.BLACK)
       this.board.flipBoard();
 
-    // console.log("fen: " + this.board.chess.fen + " . Turn: "
-    //   + this.board.chess.turn);
+    this.output.push("Play your moves in the sequence.");
     let stepCount = 0;
 
     this.board.moveMade.subscribe((move: Move) => {
@@ -80,7 +79,7 @@ export class TrainerComponent implements OnInit {
           // Correct move
           this.board.chess.move(step.move);
           //   console.log("fen after move: " + this.board.chess.fen);
-          console.log("correct move");
+          //this.output.push("Correct move: " + step.move.from + step.move.to);
           // Make the next move if there is one
           stepCount++;
           if (stepCount < this.sequence.steps.length) {
@@ -89,23 +88,23 @@ export class TrainerComponent implements OnInit {
             //console.log("fen after move: " + this.board.chess.fen);
           }
           else {
-            console.log("End of sequence");
+            this.output.push("End of sequence");
           }
         }
         else {
           //this.board.movingFrom.moveBack();
           this.board.chess.undo();
-          console.log("incorrect move. s/b "
+          this.output.push("incorrect move. s/b "
             + step.move.from + step.move.to);
           stepCount--;
         }
         stepCount++;
         if (stepCount == this.sequence.steps.length) {
-          console.log("End of sequence");
+          this.output.push("End of sequence");
         }
       }
       else {
-        console.log("End of sequence");
+        this.output.push("End of sequence");
       }
     });
   }

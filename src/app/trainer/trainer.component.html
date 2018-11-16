@@ -1,5 +1,9 @@
 <app-header *ngIf="showHeader"></app-header>
 <br>
-<chessboard></chessboard>
-<br>
-<pre>{{ output }}</pre>
+<chessboard class="floating-box"></chessboard>
+
+<section class="floating-box">
+    <ul class="bullets">
+        <li *ngFor="let line of output">{{ line }}</li>
+    </ul>
+</section>
