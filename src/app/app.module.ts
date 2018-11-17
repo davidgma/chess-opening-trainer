@@ -17,8 +17,15 @@ import { HeaderComponent } from './header/header.component';
 import { DataService } from './data.service';
 import { BuilderRoutingModule } from './builder/builder-routing.module';
 import { BuilderComponent } from './builder/builder.component';
-import { MatTableModule } from '@angular/material';
-
+import {
+  MatTableModule,
+  MatButtonModule,
+  MatTooltipModule,
+  MatIconModule,
+  MatToolbarModule
+} from '@angular/material';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import 'hammerjs';
 
 @NgModule({
   imports: [
@@ -29,7 +36,12 @@ import { MatTableModule } from '@angular/material';
     AboutRoutingModule,
     BuilderRoutingModule,
     AppRoutingModule,
-    MatTableModule
+    MatTableModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatToolbarModule,
+    BrowserAnimationsModule
   ],
   declarations: [
     AppComponent,
@@ -40,7 +52,7 @@ import { MatTableModule } from '@angular/material';
     ChessboardComponent,
     HeaderComponent,
     BuilderComponent
-    ],
+  ],
   bootstrap: [AppComponent],
   providers: [
     JsLoaderService,

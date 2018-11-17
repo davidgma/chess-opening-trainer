@@ -38,6 +38,7 @@ export class DataService {
         // this.addSequence("266 Queens Pawn Rossolimo Nf6,rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1,d2d4,d7d6,g1f3,g7g6,c2c4,f7f5,b1c3,g8f6,e2e3");
         this.addSequence("Semi-Slav Be7,rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1,d2d4,d7d5,g1f3,g8f6,c2c4,c7c6,b1c3,e7e6,c1g5,f8e7,e2e3,e8g8,d1c2,b8d7,e1c1,f8e8,c1b1,a7a6,h2h4,b7b5,c4c5,b5b4,c3a4,a6a5,g5f6,e7f6,f3g5,d7f8,f1d3,g7g6,a4b6,a8a7,b6c8,d8c8,f2f4,a5a4,c2f2");
         this.addSequence("Semi-Slav Cambridge Springs,rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1,d2d4,d7d5,g1f3,c7c6,c2c4,g8f6,b1c3,e7e6,c1g5,b8d7,d1c2,d8a5,g5d2,a5d8,e2e4");
+        this.addSequence("Sicilian Bowdler Attack,rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1,c7c5,f1c4,e7e6,g1f3,g8f6,e4e5,d7d5,c4b5,f6d7,b5d7,d8d7,e1g1,b8c6,b1c3,b7b6,d2d3,f8e7");
     } 
 
     public findSequence(name: string): Sequence {

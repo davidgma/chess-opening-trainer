@@ -43,7 +43,7 @@ export class TrainerComponent implements OnInit {
       }
       else {
         this.output.length = 0;
-        this.output.push("Sequence name: " + this.name);
+        
         // Check the sequence is in the sequences data
         this.sequence = this.dataService.findSequence(this.name);
         if (this.sequence == null) {
@@ -64,13 +64,14 @@ export class TrainerComponent implements OnInit {
       throw new Error("Invalid sequence '" + name + "'");
     }
     this.board.load(this.sequence.fen);
-    if (this.board.chess.turn == Colour.BLACK)
-      this.board.flipBoard();
+    this.board.flipBoardTo(this.board.chess.turn);
 
-    this.output.push("Play your moves in the sequence.");
+    this.output.length = 0;
+    this.output.push( this.name);
+    //this.output.push("Play your moves in the sequence.");
     let stepCount = 0;
 
-    this.board.moveMade.subscribe((move: Move) => {
+    let sub = this.board.moveMade.subscribe((move: Move) => {
       //console.log("move made: " + move.from + move.to);
       if (stepCount < this.sequence.steps.length) {
         let step = this.sequence.steps[stepCount];
@@ -89,6 +90,8 @@ export class TrainerComponent implements OnInit {
           }
           else {
             this.output.push("End of sequence");
+            sub.unsubscribe();
+            return;
           }
         }
         else {
@@ -101,14 +104,22 @@ export class TrainerComponent implements OnInit {
         stepCount++;
         if (stepCount == this.sequence.steps.length) {
           this.output.push("End of sequence");
+          sub.unsubscribe();
+          return;
         }
       }
       else {
         this.output.push("End of sequence");
+        sub.unsubscribe();
+        return;
       }
     });
   }
 
+  redoSequence() {
+    console.log("redo sequence");
+    this.runSequence();
+  }
 
 } // End of class TrainerComponent
 

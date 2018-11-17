@@ -1,7 +1,12 @@
 <app-header *ngIf="showHeader"></app-header>
-<br>
-<chessboard class="floating-box"></chessboard>
+<nav>
+        <button class="again-button" mat-icon-button matTooltip="Again" (click)="redoSequence()">
+            <mat-icon>redo
+            </mat-icon>
+        </button>
+    </nav>
 
+<chessboard class="floating-box"></chessboard>
 <section class="floating-box">
     <ul class="bullets">
         <li *ngFor="let line of output">{{ line }}</li>

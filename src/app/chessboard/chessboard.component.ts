@@ -48,11 +48,19 @@ export class ChessboardComponent implements OnInit {
     public flipBoard() {
         this.boardSide == Colour.WHITE ? this.boardSide = Colour.BLACK
             : this.boardSide = Colour.WHITE;
+        this.flip();
+    }
+
+    private flip() {
         this.squaresMap.forEach((cs: ChessSquare, key: string) => {
             cs.calculateRowColumn();
-            //cs.moveBack();
             this.positionPieces();
         });
+    }
+
+    public flipBoardTo(colour: Colour) {
+        this.boardSide = colour;
+        this.flip();
     }
 
     public load(fen: string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
@@ -83,15 +91,15 @@ export class ChessboardComponent implements OnInit {
             // + ", index: " + index
             // );
             if ((typeof piece) != 'undefined'
-            && piece != null) {
+                && piece != null) {
                 // console.log("piece: " + piece.type
                 // + ", piece colour: " + piece.color);
                 //if (cs.pieceColour != piece.color
-                  //  || cs.pieceType != piece.type) {
-                        cs.pieceColour = piece.color;
-                        cs.pieceType = piece.type;
-                   // }
-                
+                //  || cs.pieceType != piece.type) {
+                cs.pieceColour = piece.color;
+                cs.pieceType = piece.type;
+                // }
+
             }
             else {
                 // console.log("empty square");

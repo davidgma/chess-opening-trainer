@@ -11,3 +11,9 @@
     vertical-align: top;
 }
 
+.trainerToolbar {
+    color: black;
+    display: inline-block;
+    background-color: white;
+  }
+
