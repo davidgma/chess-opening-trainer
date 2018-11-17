@@ -15,7 +15,7 @@ fi
 echo $message
 
 # Create a local copy and serve it
-ng build
+ng build --base-href "http://localhost:4201/"
 rm -r ~/local/web/chess-opening-trainer
 mkdir -p ~/local/web/chess-opening-trainer
 cp ./dist/*  ~/local/web/chess-opening-trainer
