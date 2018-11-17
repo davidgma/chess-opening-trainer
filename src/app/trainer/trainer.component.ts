@@ -27,31 +27,28 @@ export class TrainerComponent implements OnInit {
   public showHeader = true;
 
   ngOnInit() {
-    this.output.push("Select a sequence from the Moves page.");
+    this.output.push('Select a sequence from the Moves page.');
     // get the parameters, if any
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.name = params.get('name');
-      console.log("showHeader: " + params.get("header"));
-      if (params.get("header") == "showHeader") {
+      console.log('showHeader: ' + params.get('header'));
+      if (params.get('header') === 'showHeader') {
         this.showHeader = true;
-      }
-      else if (params.get("header") == "hideHeader") {
+      } else if (params.get('header') === 'hideHeader') {
         this.showHeader = false;
       }
-      if (this.name == null) {
-        this.output.push("No sequence selected. Select one in the Moves section.");
-      }
-      else {
+      if (this.name === undefined) {
+        this.output.push('No sequence selected. Select one in the Moves section.');
+      } else {
         this.output.length = 0;
-        
+
         // Check the sequence is in the sequences data
         this.sequence = this.dataService.findSequence(this.name);
-        if (this.sequence == null) {
-          this.output.push("The sequence '" + this.name + "' cant be found.");
-        }
-        else {
-          //this.output.length = 0;
-          //this.output.push("Sequence found: " + this.sequence.name);
+        if (this.sequence === undefined) {
+          this.output.push('The sequence \'' + this.name + '\' cant be found.');
+        } else {
+          // this.output.length = 0;
+          // this.output.push("Sequence found: " + this.sequence.name);
           this.runSequence();
         }
       }
@@ -60,64 +57,59 @@ export class TrainerComponent implements OnInit {
   } // end of ngOnInit
 
   runSequence() {
-    if (this.sequence == null) {
-      throw new Error("Invalid sequence '" + name + "'");
+    if (this.sequence === undefined) {
+      throw new Error('Invalid sequence \'' + name + '\'');
     }
     this.board.load(this.sequence.fen);
     this.board.flipBoardTo(this.board.chess.turn);
 
     this.output.length = 0;
-    this.output.push( this.name);
-    //this.output.push("Play your moves in the sequence.");
+    this.output.push(this.name);
+    // this.output.push("Play your moves in the sequence.");
     let stepCount = 0;
 
-    let sub = this.board.moveMade.subscribe((move: Move) => {
-      //console.log("move made: " + move.from + move.to);
+    const sub = this.board.moveMade.subscribe((move: Move) => {
+      // console.log("move made: " + move.from + move.to);
       if (stepCount < this.sequence.steps.length) {
         let step = this.sequence.steps[stepCount];
-        //console.log("step: " + step.move);
-        if ((move.from + move.to) == step.move.from + step.move.to) {
+        // console.log("step: " + step.move);
+        if ((move.from + move.to) === step.move.from + step.move.to) {
           // Correct move
           this.board.chess.move(step.move);
-          //   console.log("fen after move: " + this.board.chess.fen);
-          //this.output.push("Correct move: " + step.move.from + step.move.to);
           // Make the next move if there is one
           stepCount++;
           if (stepCount < this.sequence.steps.length) {
             step = this.sequence.steps[stepCount];
-            let m = this.board.chess.move(step.move);
-            console.log("fen after move: " + this.board.chess.fen);
-          }
-          else {
-            this.output.push("End of sequence");
+            this.board.chess.move(step.move);
+            console.log('fen after move: ' + this.board.chess.fen);
+          } else {
+            this.output.push('End of sequence');
             sub.unsubscribe();
             return;
           }
-        }
-        else {
-          //this.board.movingFrom.moveBack();
+        } else {
           this.board.chess.undo();
-          this.output.push("incorrect move. s/b "
+          this.output.push('incorrect move. s/b '
             + step.move.from + step.move.to);
           stepCount--;
         }
         stepCount++;
-        if (stepCount == this.sequence.steps.length) {
-          this.output.push("End of sequence");
+        if (stepCount === this.sequence.steps.length) {
+          this.output.push('End of sequence');
           sub.unsubscribe();
           return;
         }
       }
-      else {
-        this.output.push("End of sequence");
-        sub.unsubscribe();
-        return;
-      }
+      // else {
+      //   this.output.push('End of sequence');
+      //   sub.unsubscribe();
+      //   return;
+      // }
     });
   }
 
   redoSequence() {
-    console.log("redo sequence");
+    console.log('redo sequence');
     this.runSequence();
   }
 

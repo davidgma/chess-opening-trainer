@@ -8,8 +8,8 @@ export class JsLoaderService {
   constructor() { }
 
   loadjs(url: string): Promise<void> {
-    let p = new Promise<void>((resolve) => {
-      let node = document.createElement('script');
+    const p = new Promise<void>((resolve) => {
+      const node = document.createElement('script');
       node.src = url;
       node.type = 'text/javascript';
       node.charset = 'utf-8';
@@ -18,7 +18,7 @@ export class JsLoaderService {
       node.onload = () => {
         console.log(`The javascript file ${url} has been loaded.`);
         resolve();
-      }
+      };
     });
 
     return p;

@@ -13,15 +13,15 @@ describe('AppComponent', () => {
     const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
   }));
-  it(`should have as title 'google-sheets-demo'`, async(() => {
+  it(`should have as title 'chess-opening-trainer'`, async(() => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('google-sheets-demo');
+    expect(app.title).toEqual('chess-opening-trainer');
   }));
   it('should render title in a h1 tag', async(() => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Welcome to google-sheets-demo!');
+    expect(compiled.querySelector('h1').textContent).toContain('Welcome to chess-opening-trainer!');
   }));
 });

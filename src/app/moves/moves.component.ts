@@ -19,12 +19,12 @@ export class MovesComponent implements OnInit {
     }
 
     ngOnInit() {
-        console.log("datasource.length: " + this.dataSource.length);
+        console.log('datasource.length: ' + this.dataSource.length);
     }
 
     practice(seq: Sequence): void {
-        console.log("practice sequence " + seq.name + "...");
-        this.router.navigate(['/trainer', 
+        console.log('practice sequence ' + seq.name + '...');
+        this.router.navigate(['/trainer',
         {name: seq.name, header: 'showHeader'}]);
     }
 

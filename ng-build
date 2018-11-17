@@ -27,4 +27,3 @@ git commit -a -m "${message}"
 git push
 ngh
 
-# Website https://davidgma.github.io/google-sheets-demo

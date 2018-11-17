@@ -1,10 +1,10 @@
-import { NgModule }             from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PageNotFoundComponent }    from './not-found.component';
+import { PageNotFoundComponent } from './not-found.component';
 import { HeaderComponent } from './header/header.component';
 
 const appRoutes: Routes = [
-  //{ path: '',   redirectTo: '', pathMatch: 'full' },
+  // { path: '', redirectTo: '', pathMatch: 'full' },
   { path: '', component: HeaderComponent },
   { path: '**', component: PageNotFoundComponent }
 ];
@@ -23,7 +23,7 @@ const appRoutes: Routes = [
     RouterModule
   ],
   providers: [
-    
+
   ]
 })
 export class AppRoutingModule { }

@@ -12,8 +12,8 @@ declare global {
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  public isSignedIn: boolean = false;
-  public googleDisplay = "block";
+  public isSignedIn = false;
+  public googleDisplay = 'block';
 
   constructor(public gdata: GoogleAuthService,
     private cd: ChangeDetectorRef) {
@@ -28,9 +28,9 @@ export class AppComponent implements OnInit {
   }
 
   public async signOut() {
-    console.log("calling gdata signout...");
+    console.log('calling gdata signout...');
     await this.gdata.signOut();
-    console.log("gdata signout finished");
+    console.log('gdata signout finished');
     this.isSignedIn = this.gdata.isSignedIn;
     this.googleDisplay = this.gdata.googleDisplay;
     this.cd.detectChanges();
@@ -38,5 +38,5 @@ export class AppComponent implements OnInit {
 
   ngOnInit() { }
 
-  
+
 }
