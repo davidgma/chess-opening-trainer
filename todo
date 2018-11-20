@@ -1,0 +1,17 @@
+storing settings in google sheets
+storing google sheet id in a cookie
+legal cookie warning
+change of privacy to reflect cookies
+remembering dates and times when last got wrong
+offering training on most recently wrong sequence
+next button on trainer to go to next sequence
+storage of previous dates and times in cookies and docs
+ability to change the colour of the squares and pieces
+documentation including code annotations
+ability to move by press and click instead of drag
+main output in builder instead of in the console
+move piece inside android
+tests and test script
+google verification of oauth
+tests for chessts and refactoring to remove all any types
+publish chessts on npm
