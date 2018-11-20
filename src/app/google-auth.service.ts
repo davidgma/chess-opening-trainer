@@ -15,12 +15,14 @@ export class GoogleAuthService {
     public googleUser: any;
     public signIn: EventEmitter<void> = new EventEmitter<void>();
     public signedOut: EventEmitter<void> = new EventEmitter<void>();
+    public isAPILoaded = false;
 
     constructor(public loader: JsLoaderService) {
 
         console.log('Loading the javascript API file.');
         this.loader.loadjs(this.javascriptFile).then(() => {
             // file loaded
+            this.isAPILoaded = true;
         });
     }
 
