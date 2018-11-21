@@ -1,8 +1,8 @@
 <h1><a href="/">
         Chess Opening Trainer</a></h1>
 
-<div *ngIf="isSignedIn">
-    <button class="sign-out" matTooltip="Sign out" (click)="signOut()">Sign out
+<div >
+    <button class="sign-out" matTooltip="Sign out" (click)="signOut()" *ngIf="isSignedIn">Sign out
     </button>
 </div>
 <div [style.display]="googleDisplay">
@@ -10,13 +10,13 @@
     </div>
 </div>
 <nav>
-    <a routerLink="/trainer" routerLinkActive="active">
+    <a routerLink="/trainer" routerLinkActive="active" matTooltip="Practice sequences">
         Trainer</a>
-    <a routerLink="/moves" routerLinkActive="active">
+    <a routerLink="/moves" routerLinkActive="active" matTooltip="View sequences">
         Moves</a>
     <a routerLink="/about" routerLinkActive="active">
         About</a>
-    <a routerLink="/builder" routerLinkActive="active">
+    <a routerLink="/builder" routerLinkActive="active" matTooltip="Prepare new sequences">
         Builder</a>
 </nav>
 <router-outlet></router-outlet>

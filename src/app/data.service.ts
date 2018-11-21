@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Move } from '../app/chessboard/chess-enums';
+import { GoogleAuthService } from './google-auth.service';
 
 export class Step {
     // move e.g. d2d4
@@ -26,8 +27,14 @@ export class Sequence {
 export class DataService {
 
     public sequencies = new Array<Sequence>();
-    constructor() {
+    constructor(public gauth: GoogleAuthService) {
         this.addBasicSequencies();
+        if (this.gauth.isSignedIn) {
+            this.retrieveSequences();
+        }
+        gauth.signIn.subscribe(() => {
+            this.retrieveSequences();
+        });
     }
 
     private addBasicSequencies() {
@@ -86,5 +93,42 @@ export class DataService {
             seq.addStep(parts[i], '');
         }
         this.sequencies.push(seq);
+    }
+
+    // Get sequences from a Google spreadsheet.
+    // Needs to be in /etc/chess-opening-trainer
+    private async retrieveSequences() {
+        console.log("in retrieveSequences");
+        await this.gauth.loadClient();
+        console.log("client loaded");
+        await this.gauth.loadSheetsAPI();
+        console.log("sheets v4 loaded");
+        await this.gauth.loadDriveAPI();
+        console.log("drive v3 loaded");
+        let q = "name contains 'Chess Opening Trainer' and mimeType contains 'google-apps.spreadsheet'";
+        let list = gapi.client.drive.files.list(
+            { q: q }
+        );
+        list.execute((resp) => {
+            if (resp.files.length === 0) {
+                throw new Error('No Google Docs spreadsheet Chess Opening Trainer found');
+            }
+            console.log("id: " + resp.files[0].id);
+            gapi.client.sheets.spreadsheets.values.get({
+                spreadsheetId: resp.files[0].id,
+                range: "A1"
+            }).then((response) => {
+                console.log("Range retrieved: "
+                    + response.result.values[0]);
+
+            }, (error) => {
+                throw new Error(error.result.error.message);
+            });
+            console.log(JSON.stringify(resp.files[0]));
+            console.log("here");
+        });
+        // find spreadsheet
+
+
     }
 }

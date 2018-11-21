@@ -1,5 +1,6 @@
 import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { GoogleAuthService } from '../google-auth.service';
+import { DataService } from '../data.service';
 
 
 @Component({
@@ -9,11 +10,13 @@ import { GoogleAuthService } from '../google-auth.service';
 })
 export class HeaderComponent implements OnInit {
 
-    public isSignedIn: boolean = false;
+    public isSignedIn: boolean = true;
     public googleDisplay = "block";
 
     constructor(public gdata: GoogleAuthService,
-        private cd: ChangeDetectorRef) {
+        private cd: ChangeDetectorRef,
+        // This causes the data to be loaded earlier on
+        public dataService: DataService) {
         window.onSignIn = (googleUser) => this.onSignIn(googleUser);
     }
 
