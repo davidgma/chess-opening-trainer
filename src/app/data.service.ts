@@ -52,6 +52,15 @@ export class DataService {
         fen = 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1';
         moves = 'c7c5,f1c4,e7e6,g1f3,g8f6,e4e5,d7d5,c4b5,f6d7,b5d7,d8d7,e1g1,b8c6,b1c3,b7b6,d2d3,f8e7';
         this.addSequence(name, fen, moves);
+        name = 'Lucena Position';
+        fen = '1K6/1P1k4/8/8/8/8/2R5/r7 w - - 0 1';
+        moves = 'c2d2,d7e7,d2d4,a1c1,b8a7,c1a1,a7b6,a1b1,b6c6,b1c1,c6b5,c1b1,d4b4';
+        this.addSequence(name, fen, moves);
+        name = 'Lucena Position Variation';
+        fen = '1K6/1P1k4/8/8/8/8/2R5/r7 w - - 0 1';
+        moves = 'c2d2,d7e6,b8c8,a1c1,c8d8,c1b1,d2d7,e6e5,d8c8';
+        this.addSequence(name, fen, moves);
+
     }
 
     public findSequence(name: string): Sequence {
