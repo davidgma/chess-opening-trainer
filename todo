@@ -14,3 +14,4 @@ tests and test script
 google verification of oauth
 tests for chessts and refactoring to remove all any types
 publish chessts on npm
+put error handling around reading spreadsheet

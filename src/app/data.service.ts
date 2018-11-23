@@ -55,10 +55,6 @@ export class DataService {
         fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
         moves = 'd2d4,d7d5,g1f3,c7c6,c2c4,g8f6,b1c3,e7e6,c1g5,b8d7,d1c2,d8a5,g5d2,a5d8,e2e4';
         this.addSequence(name, fen, moves);
-        name = 'Sicilian Bowdler Attack';
-        fen = 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1';
-        moves = 'c7c5,f1c4,e7e6,g1f3,g8f6,e4e5,d7d5,c4b5,f6d7,b5d7,d8d7,e1g1,b8c6,b1c3,b7b6,d2d3,f8e7';
-        this.addSequence(name, fen, moves);
         name = 'Lucena Position';
         fen = '1K6/1P1k4/8/8/8/8/2R5/r7 w - - 0 1';
         moves = 'c2d2,d7e7,d2d4,a1c1,b8a7,c1a1,a7b6,a1b1,b6c6,b1c1,c6b5,c1b1,d4b4';
@@ -107,13 +103,12 @@ export class DataService {
     // Get sequences from a Google spreadsheet.
     // Needs to be in /etc/chess-opening-trainer
     private async retrieveSequences() {
-        console.log("in retrieveSequences");
         await this.gauth.loadClient();
-        console.log("client loaded");
+        // console.log("client loaded");
         await this.gauth.loadSheetsAPI();
-        console.log("sheets v4 loaded");
+        // console.log("sheets v4 loaded");
         await this.gauth.loadDriveAPI();
-        console.log("drive v3 loaded");
+        // console.log("drive v3 loaded");
         let q = "name contains 'Chess Opening Trainer' and mimeType contains 'google-apps.spreadsheet'";
         let list = gapi.client.drive.files.list(
             { q: q }
@@ -122,19 +117,18 @@ export class DataService {
             if (resp.files.length === 0) {
                 throw new Error('No Google Docs spreadsheet Chess Opening Trainer found');
             }
-            console.log("id: " + resp.files[0].id);
+            // console.log("id: " + resp.files[0].id);
             gapi.client.sheets.spreadsheets.values.get({
                 spreadsheetId: resp.files[0].id,
-                range: "A1"
+                range: "Sequences!A2:C"
             }).then((response) => {
-                console.log("Range retrieved: "
-                    + response.result.values[0]);
-
+                for (let i = 0; i < response.result.values.length; i++) {
+                    this.addSequence(response.result.values[i][0],
+                        response.result.values[i][1], response.result.values[i][2]);
+                }
             }, (error) => {
                 throw new Error(error.result.error.message);
             });
-            console.log(JSON.stringify(resp.files[0]));
-            console.log("here");
         });
         // find spreadsheet
 
