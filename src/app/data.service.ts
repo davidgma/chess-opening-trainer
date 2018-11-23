@@ -134,4 +134,34 @@ export class DataService {
 
 
     }
+
+    nextSequence(seq: Sequence): Sequence {
+        for (let i = 0; i < this.sequencies.length; i++) {
+            let s = this.sequencies[i];
+            if (s.name === seq.name) {
+                if ((i + 1) < this.sequencies.length) {
+                    return this.sequencies[i + 1];
+                }
+                else {
+                    return undefined;
+                }
+            }
+        }
+        
+    }
+
+    prevSequence(seq: Sequence): Sequence {
+        for (let i = 0; i < this.sequencies.length; i++) {
+            let s = this.sequencies[i];
+            if (s.name === seq.name) {
+                if ((i - 1) > 0) {
+                    return this.sequencies[i - 1];
+                }
+                else {
+                    return undefined;
+                }
+            }
+        }
+        
+    }
 }

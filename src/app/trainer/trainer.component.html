@@ -3,6 +3,16 @@
             <mat-icon>redo
             </mat-icon>
         </button>
+        <button mat-icon-button matTooltip="Previous" 
+        (click)="prevSequence()">
+            <mat-icon>skip_previous
+            </mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Next" 
+        (click)="nextSequence()">
+            <mat-icon>skip_next
+            </mat-icon>
+        </button>
     </nav>
 
 <app-chessboard class="floating-box"></app-chessboard>

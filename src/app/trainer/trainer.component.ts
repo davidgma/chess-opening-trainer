@@ -64,6 +64,7 @@ export class TrainerComponent implements OnInit {
     this.board.flipBoardTo(this.board.chess.turn);
 
     this.output.length = 0;
+    this.name = this.sequence.name;
     this.output.push(this.name);
     // this.output.push("Play your moves in the sequence.");
     let stepCount = 0;
@@ -111,6 +112,38 @@ export class TrainerComponent implements OnInit {
   redoSequence() {
     console.log('redo sequence');
     this.runSequence();
+  }
+
+  nextSequence() {
+    // this.output.length = 0;
+    if (this.sequence === undefined) {
+      this.sequence = this.dataService.sequencies[0];
+    }
+    else {
+      this.sequence = this.dataService.nextSequence(this.sequence);
+    }
+
+    if (this.sequence === undefined) {
+      this.output.push('The sequence \'' + this.name + '\' is the last sequence.');
+    } else {
+      this.runSequence();
+    }
+  }
+
+  prevSequence() {
+    // this.output.length = 0;
+    if (this.sequence === undefined) {
+      this.sequence = this.dataService.sequencies[0];
+    }
+    else {
+      this.sequence = this.dataService.prevSequence(this.sequence);
+    }
+
+    if (this.sequence === undefined) {
+      this.output.push('The sequence \'' + this.name + '\' is the first sequence.');
+    } else {
+      this.runSequence();
+    }
   }
 
 } // End of class TrainerComponent
