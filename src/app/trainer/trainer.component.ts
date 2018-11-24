@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { GoogleAuthService } from '../google-auth.service';
 import { ChessboardComponent } from '../chessboard/chessboard.component';
-import { DataService, Sequence } from '../data.service';
+import { DataService, Sequence, Record } from '../data.service';
 import { Colour, Move } from '../chessboard/chess-enums';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 // import { ChessSquare } from '../chessboard/chess-square';
 // import { Colour, PieceType } from '../chessboard/chess-enums';
@@ -26,10 +27,11 @@ export class TrainerComponent implements OnInit {
     private route: ActivatedRoute) { }
   public showHeader = true;
 
-  ngOnInit() {
+  async ngOnInit() {
     this.output.push('Select a sequence from the Moves page.');
     // get the parameters, if any
-    this.route.paramMap.subscribe((params: ParamMap) => {
+    
+    this.route.paramMap.subscribe(async (params: ParamMap) => {
       this.name = params.get('name');
       console.log('showHeader: ' + params.get('header'));
       if (params.get('header') === 'showHeader') {
@@ -43,7 +45,7 @@ export class TrainerComponent implements OnInit {
         this.output.length = 0;
 
         // Check the sequence is in the sequences data
-        this.sequence = this.dataService.findSequence(this.name);
+        this.sequence = await this.dataService.findSequence(this.name);
         if (this.sequence === undefined) {
           this.output.push('The sequence \'' + this.name + '\' cant be found.');
         } else {
@@ -69,7 +71,7 @@ export class TrainerComponent implements OnInit {
     // this.output.push("Play your moves in the sequence.");
     let stepCount = 0;
 
-    const sub = this.board.moveMade.subscribe((move: Move) => {
+    const sub = <Subscription>this.board.moveMade.subscribe((move: Move) => {
       // console.log("move made: " + move.from + move.to);
       if (stepCount < this.sequence.steps.length) {
         let step = this.sequence.steps[stepCount];
@@ -84,8 +86,7 @@ export class TrainerComponent implements OnInit {
             this.board.chess.move(step.move);
             console.log('fen after move: ' + this.board.chess.fen);
           } else {
-            this.output.push('End of sequence');
-            sub.unsubscribe();
+            this.endSequence(sub);
             return;
           }
         } else {
@@ -96,17 +97,25 @@ export class TrainerComponent implements OnInit {
         }
         stepCount++;
         if (stepCount === this.sequence.steps.length) {
-          this.output.push('End of sequence');
-          sub.unsubscribe();
+          this.endSequence(sub);
           return;
         }
       }
-      // else {
-      //   this.output.push('End of sequence');
-      //   sub.unsubscribe();
-      //   return;
-      // }
     });
+  }
+
+  endSequence(sub: Subscription) {
+    this.output.push('End of sequence');
+    sub.unsubscribe();
+    let record = this.dataService.getRecord(this.sequence.name);
+    if (record === undefined) {
+      console.log("New record. Name: " + this.sequence.name
+      + ", last: " + Date.now());
+
+    }
+    else {
+      console.log("Record: " + JSON.stringify(record));
+    }
   }
 
   redoSequence() {

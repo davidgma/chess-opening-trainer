@@ -25,8 +25,10 @@ export class MovesComponent implements OnInit {
     practice(seq: Sequence): void {
         console.log('practice sequence ' + seq.name + '...');
         this.router.navigate(['/trainer',
-        {name: seq.name, header: 'showHeader'}]);
+        //{name: seq.name, header: 'showHeader'}]);
+        {name: seq.name}]);
     }
+    
 
 
 } // End of class MovesComponent

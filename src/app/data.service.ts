@@ -21,12 +21,23 @@ export class Sequence {
     }
 }
 
+export class Record {
+    // name: string; // name of the sequence
+    // last: Date; // date and time last practiced
+    // next: Date; // due date for next practise
+    constructor(public name: string, public last: Date,
+        public due: Date) { }
+}
+
 @Injectable({
     providedIn: 'root'
 })
 export class DataService {
 
     public sequencies = new Array<Sequence>();
+    public records = new Array<Record>();
+    private onRetrieval = new EventEmitter<void>();
+
     constructor(public gauth: GoogleAuthService) {
         this.addBasicSequencies();
         if (this.gauth.isSignedIn) {
@@ -66,28 +77,23 @@ export class DataService {
 
     }
 
-    public findSequence(name: string): Sequence {
-        for (const seq of this.sequencies) {
-            if (seq.name === name) {
-                return seq;
+    public async findSequence(name: string, wait: boolean = true): Promise<Sequence> {
+        let p = new Promise<Sequence>((resolve) => {
+            for (const seq of this.sequencies) {
+                if (seq.name === name) {
+                    resolve(seq);
+                }
             }
-        }
-        return undefined;
-    }
+            // wait for google auth
+            if (wait) {
+                this.onRetrieval.subscribe(async () => {
+                    resolve(this.findSequence(name, false));
+                });
+            }
+        });
+        return p;
 
-    // private addSequence(info: string) {
-    //     const parts = info.split(',');
-    //     if (parts.length > 3) {
-    //         const seq = new Sequence();
-    //         seq.name = parts[0];
-    //         seq.fen = parts[1];
-    //         for (let i = 2; i < parts.length; i++) {
-    //             seq.addStep(parts[i], '');
-    //         }
-    //         this.sequencies.push(seq);
-    //         // console.log("Sequence added: " + seq.name);
-    //     }
-    // }
+    }
 
     private addSequence(name: string, fen: string, moves: string) {
         const seq = new Sequence();
@@ -126,13 +132,24 @@ export class DataService {
                     this.addSequence(response.result.values[i][0],
                         response.result.values[i][1], response.result.values[i][2]);
                 }
+                this.onRetrieval.emit();
+            }, (error) => {
+                throw new Error(error.result.error.message);
+            });
+            gapi.client.sheets.spreadsheets.values.get({
+                spreadsheetId: resp.files[0].id,
+                range: "Record!A2:C"
+            }).then((response) => {
+                if (!(response.result.values === undefined)) {
+                    for (let i = 0; i < response.result.values.length; i++) {
+                        this.addRecord(response.result.values[i][0],
+                            response.result.values[i][1], response.result.values[i][2]);
+                    }
+                }
             }, (error) => {
                 throw new Error(error.result.error.message);
             });
         });
-        // find spreadsheet
-
-
     }
 
     nextSequence(seq: Sequence): Sequence {
@@ -147,7 +164,7 @@ export class DataService {
                 }
             }
         }
-        
+
     }
 
     prevSequence(seq: Sequence): Sequence {
@@ -162,6 +179,23 @@ export class DataService {
                 }
             }
         }
-        
+
+    }
+
+    addRecord(name: string, last: Date, due: Date) {
+        this.records.push(new Record(name, last, due));
+    }
+
+    // finds a record from the records array
+    getRecord(name: string) {
+        return this.records.find((record) => {
+            return (record.name === name);
+        })
+    }
+
+    // Store a record back into the spreadsheet
+    storeRecord(record: Record) {
+        let index = this.records.indexOf(record);
+        console.log("record index: " + index);
     }
 }
