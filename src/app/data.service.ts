@@ -40,12 +40,17 @@ export class DataService {
 
     constructor(public gauth: GoogleAuthService) {
         this.addBasicSequencies();
+        
         if (this.gauth.isSignedIn) {
             this.retrieveSequences();
         }
-        gauth.signIn.subscribe(() => {
+        gauth.signedIn.subscribe(() => {
             this.retrieveSequences();
         });
+
+        // this.gauth.testObs.subscribe((next) => {
+        //     console.log('testObs streamed: ' + next);
+        // });
     }
 
     private addBasicSequencies() {

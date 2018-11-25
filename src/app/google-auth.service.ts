@@ -13,7 +13,7 @@ export class GoogleAuthService {
     public isSignedIn = false;
     public googleDisplay = 'block';
     public googleUser: any;
-    public signIn: EventEmitter<void> = new EventEmitter<void>();
+    public signedIn: EventEmitter<void> = new EventEmitter<void>();
     public signedOut: EventEmitter<void> = new EventEmitter<void>();
     public isAPILoaded = false;
 
@@ -28,10 +28,10 @@ export class GoogleAuthService {
 
     public onSignIn(googleUser) {
         this.googleUser = googleUser;
-        console.log('signed in');
+        console.log('Signed in');
         this.isSignedIn = true;
         this.googleDisplay = 'none';
-        this.signIn.emit();
+        this.signedIn.emit();
     }
 
     public async signOut() {
