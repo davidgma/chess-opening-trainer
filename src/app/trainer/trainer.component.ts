@@ -20,6 +20,7 @@ export class TrainerComponent implements OnInit {
   @ViewChild(ChessboardComponent) board: ChessboardComponent;
   public name: string;
   public sequence: Sequence;
+  public successful = true;
 
   constructor(private cd: ChangeDetectorRef,
     public gauth: GoogleAuthService,
@@ -30,7 +31,7 @@ export class TrainerComponent implements OnInit {
   async ngOnInit() {
     this.output.push('Select a sequence from the Moves page.');
     // get the parameters, if any
-    
+
     this.route.paramMap.subscribe(async (params: ParamMap) => {
       this.name = params.get('name');
       console.log('showHeader: ' + params.get('header'));
@@ -64,6 +65,7 @@ export class TrainerComponent implements OnInit {
     }
     this.board.load(this.sequence.fen);
     this.board.flipBoardTo(this.board.chess.turn);
+    this.successful = true;
 
     this.output.length = 0;
     this.name = this.sequence.name;
@@ -91,9 +93,10 @@ export class TrainerComponent implements OnInit {
           }
         } else {
           this.board.chess.undo();
-          this.output.push('incorrect move. s/b '
+          this.output.push('incorrect move. should be '
             + step.move.from + step.move.to);
           stepCount--;
+          this.successful = false;
         }
         stepCount++;
         if (stepCount === this.sequence.steps.length) {
@@ -105,13 +108,19 @@ export class TrainerComponent implements OnInit {
   }
 
   endSequence(sub: Subscription) {
-    this.output.push('End of sequence');
+    this.output.push('End of sequence. Successful: '
+      + this.successful);
     sub.unsubscribe();
     let record = this.dataService.getRecord(this.sequence.name);
     if (record === undefined) {
+      let now = new Date();
+      let next = new Date();
+      if (this.successful)
+        next.setDate(next.getDate() + 1);
       console.log("New record. Name: " + this.sequence.name
-      + ", last: " + Date.now());
-
+        + ", last: " + now
+        + ", next: " + next);
+      record = new Record(this.sequence.name, now, next);
     }
     else {
       console.log("Record: " + JSON.stringify(record));

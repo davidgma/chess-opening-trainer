@@ -13,25 +13,32 @@ export class GoogleAuthService {
     public isSignedIn = false;
     public googleDisplay = 'block';
     public googleUser: any;
-    public signedIn: EventEmitter<void> = new EventEmitter<void>();
-    public signedOut: EventEmitter<void> = new EventEmitter<void>();
-    public isAPILoaded = false;
+    public ready = new Array<Promise<void>>();
+    private readyResolve: (value?: void | PromiseLike<void>) => void;
+    
 
     constructor(public loader: JsLoaderService) {
 
         console.log('Loading the javascript API file.');
-        this.loader.loadjs(this.javascriptFile).then(() => {
+        this.ready.push(this.loader.loadjs(this.javascriptFile).then(() => {
             // file loaded
-            this.isAPILoaded = true;
-        });
+        }));
+
+        this.ready.push(new Promise<void>((resolve) => {
+            this.readyResolve = resolve;
+        }));
+        
     }
 
-    public onSignIn(googleUser) {
+    public async onSignIn(googleUser) {
         this.googleUser = googleUser;
         console.log('Signed in');
         this.isSignedIn = true;
         this.googleDisplay = 'none';
-        this.signedIn.emit();
+        await this.loadClient();
+        await this.loadSheetsAPI();
+        await this.loadDriveAPI();
+        this.readyResolve();
     }
 
     public async signOut() {
@@ -41,18 +48,18 @@ export class GoogleAuthService {
             console.log('signed out');
             this.isSignedIn = false;
             this.googleDisplay = 'block';
-            this.signedOut.emit();
         });
     }
 
-    public async loadClient() {
+    public async loadClient(): Promise<void> {
         const p = new Promise<void>((resolve) => {
             gapi.load('client', () => {
+                console.log("client loaded");
                 resolve();
             },
                 (error) => {
                     console.log('Error loading client: '
-                    + JSON.stringify(error));
+                        + JSON.stringify(error));
                 });
         });
         return p;
@@ -63,11 +70,12 @@ export class GoogleAuthService {
             gapi.client.load(
                 'https://sheets.googleapis.com/$discovery/rest?version=v4')
                 .then(() => {
+                    console.log("sheets v4 loaded");
                     resolve();
                 },
                     (error) => {
                         console.log('Error loading SheetsAPI: '
-                        + JSON.stringify(error));
+                            + JSON.stringify(error));
                     });
         });
         return p;
@@ -78,11 +86,12 @@ export class GoogleAuthService {
             gapi.client.load(
                 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest')
                 .then(() => {
+                    console.log("drive v3 loaded");
                     resolve();
                 },
                     (error) => {
-                        console.log("Error loading DriveAPI: " 
-                        + JSON.stringify(error));
+                        console.log("Error loading DriveAPI: "
+                            + JSON.stringify(error));
                     });
         });
         return p;

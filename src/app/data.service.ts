@@ -37,20 +37,15 @@ export class DataService {
     public sequencies = new Array<Sequence>();
     public records = new Array<Record>();
     private onRetrieval = new EventEmitter<void>();
+    public codeLoaded = new Array<Promise<void>>();
 
     constructor(public gauth: GoogleAuthService) {
         this.addBasicSequencies();
-        
-        if (this.gauth.isSignedIn) {
+        Promise.all(this.gauth.ready).then(() => {
+            console.log("Google ready");
             this.retrieveSequences();
-        }
-        gauth.signedIn.subscribe(() => {
-            this.retrieveSequences();
-        });
+        }); 
 
-        // this.gauth.testObs.subscribe((next) => {
-        //     console.log('testObs streamed: ' + next);
-        // });
     }
 
     private addBasicSequencies() {
@@ -114,12 +109,6 @@ export class DataService {
     // Get sequences from a Google spreadsheet.
     // Needs to be in /etc/chess-opening-trainer
     private async retrieveSequences() {
-        await this.gauth.loadClient();
-        // console.log("client loaded");
-        await this.gauth.loadSheetsAPI();
-        // console.log("sheets v4 loaded");
-        await this.gauth.loadDriveAPI();
-        // console.log("drive v3 loaded");
         let q = "name contains 'Chess Opening Trainer' and mimeType contains 'google-apps.spreadsheet'";
         let list = gapi.client.drive.files.list(
             { q: q }
