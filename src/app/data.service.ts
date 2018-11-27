@@ -1,6 +1,9 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Move } from '../app/chessboard/chess-enums';
 import { GoogleAuthService } from './google-auth.service';
+import { Observable, BehaviorSubject, from, Subject } from 'rxjs';
+import { CollectionViewer, DataSource } from "@angular/cdk/collections";
+import { MatTableDataSource } from '@angular/material';
 
 export class Step {
     // move e.g. d2d4
@@ -32,21 +35,28 @@ export class Record {
 @Injectable({
     providedIn: 'root'
 })
-export class DataService {
+export class DataService implements DataSource<Sequence> {
 
-    public sequencies = new Array<Sequence>();
     public records = new Array<Record>();
     private onRetrieval = new EventEmitter<void>();
     public codeLoaded = new Array<Promise<void>>();
+    public sequencies = new Array<Sequence>();
+    private subject = new BehaviorSubject<Sequence[]>(null);
+    // private subject = new Subject<Sequence[]>();
 
     constructor(public gauth: GoogleAuthService) {
-        this.addBasicSequencies();
+        this.loadSequences();
+
+    }
+
+    public loadSequences() {
         Promise.all(this.gauth.ready).then(() => {
             console.log("Google ready");
             this.retrieveSequences();
-        }); 
-
+            this.addBasicSequencies();
+        });
     }
+
 
     private addBasicSequencies() {
         let name, fen, moves;
@@ -74,7 +84,6 @@ export class DataService {
         fen = '1K6/1P1k4/8/8/8/8/2R5/r7 w - - 0 1';
         moves = 'c2d2,d7e6,b8c8,a1c1,c8d8,c1b1,d2d7,e6e5,d8c8';
         this.addSequence(name, fen, moves);
-
     }
 
     public async findSequence(name: string, wait: boolean = true): Promise<Sequence> {
@@ -96,6 +105,7 @@ export class DataService {
     }
 
     private addSequence(name: string, fen: string, moves: string) {
+
         const seq = new Sequence();
         seq.name = name;
         seq.fen = fen;
@@ -104,6 +114,9 @@ export class DataService {
             seq.addStep(parts[i], '');
         }
         this.sequencies.push(seq);
+        // console.log("added sequence for " + name);
+        this.subject.next(this.sequencies);
+        // return seq;
     }
 
     // Get sequences from a Google spreadsheet.
@@ -158,7 +171,7 @@ export class DataService {
                 }
             }
         }
-
+        return new Sequence();
     }
 
     prevSequence(seq: Sequence): Sequence {
@@ -173,7 +186,7 @@ export class DataService {
                 }
             }
         }
-
+        return new Sequence();
     }
 
     addRecord(name: string, last: Date, due: Date) {
@@ -191,5 +204,13 @@ export class DataService {
     storeRecord(record: Record) {
         let index = this.records.indexOf(record);
         console.log("record index: " + index);
+    }
+
+    connect(collectionViewer: CollectionViewer): Observable<Sequence[]> {
+        return this.subject.asObservable();
+    }
+
+    disconnect(collectionViewer: CollectionViewer): void {
+        this.subject.complete();
     }
 }

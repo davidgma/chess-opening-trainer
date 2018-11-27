@@ -108,8 +108,7 @@ export class TrainerComponent implements OnInit {
   }
 
   endSequence(sub: Subscription) {
-    this.output.push('End of sequence. Successful: '
-      + this.successful);
+    this.output.push('End of sequence.');
     sub.unsubscribe();
     let record = this.dataService.getRecord(this.sequence.name);
     if (record === undefined) {

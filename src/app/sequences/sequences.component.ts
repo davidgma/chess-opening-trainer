@@ -1,25 +1,24 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { DataService, Sequence } from '../data.service';
 import { MatTable } from '@angular/material';
 import {Router} from '@angular/router';
 
 @Component({
-    selector: 'app-moves',
-    templateUrl: './moves.component.html',
-    styleUrls: ['./moves.component.css']
+    selector: 'app-sequences',
+    templateUrl: './sequences.component.html',
+    styleUrls: ['./sequences.component.css']
 })
-export class MovesComponent implements OnInit {
-    public dataSource: Array<Sequence> = new Array<Sequence>();
+export class SequencesComponent implements OnInit {
+    public dataSource: DataService;
     displayedColumns: string[] = ['name', 'practice'];
     @ViewChild(MatTable) table: MatTable<any>;
 
     constructor(public dataService: DataService, private router: Router) {
-        this.dataSource = dataService.sequencies;
-
+        
     }
 
     ngOnInit() {
-        console.log('datasource.length: ' + this.dataSource.length);
+        this.dataSource = this.dataService;
     }
 
     practice(seq: Sequence): void {
@@ -31,4 +30,4 @@ export class MovesComponent implements OnInit {
     
 
 
-} // End of class MovesComponent
+} // End of class SequencesComponent

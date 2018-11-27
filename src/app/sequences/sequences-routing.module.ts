@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import {MovesComponent } from './moves.component';
+import {SequencesComponent } from './sequences.component';
 
 const routes: Routes = [
-  { path: 'moves', component: MovesComponent }
+  { path: 'sequences', component: SequencesComponent }
 ];
 
 @NgModule({
@@ -13,4 +12,4 @@ const routes: Routes = [
   ],
   declarations: []
 })
-export class MovesRoutingModule { }
+export class SequencesRoutingModule { }

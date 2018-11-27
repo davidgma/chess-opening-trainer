@@ -182,7 +182,7 @@ start: 1 ((1st), d2d4 (Queen's Pawn)): 2 (g8f6, g1f3 (Queen's Pawn Indian)): 32 
 start: 1 ((1st), d2d4 (Queen's Pawn)): 2 (g8f6, g1f3 (Queen's Pawn Indian)): 32 (g7g6, c2c4 (East Indian)): 77 (c7c6, b1c3 (Kings Indian)): 178 (d7d5, d1b3 (GrÃ¼nfeld, Schlechter Variation))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 2 (g8f6, g1f3 (Queen's Pawn Indian)): 32 (g7g6, c2c4 (East Indian)): 77 (c7c6, b1c3 (Kings Indian)): 179 (d8b6, c4c5 (Kings Indian))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 2 (g8f6, g1f3 (Queen's Pawn Indian)): 32 (g7g6, c2c4 (East Indian)): 77 (c7c6, b1c3 (Kings Indian)): 180 (e7e6, e2e4 (Kings Indian))
-start: 1 ((1st), d2d4 (Queen's Pawn)): 2 (g8f6, g1f3 zx (Queen's Pawn Indian)): 32 (g7g6, c2c4 (East Indian)): 82 (f8g7, b1c3 (Kings Indian)): 181 (d7d5, c4d5 (Grunfeld, Three Knights Variation))
+start: 1 ((1st), d2d4 (Queen's Pawn)): 2 (g8f6, g1f3 (Queen's Pawn Indian)): 32 (g7g6, c2c4 (East Indian)): 82 (f8g7, b1c3 (Kings Indian)): 181 (d7d5, c4d5 (Grunfeld, Three Knights Variation))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 2 (g8f6, g1f3 (Queen's Pawn Indian)): 32 (g7g6, c2c4 (East Indian)): 82 (f8g7, b1c3 (Kings Indian)): 182 (e8g8, e2e4 (Kings Indian))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 2 (g8f6, g1f3 (Queen's Pawn Indian)): 32 (g7g6, c2c4 (East Indian)): 82 (f8g7, b1c3 (Kings Indian)): 183 (d7d6, e2e4 (Kings Indian))
 start: 1 ((1st), d2d4 (Queen's Pawn)): 2 (g8f6, g1f3 (Queen's Pawn Indian)): 32 (g7g6, c2c4 (East Indian)): 83 (c7c5, d4d5 (English Symmetrical, Two Knights)): 184 (f6e4, d1c2 (English, Symmetrical, Two Knights))

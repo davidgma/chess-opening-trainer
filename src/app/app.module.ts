@@ -6,11 +6,11 @@ import { AppComponent } from './app.component';
 import { GoogleAuthService } from './google-auth.service';
 import { JsLoaderService } from './js-loader.service';
 import { TrainerComponent } from './trainer/trainer.component';
-import { MovesComponent } from './moves/moves.component';
+import { SequencesComponent } from './sequences/sequences.component';
 import { AboutComponent } from './about/about.component';
 import { AppRoutingModule } from './app-routing.module';
 import { TrainerRoutingModule } from './trainer/trainer-routing.module';
-import { MovesRoutingModule } from './moves/moves-routing.module';
+import { SequencesRoutingModule } from './sequences/sequences-routing.module';
 import { AboutRoutingModule } from './about/about-routing.module';
 import { ChessboardComponent } from './chessboard/chessboard.component';
 import { HeaderComponent } from './header/header.component';
@@ -32,7 +32,7 @@ import 'hammerjs';
     BrowserModule,
     FormsModule,
     TrainerRoutingModule,
-    MovesRoutingModule,
+    SequencesRoutingModule,
     AboutRoutingModule,
     BuilderRoutingModule,
     AppRoutingModule,
@@ -46,7 +46,7 @@ import 'hammerjs';
   declarations: [
     AppComponent,
     TrainerComponent,
-    MovesComponent,
+    SequencesComponent,
     AboutComponent,
     PageNotFoundComponent,
     ChessboardComponent,
