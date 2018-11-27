@@ -3,7 +3,6 @@ import { Move } from '../app/chessboard/chess-enums';
 import { GoogleAuthService } from './google-auth.service';
 import { Observable, BehaviorSubject, from, Subject } from 'rxjs';
 import { CollectionViewer, DataSource } from "@angular/cdk/collections";
-import { MatTableDataSource } from '@angular/material';
 
 export class Step {
     // move e.g. d2d4
@@ -38,23 +37,26 @@ export class Record {
 export class DataService implements DataSource<Sequence> {
 
     public records = new Array<Record>();
-    private onRetrieval = new EventEmitter<void>();
-    public codeLoaded = new Array<Promise<void>>();
+    public sequencesLoaded = new Array<Promise<void>>();
     public sequencies = new Array<Sequence>();
     private subject = new BehaviorSubject<Sequence[]>(null);
-    // private subject = new Subject<Sequence[]>();
 
     constructor(public gauth: GoogleAuthService) {
-        this.loadSequences();
-
+        this.sequencesLoaded.push(this.loadSequences());
     }
 
-    public loadSequences() {
-        Promise.all(this.gauth.ready).then(() => {
-            console.log("Google ready");
-            this.retrieveSequences();
+    public async loadSequences(): Promise<void> {
+        let p = new Promise<void>((resolve) => {
             this.addBasicSequencies();
+            this.subject.next(this.sequencies);
+            Promise.all(this.gauth.ready).then(async () => {
+                console.log("Google ready");
+                await this.retrieveSequences();
+                this.subject.next(this.sequencies);
+                resolve();
+            });
         });
+        return p;
     }
 
 
@@ -95,7 +97,8 @@ export class DataService implements DataSource<Sequence> {
             }
             // wait for google auth
             if (wait) {
-                this.onRetrieval.subscribe(async () => {
+                Promise.all(this.sequencesLoaded).then(async () => {
+                    let seq = await this.findSequence(name, false);
                     resolve(this.findSequence(name, false));
                 });
             }
@@ -105,7 +108,6 @@ export class DataService implements DataSource<Sequence> {
     }
 
     private addSequence(name: string, fen: string, moves: string) {
-
         const seq = new Sequence();
         seq.name = name;
         seq.fen = fen;
@@ -114,49 +116,49 @@ export class DataService implements DataSource<Sequence> {
             seq.addStep(parts[i], '');
         }
         this.sequencies.push(seq);
-        // console.log("added sequence for " + name);
-        this.subject.next(this.sequencies);
-        // return seq;
     }
 
     // Get sequences from a Google spreadsheet.
     // Needs to be in /etc/chess-opening-trainer
     private async retrieveSequences() {
-        let q = "name contains 'Chess Opening Trainer' and mimeType contains 'google-apps.spreadsheet'";
-        let list = gapi.client.drive.files.list(
-            { q: q }
-        );
-        list.execute((resp) => {
-            if (resp.files.length === 0) {
-                throw new Error('No Google Docs spreadsheet Chess Opening Trainer found');
-            }
-            // console.log("id: " + resp.files[0].id);
-            gapi.client.sheets.spreadsheets.values.get({
-                spreadsheetId: resp.files[0].id,
-                range: "Sequences!A2:C"
-            }).then((response) => {
-                for (let i = 0; i < response.result.values.length; i++) {
-                    this.addSequence(response.result.values[i][0],
-                        response.result.values[i][1], response.result.values[i][2]);
+        const p = new Promise<void>((resolve) => {
+            let q = "name contains 'Chess Opening Trainer' and mimeType contains 'google-apps.spreadsheet'";
+            let list = gapi.client.drive.files.list(
+                { q: q }
+            );
+            list.execute((resp) => {
+                if (resp.files.length === 0) {
+                    throw new Error('No Google Docs spreadsheet Chess Opening Trainer found');
                 }
-                this.onRetrieval.emit();
-            }, (error) => {
-                throw new Error(error.result.error.message);
-            });
-            gapi.client.sheets.spreadsheets.values.get({
-                spreadsheetId: resp.files[0].id,
-                range: "Record!A2:C"
-            }).then((response) => {
-                if (!(response.result.values === undefined)) {
+                gapi.client.sheets.spreadsheets.values.get({
+                    spreadsheetId: resp.files[0].id,
+                    range: "Sequences!A2:C"
+                }).then((response) => {
                     for (let i = 0; i < response.result.values.length; i++) {
-                        this.addRecord(response.result.values[i][0],
+                        this.addSequence(response.result.values[i][0],
                             response.result.values[i][1], response.result.values[i][2]);
                     }
-                }
-            }, (error) => {
-                throw new Error(error.result.error.message);
+                    resolve();
+                }, (error) => {
+                    throw new Error(error.result.error.message);
+                });
+                // todo: this should be in its own method.
+                gapi.client.sheets.spreadsheets.values.get({
+                    spreadsheetId: resp.files[0].id,
+                    range: "Record!A2:C"
+                }).then((response) => {
+                    if (!(response.result.values === undefined)) {
+                        for (let i = 0; i < response.result.values.length; i++) {
+                            this.addRecord(response.result.values[i][0],
+                                response.result.values[i][1], response.result.values[i][2]);
+                        }
+                    }
+                }, (error) => {
+                    throw new Error(error.result.error.message);
+                });
             });
         });
+        return p;
     }
 
     nextSequence(seq: Sequence): Sequence {

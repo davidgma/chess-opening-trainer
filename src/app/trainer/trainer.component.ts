@@ -50,8 +50,6 @@ export class TrainerComponent implements OnInit {
         if (this.sequence === undefined) {
           this.output.push('The sequence \'' + this.name + '\' cant be found.');
         } else {
-          // this.output.length = 0;
-          // this.output.push("Sequence found: " + this.sequence.name);
           this.runSequence();
         }
       }
