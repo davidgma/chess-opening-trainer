@@ -1,10 +1,11 @@
 
-import { Component, OnInit, OnDestroy, SystemJsNgModuleLoader } from '@angular/core';
-import { ChangeDetectorRef, EventEmitter } from '@angular/core';
+import {
+    Component, OnInit, ChangeDetectorRef,
+    EventEmitter, ElementRef, ViewChild
+} from '@angular/core';
 import { ChessSquare } from './chess-square';
 import { files, Move, Colour } from './chess-enums';
 import { Chess, FenValidationResult, ChessPiece } from './chess';
-import { ThrowStmt } from '@angular/compiler';
 
 @Component({
     selector: 'app-chessboard',
@@ -12,6 +13,8 @@ import { ThrowStmt } from '@angular/compiler';
     styleUrls: ['./chessboard.component.css']
 })
 export class ChessboardComponent implements OnInit {
+
+    @ViewChild('svgRegion') svgRegion: ElementRef;
 
     constructor(private cd: ChangeDetectorRef) {
         this.calculateSizes();
@@ -29,6 +32,7 @@ export class ChessboardComponent implements OnInit {
         this.chess.onChange.subscribe(() => {
             this.positionPieces();
         });
+
     }
 
 
@@ -41,7 +45,9 @@ export class ChessboardComponent implements OnInit {
 
     public squaresMap = new Map<string, ChessSquare>();
     public mouseMoveLocal = new EventEmitter<MouseEvent>();
+    public touchMoveLocal = new EventEmitter<TouchEvent>();
     public mouseUpLocal = new EventEmitter<MouseEvent>();
+    public touchEndLocal = new EventEmitter<TouchEvent>();
     public moving = false;
     public movingFrom: ChessSquare;
     public chess: Chess;
@@ -139,40 +145,72 @@ export class ChessboardComponent implements OnInit {
         this.mouseMoveLocal.emit(event);
     }
 
-    mouseLeave(event: MouseEvent) {
-        // console.log("mouse leave event occurred");
+    touchMove(event: TouchEvent) {
+        this.touchMoveLocal.emit(event);
+    }
+
+    // mouseLeave(event: MouseEvent) {
+    //     // console.log("mouse leave event occurred");
+    // }
+
+    touchEnd(event: TouchEvent) {
+        let t: Touch = event.targetTouches.item[0];
+        if (this.moving) {
+            this.endMove(t.clientX, t.clientY);
+
+        }
+        this.touchEndLocal.emit(event);
     }
 
     mouseUp(event: MouseEvent) {
-
         if (this.moving) {
-            let column =
-                files[Math.floor(event.offsetX / this.squareSize)];
-            let row = 8 - Math.floor(event.offsetY / this.squareSize);
-            if (this.boardSide === Colour.BLACK) {
-                const columnNumber = 7 - files.indexOf(column);
-                column = files[columnNumber];
-                row = 9 - row;
-            }
+            this.endMove(event.clientX, event.clientY);
 
-            const coord = column + row.toString();
-            // console.log("mouse released at " + coord);
-            this.mouseUpLocal.emit(event);
-            this.moving = false;
-            // check whether the move is valid
-            const move = new Move(this.movingFrom.coordinate,
-                coord);
-            const chessMove = this.chess.move(move);
-            // console.log("chessmove: " + JSON.stringify(chessMove));
-            if (chessMove === undefined) {
-                this.positionPieces();
-                console.log('invalid move');
-            } else { // valid move
-                this.moveMade.emit(move);
-                // this.movePiece(this.movingFrom, this.squaresMap.get(coord));
-                // this.flipBoard();
-                // console.log(this.chess.fen);
-            }
+        }
+        this.mouseUpLocal.emit(event);
+    }
+
+    endMove(clientX: number, clientY: number) {
+        let boardClientX = this.svgRegion.nativeElement.getBoundingClientRect().left;
+        let boardClientY = this.svgRegion.nativeElement.getBoundingClientRect().top;
+        // console.log('board x: ' + boardClientX + ', board y: ' + boardClientY);
+        let mouseClientX = clientX;
+        let mouseClientY = clientY;
+        // console.log('mouse x: ' + mouseClientX + ', mouse y: ' + mouseClientY);
+        // console.log('mouse-board x: ' + (mouseClientX - boardClientX) + ', mouse-board y: ' + (mouseClientY - boardClientY));
+        // console.log('offset x: ' + event.offsetX + ', offset y: ' + event.offsetY);
+
+        // let column =
+        //     files[Math.floor(event.offsetX / this.squareSize)];
+        let column =
+            files[Math.floor((mouseClientX - boardClientX) / this.squareSize)];
+        // console.log('column: ' + column);
+        // let row = 8 - Math.floor(event.offsetY / this.squareSize);
+        let row = 8 - Math.floor((mouseClientY - boardClientY) / this.squareSize);
+        // console.log('row: ' + row);
+        if (this.boardSide === Colour.BLACK) {
+            const columnNumber = 7 - files.indexOf(column);
+            column = files[columnNumber];
+            row = 9 - row;
+        }
+
+        const coord = column + row.toString();
+        // console.log("mouse released at " + coord);
+        
+        this.moving = false;
+        // check whether the move is valid
+        const move = new Move(this.movingFrom.coordinate,
+            coord);
+        const chessMove = this.chess.move(move);
+        // console.log("chessmove: " + JSON.stringify(chessMove));
+        if (chessMove === undefined) {
+            this.positionPieces();
+            console.log('invalid move');
+        } else { // valid move
+            this.moveMade.emit(move);
+            // this.movePiece(this.movingFrom, this.squaresMap.get(coord));
+            // this.flipBoard();
+            // console.log(this.chess.fen);
         }
     }
 
