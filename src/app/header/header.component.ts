@@ -22,7 +22,7 @@ export class HeaderComponent implements OnInit {
 
     onSignIn(googleUser) {
         this.gdata.onSignIn(googleUser);
-        this.isSignedIn = this.gdata.isSignedIn;
+        // this.isSignedIn = this.gdata.isSignedIn;
         this.googleDisplay = this.gdata.googleDisplay;
         this.cd.detectChanges();
       }
@@ -31,7 +31,7 @@ export class HeaderComponent implements OnInit {
         console.log("calling gdata signout...");
         await this.gdata.signOut();
         console.log("gdata signout finished");
-        this.isSignedIn = this.gdata.isSignedIn;
+        // this.isSignedIn = this.gdata.isSignedIn;
         this.googleDisplay = this.gdata.googleDisplay;
         this.cd.detectChanges();
       }

@@ -10,7 +10,7 @@ declare global {
 })
 export class GoogleAuthService {
     public javascriptFile = 'https://apis.google.com/js/platform.js';
-    public isSignedIn = false;
+    // public isSignedIn = false;
     public googleDisplay = 'block';
     public googleUser: any;
     public ready = new Array<Promise<void>>();
@@ -33,7 +33,7 @@ export class GoogleAuthService {
     public async onSignIn(googleUser) {
         this.googleUser = googleUser;
         console.log('Signed in');
-        this.isSignedIn = true;
+        // this.isSignedIn = true;
         this.googleDisplay = 'none';
         await this.loadClient();
         await this.loadSheetsAPI();
@@ -46,7 +46,7 @@ export class GoogleAuthService {
         const auth2 = gapi.auth2.getAuthInstance();
         await auth2.signOut().then(() => {
             console.log('signed out');
-            this.isSignedIn = false;
+            // this.isSignedIn = false;
             this.googleDisplay = 'block';
         });
     }

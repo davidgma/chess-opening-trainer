@@ -3,6 +3,7 @@ import { Move } from '../app/chessboard/chess-enums';
 import { GoogleAuthService } from './google-auth.service';
 import { Observable, BehaviorSubject, from, Subject } from 'rxjs';
 import { CollectionViewer, DataSource } from "@angular/cdk/collections";
+import { Spreadsheet} from './google-spreadsheet';
 
 export class Step {
     // move e.g. d2d4
@@ -40,6 +41,7 @@ export class DataService implements DataSource<Sequence> {
     public sequencesLoaded = new Array<Promise<void>>();
     public sequencies = new Array<Sequence>();
     private subject = new BehaviorSubject<Sequence[]>(null);
+    public spreadsheet: Spreadsheet;
 
     constructor(public gauth: GoogleAuthService) {
         this.sequencesLoaded.push(this.loadSequences());
@@ -130,8 +132,9 @@ export class DataService implements DataSource<Sequence> {
                 if (resp.files.length === 0) {
                     throw new Error('No Google Docs spreadsheet Chess Opening Trainer found');
                 }
+                this.spreadsheet = new Spreadsheet(resp.files[0].id);
                 gapi.client.sheets.spreadsheets.values.get({
-                    spreadsheetId: resp.files[0].id,
+                    spreadsheetId: this.spreadsheet.id,
                     range: "Sequences!A2:C"
                 }).then((response) => {
                     for (let i = 0; i < response.result.values.length; i++) {
@@ -142,20 +145,7 @@ export class DataService implements DataSource<Sequence> {
                 }, (error) => {
                     throw new Error(error.result.error.message);
                 });
-                // todo: this should be in its own method.
-                gapi.client.sheets.spreadsheets.values.get({
-                    spreadsheetId: resp.files[0].id,
-                    range: "Record!A2:C"
-                }).then((response) => {
-                    if (!(response.result.values === undefined)) {
-                        for (let i = 0; i < response.result.values.length; i++) {
-                            this.addRecord(response.result.values[i][0],
-                                response.result.values[i][1], response.result.values[i][2]);
-                        }
-                    }
-                }, (error) => {
-                    throw new Error(error.result.error.message);
-                });
+                this.addRecords();
             });
         });
         return p;
@@ -214,5 +204,28 @@ export class DataService implements DataSource<Sequence> {
 
     disconnect(collectionViewer: CollectionViewer): void {
         this.subject.complete();
+    }
+
+    async addRecords(): Promise<void> {
+        let p = new Promise<void>(async (resolve) => {
+            await Promise.all(this.gauth.ready);
+            this.spreadsheet.createSheetIfNotExists('Records');
+
+            // todo: add this to the spreadsheets class
+            // gapi.client.sheets.spreadsheets.values.get({
+            //     spreadsheetId: this.spreadsheet.id,
+            //     range: "Records!A2:C"
+            // }).then((response) => {
+            //     if (!(response.result.values === undefined)) {
+            //         for (let i = 0; i < response.result.values.length; i++) {
+            //             this.addRecord(response.result.values[i][0],
+            //                 response.result.values[i][1], response.result.values[i][2]);
+            //         }
+            //     }
+            // }, (error) => {
+            //     throw new Error(error.result.error.message);
+            // });
+        });
+        return p;
     }
 }

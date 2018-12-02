@@ -29,6 +29,11 @@ export class TrainerComponent implements OnInit {
   public showHeader = true;
 
   async ngOnInit() {
+
+    // If logged into Google, look for records of previous attempts
+    Promise.all(this.gauth.ready).then(() => {
+      // Google Drive is ready to use
+    });
     this.output.push('Select a sequence from the Moves page.');
     // get the parameters, if any
 
