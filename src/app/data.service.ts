@@ -132,7 +132,8 @@ export class DataService implements DataSource<Sequence> {
                 if (resp.files.length === 0) {
                     throw new Error('No Google Docs spreadsheet Chess Opening Trainer found');
                 }
-                this.spreadsheet = new Spreadsheet(resp.files[0].id);
+                this.spreadsheet = new Spreadsheet(resp.files[0].id,
+                    this.gauth);
                 gapi.client.sheets.spreadsheets.values.get({
                     spreadsheetId: this.spreadsheet.id,
                     range: "Sequences!A2:C"
@@ -210,8 +211,15 @@ export class DataService implements DataSource<Sequence> {
         let p = new Promise<void>(async (resolve) => {
             await Promise.all(this.gauth.ready);
             this.spreadsheet.createSheetIfNotExists('Records');
+            let sheets = await this.spreadsheet.sheets;
+            // for (let sheet of sheets) {
+            //     console.log(sheet);
+            // }
 
-            // todo: add this to the spreadsheets class
+            // todo: put in headings to this sheet if
+            // they don't already exist. In spreadsheet class.
+            
+            // todo: add this to the spreadsheet class
             // gapi.client.sheets.spreadsheets.values.get({
             //     spreadsheetId: this.spreadsheet.id,
             //     range: "Records!A2:C"
@@ -225,6 +233,7 @@ export class DataService implements DataSource<Sequence> {
             // }, (error) => {
             //     throw new Error(error.result.error.message);
             // });
+            resolve();
         });
         return p;
     }

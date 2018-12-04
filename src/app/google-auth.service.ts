@@ -48,6 +48,9 @@ export class GoogleAuthService {
             console.log('signed out');
             // this.isSignedIn = false;
             this.googleDisplay = 'block';
+            this.ready.push(new Promise<void>((resolve) => {
+                this.readyResolve = resolve;
+            }));
         });
     }
 
