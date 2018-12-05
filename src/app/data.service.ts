@@ -3,7 +3,7 @@ import { Move } from '../app/chessboard/chess-enums';
 import { GoogleAuthService } from './google-auth.service';
 import { Observable, BehaviorSubject, from, Subject } from 'rxjs';
 import { CollectionViewer, DataSource } from "@angular/cdk/collections";
-import { Spreadsheet} from './google-spreadsheet';
+import { Spreadsheet } from './google-spreadsheet';
 
 export class Step {
     // move e.g. d2d4
@@ -210,15 +210,15 @@ export class DataService implements DataSource<Sequence> {
     async addRecords(): Promise<void> {
         let p = new Promise<void>(async (resolve) => {
             await Promise.all(this.gauth.ready);
-            this.spreadsheet.createSheetIfNotExists('Records');
-            let sheets = await this.spreadsheet.sheets;
-            // for (let sheet of sheets) {
-            //     console.log(sheet);
-            // }
+            let exists = await this.spreadsheet.sheetExists('Records');
+            if (!exists) {
+                console.log('Records sheet being created...');
+                await this.spreadsheet.createSheet('Records');
+                await this.spreadsheet.writeRange('Records!A1:C',
+                    [['Name', 'Last', 'Next']]);
+                await this.spreadsheet.setBold('Records!A1:C1');
+            }
 
-            // todo: put in headings to this sheet if
-            // they don't already exist. In spreadsheet class.
-            
             // todo: add this to the spreadsheet class
             // gapi.client.sheets.spreadsheets.values.get({
             //     spreadsheetId: this.spreadsheet.id,
