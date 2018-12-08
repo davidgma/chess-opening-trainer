@@ -1,16 +1,19 @@
 // Wrapper around a Google Docs spreadsheet
 import { GoogleAuthService } from './google-auth.service';
+import { AlaSql } from './alasql.service';
 
 export class Spreadsheet {
 
     constructor(public id: string,
-        private gauth: GoogleAuthService) { }
+        private gauth: GoogleAuthService,
+        private ala: AlaSql) { }
 
     async createSheetIfNotExists(name: string) {
         let p = new Promise<void>(async (resolve) => {
             let sheets = await this.sheets;
             if (!sheets.includes(name)) {
-                this.createSheet(name);
+                await this.createSheet(name);
+                resolve();
             }
             else resolve();
         });
@@ -88,7 +91,9 @@ export class Spreadsheet {
                 "range": range,
                 "values": data
             };
+            // console.log('spreadsheet id: ' + this.id);
             gapi.client.sheets.spreadsheets.values.update(params, requestBody).then((response) => {
+                // console.log('writeRange response: ' + JSON.stringify(response));
                 resolve();
             },
                 (reason) => {
@@ -159,7 +164,7 @@ export class Spreadsheet {
             if (to[1] !== undefined) {
                 ret.endColumnIndex = this.toColumnIndex(to[1]);
             }
-            
+
             // console.log(JSON.stringify(ret));
             resolve(ret);
         });
@@ -191,5 +196,64 @@ export class Spreadsheet {
             resolve(-1);
         });
         return p;
+    }
+
+    // Writes an alasql table to a sheet in the spreadsheet
+    async writeTable(name: string) {
+        let p = new Promise<void>(async (resolve) => {
+            let tableData = await this.ala.execSelect('select * from ' + name);
+            // console.log('tableData: ' + JSON.stringify(tableData));
+            let values = this.jsonToTable(tableData);
+            await this.createSheetIfNotExists(name);
+            // await this.writeRange(name + '!A1:C3', values);
+            await this.writeRange(name, values);
+            resolve();
+        });
+        return p;
+    }
+
+    private jsonToTable(data: Object[]): string[][] {
+        let r = new Array<Array<string>>();
+        let r1 = new Array<string>();
+        // column names
+        for (let key of Object.keys(data[0])) {
+            // r1.push(key.replace('"', '\"'));
+            r1.push(key);
+        }
+        r.push(r1);
+
+        // row data
+        for (let row of Object.values(data)) {
+            let r2 = new Array<string>();
+            for (let rowData of Object.values(row)) {
+                // r2.push(rowData.replace('"', '\"'));
+                r2.push(rowData);
+            }
+            r.push(r2);
+        }
+        // This is how to get the array in the right format
+        // for the Sheets API
+        // console.log(JSON.stringify(r));
+        return r;
+    }
+
+    // Won't work for empty tables
+    private tableToJson(data:  string[][]): Object[] {
+
+        if (data.length < 2) {
+            throw new Error('tableToJson called without at least two lines');
+        }
+
+        let ret = new Array<Object>();
+        for (let i = 1; i < data.length; i++) {
+            let obj = new Object();
+            for (let k = 0; k < data[0].length; k++) {
+                let key = data[0][k];
+                obj[key] = data[i][k];
+            }
+            ret.push(obj);
+        }
+        // console.log(JSON.stringify(ret));
+        return ret;
     }
 }

@@ -4,6 +4,7 @@ import { GoogleAuthService } from './google-auth.service';
 import { Observable, BehaviorSubject, from, Subject } from 'rxjs';
 import { CollectionViewer, DataSource } from "@angular/cdk/collections";
 import { Spreadsheet } from './google-spreadsheet';
+import { AlaSql } from './alasql.service';
 
 export class Step {
     // move e.g. d2d4
@@ -43,7 +44,8 @@ export class DataService implements DataSource<Sequence> {
     private subject = new BehaviorSubject<Sequence[]>(null);
     public spreadsheet: Spreadsheet;
 
-    constructor(public gauth: GoogleAuthService) {
+    constructor(public gauth: GoogleAuthService,
+        public ala: AlaSql) {
         this.sequencesLoaded.push(this.loadSequences());
     }
 
@@ -133,7 +135,7 @@ export class DataService implements DataSource<Sequence> {
                     throw new Error('No Google Docs spreadsheet Chess Opening Trainer found');
                 }
                 this.spreadsheet = new Spreadsheet(resp.files[0].id,
-                    this.gauth);
+                    this.gauth, this.ala);
                 gapi.client.sheets.spreadsheets.values.get({
                     spreadsheetId: this.spreadsheet.id,
                     range: "Sequences!A2:C"
@@ -218,7 +220,17 @@ export class DataService implements DataSource<Sequence> {
                     [['Name', 'Last', 'Next']]);
                 await this.spreadsheet.setBold('Records!A1:C1');
             }
+            
+            await this.ala.exec('DROP TABLE IF EXISTS t_settings');
+            await this.ala.exec('CREATE TABLE t_settings (name string, setting string)');
+            await this.ala.exec('insert into t_settings values '
+            + '("setting1", "my setting"), ("setting2", "10")');
+            await this.spreadsheet.writeTable('t_settings');
 
+            // next: update the spreadsheet class to delete and
+            // re-add sheet for a table. Notes can't be kept.
+            // next: update spreadsheet class to read a table from a
+            // sheet with the option to only read so many columns
             // todo: add this to the spreadsheet class
             // gapi.client.sheets.spreadsheets.values.get({
             //     spreadsheetId: this.spreadsheet.id,

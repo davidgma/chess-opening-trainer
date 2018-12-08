@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { PageNotFoundComponent } from './not-found.component';
 import { AppComponent } from './app.component';
 import { GoogleAuthService } from './google-auth.service';
+import { AlaSql } from './alasql.service';
 import { JsLoaderService } from './js-loader.service';
 import { TrainerComponent } from './trainer/trainer.component';
 import { SequencesComponent } from './sequences/sequences.component';
@@ -57,6 +58,7 @@ import 'hammerjs';
   providers: [
     JsLoaderService,
     GoogleAuthService,
-    DataService]
+    DataService,
+    AlaSql]
 })
 export class AppModule { }
