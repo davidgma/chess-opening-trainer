@@ -226,12 +226,12 @@ export class DataService implements DataSource<Sequence> {
             await this.ala.exec('insert into t_settings values '
             + '("setting1", "my setting"), ("setting2", "10")');
             await this.spreadsheet.writeTable('t_settings');
+            // await this.spreadsheet.readTable('t_settings');
+            await this.ala.execSelect('select * from t_settings');
 
-            // next: update the spreadsheet class to delete and
-            // re-add sheet for a table. Notes can't be kept.
-            // next: update spreadsheet class to read a table from a
-            // sheet with the option to only read so many columns
-            // todo: add this to the spreadsheet class
+            // todo: continue with adding new record to the table:
+            // retrieve the table from the spreadsheet first
+            // todo: add this to the spreadsheet class:
             // gapi.client.sheets.spreadsheets.values.get({
             //     spreadsheetId: this.spreadsheet.id,
             //     range: "Records!A2:C"

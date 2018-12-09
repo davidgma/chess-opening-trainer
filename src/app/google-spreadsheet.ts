@@ -205,7 +205,7 @@ export class Spreadsheet {
             // console.log('tableData: ' + JSON.stringify(tableData));
             let values = this.jsonToTable(tableData);
             await this.createSheetIfNotExists(name);
-            // await this.writeRange(name + '!A1:C3', values);
+            await this.clearSheet(name);
             await this.writeRange(name, values);
             resolve();
         });
@@ -238,7 +238,7 @@ export class Spreadsheet {
     }
 
     // Won't work for empty tables
-    private tableToJson(data:  string[][]): Object[] {
+    private tableToJson(data: string[][]): Object[] {
 
         if (data.length < 2) {
             throw new Error('tableToJson called without at least two lines');
@@ -255,5 +255,113 @@ export class Spreadsheet {
         }
         // console.log(JSON.stringify(ret));
         return ret;
+    }
+
+    public async deleteSheet(name: string) {
+        let p = new Promise<void>(async (resolve) => {
+            await Promise.all(this.gauth.ready);
+            let sheetId = await this.sheetId(name);
+            if (sheetId === -1) {
+                resolve();
+                return;
+            }
+
+            let params = { spreadsheetId: this.id };
+            let requestBody = {
+                "requests": [
+                    {
+                        "deleteSheet": {
+                            "sheetId": sheetId
+                        }
+                    }
+                ]
+            };
+            gapi.client.sheets.spreadsheets.batchUpdate(params, requestBody).then((response) => {
+                resolve();
+            },
+                (error) => {
+                    throw new Error('Error deleting sheet ' + name
+                        + '. reason: ' + JSON.stringify(error));
+                });
+            // 
+        });
+        return p;
+    }
+
+    public async clearSheet(name: string) {
+        let p = new Promise<void>(async (resolve) => {
+            await Promise.all(this.gauth.ready);
+            let sheetId = await this.sheetId(name);
+            if (sheetId === -1) {
+                resolve();
+                return;
+            }
+
+            let params = { spreadsheetId: this.id };
+            let requestBody = {
+                "requests": [
+                    {
+                        "updateCells": {
+                            "range": {
+                                "sheetId": sheetId
+                            },
+                            "fields": "userEnteredValue"
+                        }
+                    }
+                ]
+            };
+            gapi.client.sheets.spreadsheets.batchUpdate(params, requestBody).then((response) => {
+                resolve();
+            },
+                (error) => {
+                    throw new Error('Error deleting sheet ' + name
+                        + '. reason: ' + JSON.stringify(error));
+                });
+            // 
+        });
+        return p;
+    }
+
+    // Reads an alasql table from a sheet in the spreadsheet.
+    async readTable(tableName: string) {
+        let p = new Promise<void>(async (resolve) => {
+            let data = await this.readSheet(tableName);
+            let table = this.tableToJson(data);
+            // console.log('json table data: ' + JSON.stringify(table));
+            this.ala.exec('drop table if exists ' + tableName);
+            this.ala.createTable(tableName, table);
+            resolve();
+        });
+        return p;
+    }
+
+    async readSheet(sheetName: string) {
+        let p = new Promise<string[][]>(async (resolve) => {
+            resolve(this.readRange(sheetName));
+        });
+        return p;
+    }
+
+    async readRange(rangeName) {
+        let p = new Promise<string[][]>(async (resolve) => {
+            await Promise.all(this.gauth.ready);
+            let ret = new Array<Array<string>>();
+            let params = {
+                spreadsheetId: this.id,
+                range: rangeName
+            };
+            gapi.client.sheets.spreadsheets.values.get(params).then((response) => {
+                for (let v of response.result.values) {
+                    ret.push(v);
+                }
+                // console.log('return from readRange: ' + JSON.stringify(ret));
+                resolve(ret);
+              }, (error) => {
+                throw new Error('Error deleting sheet ' + name
+                    + '. reason: ' + JSON.stringify(error));
+            });
+            
+        });
+        return p;
     }
 }
