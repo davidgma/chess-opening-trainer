@@ -220,15 +220,17 @@ export class DataService implements DataSource<Sequence> {
                     [['Name', 'Last', 'Next']]);
                 await this.spreadsheet.setBold('Records!A1:C1');
             }
-            
+
             await this.ala.exec('DROP TABLE IF EXISTS t_settings');
             await this.ala.exec('CREATE TABLE t_settings (name string, setting string)');
             await this.ala.exec('insert into t_settings values '
-            + '("setting1", "my setting"), ("setting2", "10")');
+            + '("setting1", "my setting"), ("setting2", "12")');
             await this.spreadsheet.writeTable('t_settings');
             // await this.spreadsheet.readTable('t_settings');
-            await this.ala.execSelect('select * from t_settings');
+            let data1 = await this.ala.execSelect('select * from t_settings');
+            console.log(JSON.stringify(data1));
 
+            
             // todo: continue with adding new record to the table:
             // retrieve the table from the spreadsheet first
             // todo: add this to the spreadsheet class:

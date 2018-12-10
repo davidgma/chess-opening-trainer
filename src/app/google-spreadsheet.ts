@@ -198,63 +198,76 @@ export class Spreadsheet {
         return p;
     }
 
-    // Writes an alasql table to a sheet in the spreadsheet
-    async writeTable(name: string) {
+    // Writes an alasql table to a sheet in the spreadsheet.
+    // Uses the existing alasql data rather than a select query for efficiency.
+    async writeTable(tableName: string) {
         let p = new Promise<void>(async (resolve) => {
-            let tableData = await this.ala.execSelect('select * from ' + name);
-            // console.log('tableData: ' + JSON.stringify(tableData));
-            let values = this.jsonToTable(tableData);
-            await this.createSheetIfNotExists(name);
-            await this.clearSheet(name);
-            await this.writeRange(name, values);
+            let values = await this.jsonToArray(this.ala.rawData(tableName));
+            await this.createSheetIfNotExists(tableName);
+            await this.clearSheet(tableName);
+            await this.writeRange(tableName, values);
             resolve();
         });
         return p;
     }
 
-    private jsonToTable(data: Object[]): string[][] {
-        let r = new Array<Array<string>>();
-        let r1 = new Array<string>();
-        // column names
-        for (let key of Object.keys(data[0])) {
-            // r1.push(key.replace('"', '\"'));
-            r1.push(key);
-        }
-        r.push(r1);
-
-        // row data
-        for (let row of Object.values(data)) {
-            let r2 = new Array<string>();
-            for (let rowData of Object.values(row)) {
-                // r2.push(rowData.replace('"', '\"'));
-                r2.push(rowData);
+    private async jsonToArray(data: Object[]): Promise<string[][]> {
+        let p = new Promise<string[][]>((resolve) => {
+            let r = new Array<Array<string>>();
+            let r1 = new Array<string>();
+            // column names
+            for (let key of Object.keys(data[0])) {
+                // r1.push(key.replace('"', '\"'));
+                r1.push(key);
             }
-            r.push(r2);
-        }
-        // This is how to get the array in the right format
-        // for the Sheets API
-        // console.log(JSON.stringify(r));
-        return r;
+            r.push(r1);
+
+            // row data
+            for (let row of Object.values(data)) {
+                let r2 = new Array<string>();
+                for (let rowData of Object.values(row)) {
+                    // r2.push(rowData.replace('"', '\"'));
+                    r2.push(rowData);
+                }
+                r.push(r2);
+            }
+            // This is how to get the array in the right format
+            // for the Sheets API
+            // console.log(JSON.stringify(r));
+            resolve(r);
+        });
+        return p;
     }
 
-    // Won't work for empty tables
-    private tableToJson(data: string[][]): Object[] {
-
-        if (data.length < 2) {
-            throw new Error('tableToJson called without at least two lines');
-        }
-
-        let ret = new Array<Object>();
-        for (let i = 1; i < data.length; i++) {
-            let obj = new Object();
-            for (let k = 0; k < data[0].length; k++) {
-                let key = data[0][k];
-                obj[key] = data[i][k];
+    private async arrayToJson(data: string[][]): Promise<Object[]> {
+        let p = new Promise<Object[]>((resolve) => {
+            if (data.length < 1) {
+                throw new Error('arrayToJson called without at least 1 line');
             }
-            ret.push(obj);
-        }
-        // console.log(JSON.stringify(ret));
-        return ret;
+            let ret = new Array<Object>();
+            if (data.length === 1) {
+                // empty table - just column names
+                let obj = new Object();
+                for (let k = 0; k < data[0].length; k++) {
+                    let key = data[0][k];
+                    obj[key] = '';
+                }
+                ret.push(obj);
+            }
+            else { // not an empty table
+                for (let i = 1; i < data.length; i++) {
+                    let obj = new Object();
+                    for (let k = 0; k < data[0].length; k++) {
+                        let key = data[0][k];
+                        obj[key] = data[i][k];
+                    }
+                    ret.push(obj);
+                }
+            }
+            // console.log(JSON.stringify(ret));
+            resolve(ret);
+        });
+        return p;
     }
 
     public async deleteSheet(name: string) {
@@ -326,10 +339,10 @@ export class Spreadsheet {
     async readTable(tableName: string) {
         let p = new Promise<void>(async (resolve) => {
             let data = await this.readSheet(tableName);
-            let table = this.tableToJson(data);
+            let tableData = await this.arrayToJson(data);
             // console.log('json table data: ' + JSON.stringify(table));
             this.ala.exec('drop table if exists ' + tableName);
-            this.ala.createTable(tableName, table);
+            this.ala.createTable(tableName, tableData);
             resolve();
         });
         return p;
@@ -356,11 +369,11 @@ export class Spreadsheet {
                 }
                 // console.log('return from readRange: ' + JSON.stringify(ret));
                 resolve(ret);
-              }, (error) => {
+            }, (error) => {
                 throw new Error('Error deleting sheet ' + name
                     + '. reason: ' + JSON.stringify(error));
             });
-            
+
         });
         return p;
     }
