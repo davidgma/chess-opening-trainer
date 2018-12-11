@@ -230,7 +230,6 @@ export class DataService implements DataSource<Sequence> {
             let data1 = await this.ala.execSelect('select * from t_settings');
             console.log(JSON.stringify(data1));
 
-            // todo: add undo to builder
             // todo: continue with adding new record to the table:
             // retrieve the table from the spreadsheet first
             // todo: add this to the spreadsheet class:

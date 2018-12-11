@@ -1,0 +1,21 @@
+.bullets {
+    list-style-type: none;
+    padding-left: 10px;
+    color: #b7d7d9;
+    display: inline-block; 
+    font-weight: bold;
+}
+
+.nav {
+    padding-left: 10px;
+}
+
+.icon {
+    color: #b7d7d9;
+}
+
+.floating-box {
+    margin: 1px;
+    display: inline-block; 
+    vertical-align: top;
+}
