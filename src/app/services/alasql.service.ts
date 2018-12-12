@@ -10,10 +10,10 @@ export class AlaSql {
 
     public async exec (sql: string) {
         let p = new Promise<string>(async (resolve) => {
-            // console.log('Sql: ' + sql);
+            console.log('Sql: ' + sql);
             alasql.promise(sql)
                 .then((res) => {
-                    // console.log('Result: ' + JSON.stringify(res));
+                    console.log('Result: ' + JSON.stringify(res));
                     resolve(res);
                 });
                 

@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { GoogleAuthService } from '../google-auth.service';
+import { GoogleAuthService } from '../services/google-auth.service';
 import { ChessboardComponent } from '../chessboard/chessboard.component';
-import { DataService, Sequence, Record } from '../data.service';
+import { DataService, Sequence } from '../services/data.service';
+import { Record, RecordService } from '../services/record.service';
 import { Colour, Move } from '../chessboard/chess-enums';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -25,7 +26,8 @@ export class TrainerComponent implements OnInit {
   constructor(private cd: ChangeDetectorRef,
     public gauth: GoogleAuthService,
     private dataService: DataService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    private recordService: RecordService) { }
   public showHeader = true;
 
   async ngOnInit() {
@@ -110,10 +112,10 @@ export class TrainerComponent implements OnInit {
     });
   }
 
-  endSequence(sub: Subscription) {
+  async endSequence(sub: Subscription) {
     this.output.push('End of sequence.');
     sub.unsubscribe();
-    let record = this.dataService.getRecord(this.sequence.name);
+    let record = await this.recordService.getRecord(this.sequence.name);
     if (record === undefined) {
       let now = new Date();
       let next = new Date();
@@ -122,7 +124,8 @@ export class TrainerComponent implements OnInit {
       console.log("New record. Name: " + this.sequence.name
         + ", last: " + now
         + ", next: " + next);
-      record = new Record(this.sequence.name, now, next);
+	  record = new Record(this.sequence.name, now, next);
+	  await this.recordService.addRecord(record);
     }
     else {
       console.log("Record: " + JSON.stringify(record));

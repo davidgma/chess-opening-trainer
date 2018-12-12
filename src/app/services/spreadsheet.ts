@@ -4,7 +4,8 @@ import { AlaSql } from './alasql.service';
 
 export class Spreadsheet {
 
-    constructor(public id: string,
+    constructor(
+        public id: string,
         private gauth: GoogleAuthService,
         private ala: AlaSql) { }
 
@@ -211,7 +212,7 @@ export class Spreadsheet {
         return p;
     }
 
-    private async jsonToArray(data: Object[]): Promise<string[][]> {
+    public async jsonToArray(data: Object[]): Promise<string[][]> {
         let p = new Promise<string[][]>((resolve) => {
             let r = new Array<Array<string>>();
             let r1 = new Array<string>();
@@ -239,7 +240,7 @@ export class Spreadsheet {
         return p;
     }
 
-    private async arrayToJson(data: string[][]): Promise<Object[]> {
+    public async arrayToJson(data: string[][]): Promise<Object[]> {
         let p = new Promise<Object[]>((resolve) => {
             if (data.length < 1) {
                 throw new Error('arrayToJson called without at least 1 line');

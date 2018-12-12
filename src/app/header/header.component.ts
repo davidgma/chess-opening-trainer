@@ -1,6 +1,6 @@
 import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
-import { GoogleAuthService } from '../google-auth.service';
-import { DataService } from '../data.service';
+import { GoogleAuthService } from '../services/google-auth.service';
+import { DataService } from '../services/data.service';
 
 
 @Component({

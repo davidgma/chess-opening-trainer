@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { DataService, Sequence } from '../data.service';
+import { DataService, Sequence } from '../services/data.service';
 import { MatTable } from '@angular/material';
 import {Router} from '@angular/router';
 
