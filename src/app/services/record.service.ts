@@ -50,6 +50,12 @@ export class RecordService {
 				resolve();
 			}
 			else {
+				// Create the table anyway just in case the sheet
+				// has become blank for some reason.
+				let tableData =
+					await this.spreadsheet.arrayToJson([this.columns]);
+				await this.ala.createTable(this.tableName, tableData);
+				// Pull in any data from the spreadsheet
 				await this.spreadsheet.readTable(this.tableName);
 				resolve();
 			}
@@ -82,7 +88,7 @@ export class RecordService {
 	async addRecord(record: Record) {
 		let p = new Promise<void>(async (resolve) => {
 			await Promise.all(this.ready);
-			console.log("addRecord called");
+			// console.log("addRecord called");
 			let sql = "insert into " + this.tableName
 				+ " VALUES ("
 				+ "'" + record.name + "', "

@@ -193,9 +193,9 @@ export class DataService implements DataSource<Sequence> {
 		let p = new Promise<void>(async (resolve) => {
 
 			console.log("here1 in data.service addRecords()");
-			// todo: fix bug of blank line for new table:
-			// See how alasql represents a table with no lines
-			// and replicate that.
+
+
+			// todo: fix the date formatting for last and next.
 			// todo: change retrieveSequences to use a new SequenceService.
 
 			// await this.ala.exec('DROP TABLE IF EXISTS t_settings');

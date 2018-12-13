@@ -16,7 +16,7 @@ export class SpreadsheetService {
 		let p = new Promise<Spreadsheet>(async (resolve) => {
 			if (this.spreadsheets.get(name) === undefined) {
 				await Promise.all(this.gauth.ready);
-				console.log("Spreadsheet '" + name + "' not yet retrieved. Retrieving...");
+				console.log("Spreadsheet '" + name + "' not yet retrieved. Retrieving...");	
 				let q = "name = '" + name + "' and mimeType contains 'google-apps.spreadsheet'";
 				let list = gapi.client.drive.files.list(
 					{ q: q }
