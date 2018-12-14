@@ -7,6 +7,7 @@ import { Spreadsheet } from './spreadsheet';
 // import { SpreadsheetService } from './spreadsheet.service';
 import { RecordService } from './record.service';
 import { AlaSql } from './alasql.service';
+import { MatInputBase } from '@angular/material';
 
 export class Step {
 	// move e.g. d2d4
@@ -194,8 +195,7 @@ export class DataService implements DataSource<Sequence> {
 
 			console.log("here1 in data.service addRecords()");
 
-
-			// todo: fix the date formatting for last and next.
+			// todo: update endSequence to change existing record.
 			// todo: change retrieveSequences to use a new SequenceService.
 
 			// await this.ala.exec('DROP TABLE IF EXISTS t_settings');

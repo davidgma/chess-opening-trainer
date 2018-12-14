@@ -92,8 +92,8 @@ export class RecordService {
 			let sql = "insert into " + this.tableName
 				+ " VALUES ("
 				+ "'" + record.name + "', "
-				+ "'" + record.last + "', "
-				+ "'" + record.next + "'"
+				+ "'" + await this.dateToString(record.last) + "', "
+				+ "'" + await this.dateToString(record.next) + "'"
 				+ ")";
 			await this.ala.exec(sql);
 			this.spreadsheet.writeTable(this.tableName);
@@ -101,6 +101,62 @@ export class RecordService {
 		});
 		return p;
 
+	}
+
+	async dateToString(date: Date): Promise<string> {
+		let p = new Promise<string>((resolve) => {
+			let ret = "";
+			let year = date.getFullYear().toString();
+			let month = (date.getMonth() + 1).toString();
+			if (month.length === 1)
+				month = "0" + month;
+			let day = date.getDate().toString();
+			if (day.length === 1)
+				day = "0" + day;
+			let hour = date.getHours().toString();
+			if (hour.length === 1)
+				hour = "0" + hour;
+			let minute = date.getMinutes().toString();
+			if (minute.length === 1)
+				minute = "0" + minute;
+			resolve(year + "-" + month + "-" + day + " " + hour
+				+ ":" + minute);
+		});
+		return p;
+	}
+
+	async stringToDate(date: string): Promise<Date> {
+		let p = new Promise<Date>((resolve) => {
+			let pattern =
+				/^(\d{4})\D+(\d{1,2})\D+(\d{1,2})\D+(\d{1,2})\D+(\d{1,2})/;
+			let matches = pattern.exec(date);
+			let year = matches[1];
+			if (year === undefined)
+				throw new Error("Couldn't find year in date string '"
+					+ date + "'.");
+			let month = matches[2];
+			if (month === undefined)
+				throw new Error("Couldn't find month in date string '"
+					+ date + "'.");
+			let day = matches[3];
+			if (day === undefined)
+				throw new Error("Couldn't find day in date string '"
+					+ date + "'.");
+			let hour = matches[4];
+			if (hour === undefined)
+				throw new Error("Couldn't find hour in date string '"
+					+ date + "'.");
+			let minute = matches[5];
+			if (minute === undefined)
+				throw new Error("Couldn't find minute in date string '"
+					+ date + "'.");
+			resolve(new Date(parseInt(year), 
+			parseInt(month) - 1, 
+			parseInt(day), 
+			parseInt(hour), 
+			parseInt(minute)));
+		});
+		return p;
 	}
 
 	// Store a record back into the spreadsheet
