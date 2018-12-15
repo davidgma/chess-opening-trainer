@@ -19,7 +19,7 @@ export class RecordService {
 
 	private spreadsheetName = 'Chess Opening Trainer';
 	private tableName = 't_records';
-	private columns = ['Name', 'Last', 'Next'];
+	private columns = ['name', 'last', 'next'];
 	public ready = new Array<Promise<void>>();
 	private spreadsheet: Spreadsheet;
 
@@ -57,6 +57,8 @@ export class RecordService {
 				await this.ala.createTable(this.tableName, tableData);
 				// Pull in any data from the spreadsheet
 				await this.spreadsheet.readTable(this.tableName);
+				let records = await this.ala.execSelect("select * from t_records");
+				// console.log("retrieved records: " + JSON.stringify(records));
 				resolve();
 			}
 		});
@@ -70,15 +72,22 @@ export class RecordService {
 			let res = await this.ala.execSelect(
 				'select * from '
 				+ this.tableName
-				+ ' where Name = "' + name + '"');
-			console.log('record retrieved in getRecord: ' + JSON.stringify(res));
+				+ ' where name = "' + name + '"');
+			// console.log('record retrieved in getRecord: ' + JSON.stringify(res));
 			if (res.length === 0) {
 				resolve(undefined);
 				return;
 			}
 			else {
-				resolve(new Record(
-					res[0]['Name'], res[0]['Last'], res[0]['Next']));
+				// console.log(res[0]['name']);
+				let record = new Record(
+					res[0]['name'], 
+					await this.stringToDate(res[0]['last']), 
+					await this.stringToDate(res[0]['next']));
+				// console.log('getRecord record created: ' 
+				// + JSON.stringify(record));
+				resolve(record);
+
 				return;
 			}
 		});
@@ -88,14 +97,18 @@ export class RecordService {
 	async addRecord(record: Record) {
 		let p = new Promise<void>(async (resolve) => {
 			await Promise.all(this.ready);
-			// console.log("addRecord called");
-			let sql = "insert into " + this.tableName
+			let sqlDelete = "delete from " + this.tableName
+			+ " where name = '" + record.name + "'";
+			let deleteResult = await this.ala.exec(sqlDelete);
+			// console.log("previous record deleted: " + deleteResult);
+			let sqlInsert = "insert into " + this.tableName
 				+ " VALUES ("
 				+ "'" + record.name + "', "
 				+ "'" + await this.dateToString(record.last) + "', "
 				+ "'" + await this.dateToString(record.next) + "'"
 				+ ")";
-			await this.ala.exec(sql);
+			await this.ala.exec(sqlInsert);
+			// console.log("new record added");
 			this.spreadsheet.writeTable(this.tableName);
 			resolve();
 		});
@@ -150,18 +163,18 @@ export class RecordService {
 			if (minute === undefined)
 				throw new Error("Couldn't find minute in date string '"
 					+ date + "'.");
-			resolve(new Date(parseInt(year), 
-			parseInt(month) - 1, 
-			parseInt(day), 
-			parseInt(hour), 
-			parseInt(minute)));
+			resolve(new Date(parseInt(year),
+				parseInt(month) - 1,
+				parseInt(day),
+				parseInt(hour),
+				parseInt(minute)));
 		});
 		return p;
 	}
 
-	// Store a record back into the spreadsheet
-	// storeRecord(record: Record) {
-	//     let index = this.records.indexOf(record);
-	//     console.log("record index: " + index);
-	// }
+	// Store all records back into the spreadsheet
+	async save() {
+		await this.spreadsheet.writeTable(this.tableName);
+	}
+	
 }

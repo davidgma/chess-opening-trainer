@@ -195,7 +195,11 @@ export class DataService implements DataSource<Sequence> {
 
 			console.log("here1 in data.service addRecords()");
 
-			// todo: update endSequence to change existing record.
+			// todo: update Trainer for where the user makes an error.
+			// todo: update Trainer to first go to the next due record
+			// where the records have been retrieved, otherwise as-is.
+			// todo: update the Trainer to show when a sequence is
+			// due with overdue shown in red and not-yet-due in green.
 			// todo: change retrieveSequences to use a new SequenceService.
 
 			// await this.ala.exec('DROP TABLE IF EXISTS t_settings');

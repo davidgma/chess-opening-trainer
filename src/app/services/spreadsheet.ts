@@ -346,9 +346,11 @@ export class Spreadsheet {
 			let data = await this.readSheet(tableName);
 			if (data.length > 0) {
 				let tableData = await this.arrayToJson(data);
-				// console.log('json table data: ' + JSON.stringify(table));
-				this.ala.exec('drop table if exists ' + tableName);
-				this.ala.createTable(tableName, tableData);
+				// console.log('readTable tableData: ' + JSON.stringify(tableData));
+				await this.ala.exec('drop table if exists ' + tableName);
+				await this.ala.createTable(tableName, tableData);
+				let qr = await this.ala.execSelect("select * from " + tableName);
+				// console.log("readTable results: " + JSON.stringify(qr));
 			}
 			resolve();
 		});

@@ -57,11 +57,16 @@ export class AlaSql {
 				sql += Object.keys(data[0])[i];
 			}
 			sql += ")";
-			// console.log("sql: " + sql);
+			// console.log("createTable sql: " + sql);
 			// Create the table
 			alasql.promise(sql).then((res) => {
 				// If there's data then add it in
-				if (data.length > 1) {
+				// console.log("data: " + JSON.stringify(data));
+				// console.log("createTable data[0]: " 
+				// + JSON.stringify(data[0]));
+				// console.log("Object.values(data[0])[0]" + Object.values(data[0])[0]);
+				// console.log("createTable data.length: " + data.length);
+				if (data.length > 0 && Object.values(data[0])[0] !== "") {
 					let a = <any>alasql;
 					for (let i = 0; i < Object.keys(a.tables).length; i++) {
 						if (Object.keys(a.tables)[i] === tableName) {
