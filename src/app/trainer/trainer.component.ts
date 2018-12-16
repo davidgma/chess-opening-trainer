@@ -21,7 +21,7 @@ export class TrainerComponent implements OnInit {
 	@ViewChild(ChessboardComponent) board: ChessboardComponent;
 	public name: string;
 	public sequence: Sequence;
-	public successful = true;
+	// public successful = true;
 	public incrementFactor = 1.5;
 
 	constructor(private cd: ChangeDetectorRef,
@@ -39,7 +39,6 @@ export class TrainerComponent implements OnInit {
 		});
 		this.output.push('Select a sequence from the Moves page.');
 		// get the parameters, if any
-
 		this.route.paramMap.subscribe(async (params: ParamMap) => {
 			this.name = params.get('name');
 			console.log('showHeader: ' + params.get('header'));
@@ -48,8 +47,9 @@ export class TrainerComponent implements OnInit {
 			} else if (params.get('header') === 'hideHeader') {
 				this.showHeader = false;
 			}
-			if (this.name === undefined) {
-				this.output.push('No sequence selected. Select one in the Moves section.');
+			if (this.name === undefined || this.name === null) {
+				await this.nextSequence();
+				return;
 			} else {
 				this.output.length = 0;
 
@@ -71,8 +71,7 @@ export class TrainerComponent implements OnInit {
 		}
 		this.board.load(this.sequence.fen);
 		this.board.flipBoardTo(this.board.chess.turn);
-		this.successful = true;
-
+		let successful = true;
 		this.output.length = 0;
 		this.name = this.sequence.name;
 		this.output.push(this.name);
@@ -94,26 +93,26 @@ export class TrainerComponent implements OnInit {
 						this.board.chess.move(step.move);
 						console.log('fen after move: ' + this.board.chess.fen);
 					} else {
-						this.endSequence(sub);
+						this.endSequence(sub, successful);
 						return;
 					}
 				} else {
 					this.board.chess.undo();
-					this.output.push('incorrect move. should be '
+					this.output.push('Incorrect move. should be '
 						+ step.move.from + step.move.to);
 					stepCount--;
-					this.successful = false;
+					successful = false;
 				}
 				stepCount++;
 				if (stepCount === this.sequence.steps.length) {
-					this.endSequence(sub);
+					this.endSequence(sub, successful);
 					return;
 				}
 			}
 		});
 	}
 
-	async endSequence(sub: Subscription) {
+	async endSequence(sub: Subscription, successful: boolean) {
 		let p = new Promise<void>(async (resolve) => {
 			this.output.push('End of sequence.');
 			sub.unsubscribe();
@@ -121,7 +120,7 @@ export class TrainerComponent implements OnInit {
 			if (record === undefined) {
 				let now = new Date();
 				let next = new Date();
-				if (this.successful)
+				if (successful)
 					next.setDate(next.getDate() + 1);
 				console.log("New record. name: " + this.sequence.name
 					+ ", last: " + now
@@ -131,51 +130,81 @@ export class TrainerComponent implements OnInit {
 				resolve();
 			}
 			else {
-				let gap = 
-				(record.next.getTime() - record.last.getTime()) * this.incrementFactor;
+				let gap =
+					(record.next.getTime() - record.last.getTime()) * this.incrementFactor;
+				let oneDay = 1000 * 60 * 60 * 24;
+				if (gap < oneDay)
+					gap = oneDay;
 				let now = new Date();
-				let next = new Date(now.getTime() + gap);
+				let next: Date;
+				if (successful)
+					next = new Date(now.getTime() + gap);
+				else
+					next = new Date();
+
 				let r = new Record(this.sequence.name, now, next);
+				// console.log("endSequence r: " + JSON.stringify(r));
 				await this.recordService.addRecord(r);
+				resolve();
 			}
 		});
 	}
 
 	redoSequence() {
-		console.log('redo sequence');
+		// console.log('redo sequence');
 		this.runSequence();
 	}
 
-	nextSequence() {
-		// this.output.length = 0;
-		if (this.sequence === undefined) {
-			this.sequence = this.dataService.sequencies[0];
-		}
-		else {
-			this.sequence = this.dataService.nextSequence(this.sequence);
-		}
-
-		if (this.sequence === undefined) {
-			this.output.push('The sequence \'' + this.name + '\' is the last sequence.');
-		} else {
-			this.runSequence();
-		}
+	async nextSequence() {
+		let p = new Promise<void>(async (resolve) => {
+			await Promise.all(this.recordService.ready);
+			let sql = "select * from t_records order by next";
+			let results = await this.recordService.ala.execSelect(sql);
+			// console.log("nextSequence results: " + JSON.stringify(results));
+			if (results.length === 0) {
+				this.output.push('No records found.');
+				resolve();
+				return;
+			}
+			let name = results[0]['name'];
+			// console.log("name: " + name);
+			// Check the sequence is in the sequences data
+			this.sequence = await this.dataService.findSequence(name);
+			if (this.sequence === undefined) {
+				this.output.push('The sequence \'' + this.name + '\' cant be found.');
+			} else {
+				// console.log("nextSequence running: " + this.sequence.name);
+				this.runSequence();
+				resolve();
+			}
+		});
+		return p;
 	}
 
-	prevSequence() {
-		// this.output.length = 0;
-		if (this.sequence === undefined) {
-			this.sequence = this.dataService.sequencies[0];
-		}
-		else {
-			this.sequence = this.dataService.prevSequence(this.sequence);
-		}
-
-		if (this.sequence === undefined) {
-			this.output.push('The sequence \'' + this.name + '\' is the first sequence.');
-		} else {
-			this.runSequence();
-		}
+	async prevSequence() {
+		let p = new Promise<void>(async (resolve) => {
+			await Promise.all(this.recordService.ready);
+			let sql = "select * from t_records order by next desc";
+			let results = await this.recordService.ala.execSelect(sql);
+			console.log("nextSequence results: " + JSON.stringify(results));
+			if (results.length === 0) {
+				this.output.push('No records found.');
+				resolve();
+				return;
+			}
+			let name = results[0]['name'];
+			console.log("name: " + name);
+			// Check the sequence is in the sequences data
+			this.sequence = await this.dataService.findSequence(name);
+			if (this.sequence === undefined) {
+				this.output.push('The sequence \'' + this.name + '\' cant be found.');
+			} else {
+				console.log("nextSequence running: " + this.sequence.name);
+				this.runSequence();
+				resolve();
+			}
+		});
+		return p;
 	}
 
 } // End of class TrainerComponent

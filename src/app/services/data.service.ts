@@ -7,7 +7,7 @@ import { Spreadsheet } from './spreadsheet';
 // import { SpreadsheetService } from './spreadsheet.service';
 import { RecordService } from './record.service';
 import { AlaSql } from './alasql.service';
-import { MatInputBase } from '@angular/material';
+// import { MatInputBase } from '@angular/material';
 
 export class Step {
 	// move e.g. d2d4
@@ -152,35 +152,6 @@ export class DataService implements DataSource<Sequence> {
 		return p;
 	}
 
-	nextSequence(seq: Sequence): Sequence {
-		for (let i = 0; i < this.sequencies.length; i++) {
-			let s = this.sequencies[i];
-			if (s.name === seq.name) {
-				if ((i + 1) < this.sequencies.length) {
-					return this.sequencies[i + 1];
-				}
-				else {
-					return undefined;
-				}
-			}
-		}
-		return new Sequence();
-	}
-
-	prevSequence(seq: Sequence): Sequence {
-		for (let i = 0; i < this.sequencies.length; i++) {
-			let s = this.sequencies[i];
-			if (s.name === seq.name) {
-				if ((i - 1) > 0) {
-					return this.sequencies[i - 1];
-				}
-				else {
-					return undefined;
-				}
-			}
-		}
-		return new Sequence();
-	}
 
 	connect(collectionViewer: CollectionViewer): Observable<Sequence[]> {
 		return this.subject.asObservable();
@@ -195,9 +166,8 @@ export class DataService implements DataSource<Sequence> {
 
 			console.log("here1 in data.service addRecords()");
 
-			// todo: update Trainer for where the user makes an error.
-			// todo: update Trainer to first go to the next due record
-			// where the records have been retrieved, otherwise as-is.
+			// todo: get next and prev working better. Go backwards and
+			// forwards through the sequences based on the start.
 			// todo: update the Trainer to show when a sequence is
 			// due with overdue shown in red and not-yet-due in green.
 			// todo: change retrieveSequences to use a new SequenceService.
