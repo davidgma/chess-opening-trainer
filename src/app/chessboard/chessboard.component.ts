@@ -124,7 +124,6 @@ export class ChessboardComponent implements OnInit {
     }
 
     ngOnInit() {
-
         window.addEventListener('resize', ($event) => {
             this.calculateSizes();
         });
@@ -159,6 +158,9 @@ export class ChessboardComponent implements OnInit {
                 t = event.targetTouches[0];
             else
                 t = event.changedTouches[0];
+            console.log("touchEnd ended at "
+                + Math.round(t.clientX)
+                + "," + Math.round(t.clientY));
             this.endMove(t.clientX, t.clientY);
 
         }
@@ -179,16 +181,8 @@ export class ChessboardComponent implements OnInit {
         // console.log('board x: ' + boardClientX + ', board y: ' + boardClientY);
         let mouseClientX = clientX;
         let mouseClientY = clientY;
-        // console.log('mouse x: ' + mouseClientX + ', mouse y: ' + mouseClientY);
-        // console.log('mouse-board x: ' + (mouseClientX - boardClientX) + ', mouse-board y: ' + (mouseClientY - boardClientY));
-        // console.log('offset x: ' + event.offsetX + ', offset y: ' + event.offsetY);
-
-        // let column =
-        //     files[Math.floor(event.offsetX / this.squareSize)];
         let column =
             files[Math.floor((mouseClientX - boardClientX) / this.squareSize)];
-        // console.log('column: ' + column);
-        // let row = 8 - Math.floor(event.offsetY / this.squareSize);
         let row = 8 - Math.floor((mouseClientY - boardClientY) / this.squareSize);
         // console.log('row: ' + row);
         if (this.boardSide === Colour.BLACK) {
@@ -198,7 +192,6 @@ export class ChessboardComponent implements OnInit {
         }
 
         const coord = column + row.toString();
-        // console.log("mouse released at " + coord);
 
         this.moving = false;
         // check whether the move is valid
@@ -211,9 +204,6 @@ export class ChessboardComponent implements OnInit {
             console.log('invalid move');
         } else { // valid move
             this.moveMade.emit(move);
-            // this.movePiece(this.movingFrom, this.squaresMap.get(coord));
-            // this.flipBoard();
-            // console.log(this.chess.fen);
         }
     }
 

@@ -167,6 +167,7 @@ export class DataService implements DataSource<Sequence> {
 			console.log("here1 in data.service addRecords()");
 
 			// todo: finish work on touch screen
+			// todo: set so that you can click anywhere is the square
 			// todo: get next and prev working better. Go backwards and
 			// forwards through the sequences based on the start.
 			// todo: update the Trainer to show when a sequence is

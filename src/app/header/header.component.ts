@@ -37,4 +37,5 @@ export class HeaderComponent implements OnInit {
       }
     
       ngOnInit() { }
+
 } // End of class HeaderComponent

@@ -1,7 +1,8 @@
 <svg (mousemove)="mouseMove($event)"
 (touchmove)="touchMove($event)"
 (touchend)="touchEnd($event)"
-(mouseup)="mouseUp($event)" [attr.viewBox]="viewBox" [attr.width]="wholeSize"
+(mouseup)="mouseUp($event)"  
+[attr.viewBox]="viewBox" [attr.width]="wholeSize"
   [attr.height]="wholeSize" #svgRegion>
   <g *ngFor="let square of squaresMap | keyvalue" >
     <rect [attr.class]="square.value.cssClass" [attr.width]="square.value.parent.squareSize" [attr.height]="square.value.parent.squareSize"

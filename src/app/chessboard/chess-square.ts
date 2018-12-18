@@ -118,16 +118,6 @@ export class ChessSquare {
     public transform: string; // transform applied to whole piece
     public svgData = new SvgData();
 
-    /*
-    private toString() {
-        console.log("toString called");
-        return this.coordinate + ". "
-        + "svgX=" + this.svgX + ". "
-        + "svgY=" + this.svgY + ". "
-        + "colour=" + (this.isWhite ? "white": "black") + ". "
-        ;
-    } */
-
     private _pieceType: PieceType;
 
     public calculateRowColumn() {
@@ -186,6 +176,20 @@ export class ChessSquare {
     // Moves the piece relative to its original position
     private movePiece(x: number, y: number) {
         // Adjust svg values for actual placement of the square
+        // if (this.pieceColour === Colour.WHITE
+        //     && this.pieceType === PieceType.BISHOP) {
+        //     console.log("movePiece " + this.pieceColour
+        //         + this.pieceType
+        //         + " to client pos "
+        //         + Math.round(
+        //             this.parent.boardClientX
+        //             + this.pieceXOffset
+        //             + x) + "," 
+        //         + Math.round(
+        //             this.parent.boardClientY
+        //             + this.pieceYOffset
+        //             + y));
+        // }
         for (const sp of this.svgData.paths) {
             sp.d = this.incrementDXY(sp.origD, x, y);
         }
@@ -249,7 +253,6 @@ export class ChessSquare {
     // in effect it always signals the start of the move of a piece
     mouseDown(eventD: MouseEvent) {
 
-        // console.log("mouse pressed down for " + this.coordinate);
         const initialClientX = eventD.clientX;
         const initialClientY = eventD.clientY;
         this.parent.moving = true;
@@ -257,8 +260,8 @@ export class ChessSquare {
         // subscribe to the move event from the parent
         const sub = this.parent.mouseMoveLocal.subscribe((eventM) => {
             this.movePiece(
-                this.pieceXOffset + eventM.clientX - initialClientX,
-                this.pieceYOffset + eventM.clientY - initialClientY);
+                this.pieceXOffset + (eventM.clientX - initialClientX) / this.scale,
+                this.pieceYOffset + (eventM.clientY - initialClientY) / this.scale);
         });
 
         // subscribe to the mouse up event
@@ -273,6 +276,8 @@ export class ChessSquare {
     touchStart(eventD: TouchEvent) {
         eventD.preventDefault();
         let t: Touch = eventD.targetTouches[0];
+        // console.log("touch pressed at client pos " + Math.round(t.clientX)
+        // + "," + Math.round(t.clientY));
         // console.log("mouse pressed down for " + this.coordinate);
         const initialClientX = t.clientX;
         const initialClientY = t.clientY;
@@ -280,20 +285,20 @@ export class ChessSquare {
         this.parent.movingFrom = this;
         // subscribe to the move event from the parent
         const sub = this.parent.touchMoveLocal
-        .subscribe((eventM: TouchEvent) => {
-            let t2: Touch;
-            if (eventM.targetTouches.length > 0)
-                t2 = eventM.targetTouches[0];
-            else 
-                t2 = eventM.changedTouches[0];
-            this.movePiece(
-                this.pieceXOffset + t2.clientX - initialClientX,
-                this.pieceYOffset + t2.clientY - initialClientY);
-        });
+            .subscribe((eventM: TouchEvent) => {
+                let t2: Touch;
+                if (eventM.targetTouches.length > 0)
+                    t2 = eventM.targetTouches[0];
+                else
+                    t2 = eventM.changedTouches[0];
+                this.movePiece(
+                    this.pieceXOffset + (t2.clientX - initialClientX) / this.scale,
+                    this.pieceYOffset + (t2.clientY - initialClientY) / this.scale
+                    );
+            });
 
-        // subscribe to the mouse up event
+        // subscribe to the touch end event
         const sub2 = this.parent.touchEndLocal.subscribe((eventU) => {
-            // console.log("mouseUp local event received");
             sub.unsubscribe();
             sub2.unsubscribe();
         });
