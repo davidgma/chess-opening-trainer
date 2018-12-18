@@ -146,16 +146,19 @@ export class ChessboardComponent implements OnInit {
     }
 
     touchMove(event: TouchEvent) {
+        event.preventDefault();
         this.touchMoveLocal.emit(event);
     }
 
-    // mouseLeave(event: MouseEvent) {
-    //     // console.log("mouse leave event occurred");
-    // }
-
     touchEnd(event: TouchEvent) {
-        let t: Touch = event.targetTouches.item[0];
+
         if (this.moving) {
+            event.preventDefault();
+            let t: Touch;
+            if (event.targetTouches.length > 0)
+                t = event.targetTouches[0];
+            else
+                t = event.changedTouches[0];
             this.endMove(t.clientX, t.clientY);
 
         }
@@ -196,7 +199,7 @@ export class ChessboardComponent implements OnInit {
 
         const coord = column + row.toString();
         // console.log("mouse released at " + coord);
-        
+
         this.moving = false;
         // check whether the move is valid
         const move = new Move(this.movingFrom.coordinate,

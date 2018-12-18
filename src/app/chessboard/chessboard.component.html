@@ -9,9 +9,11 @@
       >
     </rect>
   </g>
-  <g *ngFor="let square of squaresMap | keyvalue" class="draggable" (mousedown)="square.value.mouseDown($event)"
+  <g *ngFor="let square of squaresMap | keyvalue" 
+  class="draggable" (mousedown)="square.value.mouseDown($event)" (touchstart)="square.value.touchStart($event)"
     [attr.transform]="square.value.transform">
-    <path *ngFor="let svgPath of square.value.svgData.paths" [attr.d]="svgPath.d" [attr.class]="svgPath.className"
+    <path *ngFor="let svgPath of square.value.svgData.paths" 
+    [attr.d]="svgPath.d" [attr.class]="svgPath.className"
       [attr.transform]="svgPath.transform" />
     <circle *ngFor="let circle of square.value.svgData.circles" [attr.cx]="circle.cx" [attr.cy]="circle.cy" [attr.r]="circle.r"
       [attr.classname]="circle.className" />

@@ -141,7 +141,7 @@ export class ChessSquare {
         if (this.parent.boardSide === Colour.BLACK) {
             this.row = 9 - this.row;
         }
-                // console.log("coord: " + coordinate + ", column: " + this.column
+        // console.log("coord: " + coordinate + ", column: " + this.column
         // + ", row:" + this.row);
 
     }
@@ -270,10 +270,33 @@ export class ChessSquare {
 
     }
 
-    // The mouseUp event can happen anywhere on the board but
-    // should only do something when a piece is being moved
-    mouseUp(event: MouseEvent) {
-        // console.log("mouse released for " + this.coordinate);
+    touchStart(eventD: TouchEvent) {
+        eventD.preventDefault();
+        let t: Touch = eventD.targetTouches[0];
+        // console.log("mouse pressed down for " + this.coordinate);
+        const initialClientX = t.clientX;
+        const initialClientY = t.clientY;
+        this.parent.moving = true;
+        this.parent.movingFrom = this;
+        // subscribe to the move event from the parent
+        const sub = this.parent.touchMoveLocal
+        .subscribe((eventM: TouchEvent) => {
+            let t2: Touch;
+            if (eventM.targetTouches.length > 0)
+                t2 = eventM.targetTouches[0];
+            else 
+                t2 = eventM.changedTouches[0];
+            this.movePiece(
+                this.pieceXOffset + t2.clientX - initialClientX,
+                this.pieceYOffset + t2.clientY - initialClientY);
+        });
+
+        // subscribe to the mouse up event
+        const sub2 = this.parent.touchEndLocal.subscribe((eventU) => {
+            // console.log("mouseUp local event received");
+            sub.unsubscribe();
+            sub2.unsubscribe();
+        });
     }
 
 } // End of ChessSquare class
