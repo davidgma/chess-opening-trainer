@@ -166,22 +166,9 @@ export class DataService implements DataSource<Sequence> {
 
 			console.log("here1 in data.service addRecords()");
 
-			// todo: finish work on touch screen
-			// todo: set so that you can click anywhere is the square
-			// todo: get next and prev working better. Go backwards and
-			// forwards through the sequences based on the start.
 			// todo: update the Trainer to show when a sequence is
 			// due with overdue shown in red and not-yet-due in green.
 			// todo: change retrieveSequences to use a new SequenceService.
-
-			// await this.ala.exec('DROP TABLE IF EXISTS t_settings');
-			// await this.ala.exec('CREATE TABLE t_settings (name string, setting string)');
-			// await this.ala.exec('insert into t_settings values '
-			// + '("setting1", "my setting"), ("setting2", "12")');
-			// await this.spreadsheet.writeTable('t_settings');
-			// await this.spreadsheet.readTable('t_settings');
-			// let data1 = await this.ala.execSelect('select * from t_settings');
-			// console.log(JSON.stringify(data1));
 
 			// todo: continue with adding new record to the table:
 			// retrieve the table from the spreadsheet first

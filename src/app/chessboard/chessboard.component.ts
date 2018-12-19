@@ -84,7 +84,7 @@ export class ChessboardComponent implements OnInit {
             throw new Error('Error: Invalid Fen. Fen=\'' + fen
                 + '\', error=' + r.error);
         }
-        console.log('fen is valid');
+        // console.log('fen is valid');
         this.chess.load(fen);
         // Set board pieces to be the same
         this.positionPieces();

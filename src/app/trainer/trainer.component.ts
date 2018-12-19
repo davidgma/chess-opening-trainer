@@ -23,19 +23,28 @@ export class TrainerComponent implements OnInit {
 	public sequence: Sequence;
 	// public successful = true;
 	public incrementFactor = 1.5;
+	public orderedSequences = new Array<Sequence>();
+	public orderedSequencesReady = new Array<Promise<void>>();
+	private orderedSequencesReadyResolve;
+	public showHeader = true;
 
 	constructor(private cd: ChangeDetectorRef,
 		public gauth: GoogleAuthService,
 		private dataService: DataService,
 		private route: ActivatedRoute,
-		private recordService: RecordService) { }
-	public showHeader = true;
+		private recordService: RecordService) {
+		let p = new Promise<void>((resolve) => {
+			this.orderedSequencesReadyResolve = resolve;
+		});
+		this.orderedSequencesReady.push(p);
+	}
 
 	async ngOnInit() {
 
 		// If logged into Google, look for records of previous attempts
 		Promise.all(this.gauth.ready).then(() => {
 			// Google Drive is ready to use
+			this.generateOrderedSequences();
 		});
 		this.output.push('Select a sequence from the Moves page.');
 		// get the parameters, if any
@@ -49,6 +58,7 @@ export class TrainerComponent implements OnInit {
 			}
 			if (this.name === undefined || this.name === null) {
 				await this.nextSequence();
+				this.runSequence();
 				return;
 			} else {
 				this.output.length = 0;
@@ -157,25 +167,28 @@ export class TrainerComponent implements OnInit {
 
 	async nextSequence() {
 		let p = new Promise<void>(async (resolve) => {
-			await Promise.all(this.recordService.ready);
-			let sql = "select * from t_records order by next";
-			let results = await this.recordService.ala.execSelect(sql);
-			// console.log("nextSequence results: " + JSON.stringify(results));
-			if (results.length === 0) {
-				this.output.push('No records found.');
-				resolve();
-				return;
-			}
-			let name = results[0]['name'];
-			// console.log("name: " + name);
-			// Check the sequence is in the sequences data
-			this.sequence = await this.dataService.findSequence(name);
+			await Promise.all(this.orderedSequencesReady);
 			if (this.sequence === undefined) {
-				this.output.push('The sequence \'' + this.name + '\' cant be found.');
-			} else {
-				// console.log("nextSequence running: " + this.sequence.name);
-				this.runSequence();
-				resolve();
+				if (this.orderedSequences.length > 0) {
+					this.sequence = this.orderedSequences[0];
+					resolve();
+					return;
+				}
+			}
+			for (let i = 0; i < this.orderedSequences.length; i++) {
+				let seq = this.orderedSequences[i];
+				if (seq.name === this.sequence.name) {
+					if (i < this.orderedSequences.length) {
+						this.sequence
+							= this.orderedSequences[i + 1];
+						this.runSequence();
+						resolve();
+						return;
+
+					}
+					else
+						console.log("Already at last sequence.");
+				}
 			}
 		});
 		return p;
@@ -183,28 +196,70 @@ export class TrainerComponent implements OnInit {
 
 	async prevSequence() {
 		let p = new Promise<void>(async (resolve) => {
-			await Promise.all(this.recordService.ready);
-			let sql = "select * from t_records order by next desc";
-			let results = await this.recordService.ala.execSelect(sql);
-			console.log("nextSequence results: " + JSON.stringify(results));
-			if (results.length === 0) {
-				this.output.push('No records found.');
-				resolve();
-				return;
-			}
-			let name = results[0]['name'];
-			console.log("name: " + name);
-			// Check the sequence is in the sequences data
-			this.sequence = await this.dataService.findSequence(name);
+			await Promise.all(this.orderedSequencesReady);
 			if (this.sequence === undefined) {
-				this.output.push('The sequence \'' + this.name + '\' cant be found.');
-			} else {
-				console.log("nextSequence running: " + this.sequence.name);
-				this.runSequence();
-				resolve();
+				if (this.orderedSequences.length > 0) {
+					this.sequence = this.orderedSequences[0];
+					resolve();
+					return;
+				}
 			}
+			for (let i = 0; i < this.orderedSequences.length; i++) {
+				let seq = this.orderedSequences[i];
+				if (seq.name === this.sequence.name) {
+					if (i > 0) {
+						this.sequence
+							= this.orderedSequences[i - 1];
+						this.runSequence();
+						resolve();
+						return;
+					}
+					else
+						console.log("Already at first sequence.");
+				}
+			}
+			resolve();
 		});
 		return p;
+	}
+
+	// Where there are some records on previous sequences, use them,
+	// otherwise any order
+	async generateOrderedSequences() {
+		let p = new Promise<void>(async (resolve) => {
+			this.orderedSequences = new Array<Sequence>();
+			await Promise.all(this.recordService.ready);
+			let sql = "select * from t_records order by next";
+			let results = await this.recordService.ala.execSelect(sql);
+			if (results.length === 0) {
+				this.output.push('No records found.');
+			}
+			else {
+				for (let result of results) {
+					let name = result['name'];
+					let seq = await this.dataService.findSequence(name);
+					if (seq === undefined) {
+						this.output.push('The sequence \'' + name + '\' cant be found.');
+					}
+					else {
+						this.orderedSequences.push(seq);
+					}
+
+				}
+			}
+			// Pull in any other sequences
+			for (let seqA of this.dataService.sequencies) {
+				let contains = false;
+				for (let seqB of this.orderedSequences) {
+					if (seqA.name === seqB.name)
+						contains = true;
+				}
+				if (!contains) {
+					this.orderedSequences.push(seqA);
+				}
+			}
+			this.orderedSequencesReadyResolve();
+		});
 	}
 
 } // End of class TrainerComponent
