@@ -18,6 +18,7 @@ import { Subscription } from 'rxjs';
 export class TrainerComponent implements OnInit {
 
 	public output = new Array<string>();
+	public outputColour = "#b7d7d9";
 	@ViewChild(ChessboardComponent) board: ChessboardComponent;
 	public name: string;
 	public sequence: Sequence;
@@ -27,6 +28,7 @@ export class TrainerComponent implements OnInit {
 	public orderedSequencesReady = new Array<Promise<void>>();
 	private orderedSequencesReadyResolve;
 	public showHeader = true;
+	public runningSubscription: Subscription;
 
 	constructor(private cd: ChangeDetectorRef,
 		public gauth: GoogleAuthService,
@@ -85,10 +87,10 @@ export class TrainerComponent implements OnInit {
 		this.output.length = 0;
 		this.name = this.sequence.name;
 		this.output.push(this.name);
-		// this.output.push("Play your moves in the sequence.");
+		this.setOutputColour();
 		let stepCount = 0;
 
-		const sub = <Subscription>this.board.moveMade.subscribe((move: Move) => {
+		this.runningSubscription = <Subscription>this.board.moveMade.subscribe((move: Move) => {
 			// console.log("move made: " + move.from + move.to);
 			if (stepCount < this.sequence.steps.length) {
 				let step = this.sequence.steps[stepCount];
@@ -103,35 +105,38 @@ export class TrainerComponent implements OnInit {
 						this.board.chess.move(step.move);
 						console.log('fen after move: ' + this.board.chess.fen);
 					} else {
-						this.endSequence(sub, successful);
+						this.endSequence(successful);
 						return;
 					}
 				} else {
 					this.board.chess.undo();
-					this.output.push('Incorrect move. should be '
+					this.output.push('Incorrect move. Should be '
 						+ step.move.from + step.move.to);
 					stepCount--;
 					successful = false;
+					this.outputColour = "#e20f0f"; // red
 				}
 				stepCount++;
 				if (stepCount === this.sequence.steps.length) {
-					this.endSequence(sub, successful);
+					this.endSequence(successful);
 					return;
 				}
 			}
 		});
 	}
 
-	async endSequence(sub: Subscription, successful: boolean) {
+	async endSequence(successful: boolean) {
 		let p = new Promise<void>(async (resolve) => {
 			this.output.push('End of sequence.');
-			sub.unsubscribe();
+			this.runningSubscription.unsubscribe();
 			let record = await this.recordService.getRecord(this.sequence.name);
 			if (record === undefined) {
 				let now = new Date();
 				let next = new Date();
-				if (successful)
+				if (successful) {
 					next.setDate(next.getDate() + 1);
+					this.outputColour = "#1daf07"; // green
+				}
 				console.log("New record. name: " + this.sequence.name
 					+ ", last: " + now
 					+ ", next: " + next);
@@ -146,13 +151,19 @@ export class TrainerComponent implements OnInit {
 				if (gap < oneDay)
 					gap = oneDay;
 				let now = new Date();
+				let last: Date;
 				let next: Date;
-				if (successful)
+				if (successful) {
+					last = new Date();
 					next = new Date(now.getTime() + gap);
-				else
+					this.outputColour = "#1daf07"; // green
+				}
+				else { // unsuccessful
+					last = record.last;
 					next = new Date();
+				}
 
-				let r = new Record(this.sequence.name, now, next);
+				let r = new Record(this.sequence.name, last, next);
 				// console.log("endSequence r: " + JSON.stringify(r));
 				await this.recordService.addRecord(r);
 				resolve();
@@ -162,10 +173,18 @@ export class TrainerComponent implements OnInit {
 
 	redoSequence() {
 		// console.log('redo sequence');
+		if (this.runningSubscription !== undefined 
+			&& ! this.runningSubscription.closed) {
+			this.runningSubscription.unsubscribe();
+		}
 		this.runSequence();
 	}
 
 	async nextSequence() {
+		if (this.runningSubscription !== undefined 
+			&& ! this.runningSubscription.closed) {
+			this.runningSubscription.unsubscribe();
+		}
 		let p = new Promise<void>(async (resolve) => {
 			await Promise.all(this.orderedSequencesReady);
 			if (this.sequence === undefined) {
@@ -178,6 +197,9 @@ export class TrainerComponent implements OnInit {
 			for (let i = 0; i < this.orderedSequences.length; i++) {
 				let seq = this.orderedSequences[i];
 				if (seq.name === this.sequence.name) {
+					// for (let s of this.orderedSequences) {
+					// 	console.log("nextSequence " + s.name);
+					// }
 					if (i < this.orderedSequences.length) {
 						this.sequence
 							= this.orderedSequences[i + 1];
@@ -195,6 +217,10 @@ export class TrainerComponent implements OnInit {
 	}
 
 	async prevSequence() {
+		if (this.runningSubscription !== undefined 
+			&& ! this.runningSubscription.closed) {
+			this.runningSubscription.unsubscribe();
+		}
 		let p = new Promise<void>(async (resolve) => {
 			await Promise.all(this.orderedSequencesReady);
 			if (this.sequence === undefined) {
@@ -260,6 +286,28 @@ export class TrainerComponent implements OnInit {
 			}
 			this.orderedSequencesReadyResolve();
 		});
+	}
+
+	private async setOutputColour(): Promise<void> {
+		let p = new Promise<void>(async (resolve) => {
+			await Promise.all(this.recordService.ready);
+			let record = await this.recordService.getRecord(this.sequence.name);
+			if (record !== undefined) {
+				this.output.push("Last completed correctly: "
+					+ await this.recordService.dateToString(record.last));
+				this.output.push("Next attempt due:  "
+					+ await this.recordService.dateToString(record.next));
+				let now = new Date();
+				if (record.next < now) {
+					this.outputColour = "#e20f0f"; // red
+				}
+				else {
+					this.outputColour = "#1daf07"; // green
+				}
+			}
+			resolve();
+		});
+		return p;
 	}
 
 } // End of class TrainerComponent
