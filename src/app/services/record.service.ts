@@ -2,14 +2,105 @@ import { Injectable } from '@angular/core';
 import { AlaSql } from './alasql.service';
 import { SpreadsheetService } from './spreadsheet.service';
 import { Spreadsheet } from './spreadsheet';
+import { Colour } from '../chessboard/chess-enums';
+
+enum OutputColour {
+	red = "#e20f0f",
+	green = "#1daf07",
+	blue = "#b7d7d9"
+}
 
 export class Record {
 	// name: string; // name of the sequence
 	// last: Date; // date and time last practiced
 	// next: Date; // due date for next practise
+
+	public incrementFactor = 1.5;
+	private _last: Date;
+	private _next: Date;
+
 	constructor(public name: string,
-		public last: Date,
-		public next: Date) { }
+		last: Date,
+		next: Date) {
+		this._last = last;
+		this._next = next;
+		this.setColour();
+	}
+
+	public lastS(): string {
+		return this.dateToString(this.last);
+	}
+
+	public nextS(): string {
+		return this.dateToString(this._next);
+	}
+
+	public colour: OutputColour;
+
+	public set last(value: Date) {
+		this._last = value;
+	}
+
+	public get last(): Date {
+		return this._last;
+	}
+
+	public get next(): Date {
+		return this._next;
+	}
+
+	public set next(value: Date) {
+		this._next = value;
+	}
+
+	private setColour(): void {
+		let now = new Date();
+		if (this._next < now) {
+			this.colour = OutputColour.red;
+		}
+		else {
+			this.colour = OutputColour.green;
+		}
+	}
+
+	// Called when a mistake is made doing a sequence
+	public mistake() {
+		this.colour = OutputColour.red;
+		this._next = new Date();
+	}
+
+	public success() {
+		this.colour = OutputColour.green;
+		let gap =
+			(this._next.getTime() - this._last.getTime()) * this.incrementFactor;
+		let oneDay = 1000 * 60 * 60 * 24;
+		if (gap < oneDay)
+			gap = oneDay;
+		let now = new Date();
+		this._last = new Date();
+		this._next = new Date(now.getTime() + gap);
+	}
+
+
+	private dateToString(date: Date): string {
+		let year = date.getFullYear().toString();
+		let month = (date.getMonth() + 1).toString();
+		if (month.length === 1)
+			month = "0" + month;
+		let day = date.getDate().toString();
+		if (day.length === 1)
+			day = "0" + day;
+		let hour = date.getHours().toString();
+		if (hour.length === 1)
+			hour = "0" + hour;
+		let minute = date.getMinutes().toString();
+		if (minute.length === 1)
+			minute = "0" + minute;
+		return (year + "-" + month + "-" + day + " " + hour
+			+ ":" + minute);
+	}
+
+
 }
 
 @Injectable({
@@ -81,8 +172,8 @@ export class RecordService {
 			else {
 				// console.log(res[0]['name']);
 				let record = new Record(
-					res[0]['name'], 
-					await this.stringToDate(res[0]['last']), 
+					res[0]['name'],
+					await this.stringToDate(res[0]['last']),
 					await this.stringToDate(res[0]['next']));
 				// console.log('getRecord record created: ' 
 				// + JSON.stringify(record));
@@ -98,7 +189,7 @@ export class RecordService {
 		let p = new Promise<void>(async (resolve) => {
 			await Promise.all(this.ready);
 			let sqlDelete = "delete from " + this.tableName
-			+ " where name = '" + record.name + "'";
+				+ " where name = '" + record.name + "'";
 			let deleteResult = await this.ala.exec(sqlDelete);
 			// console.log("previous record deleted: " + deleteResult);
 			let sqlInsert = "insert into " + this.tableName
@@ -176,5 +267,5 @@ export class RecordService {
 	async save() {
 		await this.spreadsheet.writeTable(this.tableName);
 	}
-	
+
 }
