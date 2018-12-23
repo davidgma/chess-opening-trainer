@@ -174,7 +174,6 @@ export class TrainerComponent implements OnInit {
 			this.runningSubscription.unsubscribe();
 		}
 		let p = new Promise<void>(async (resolve) => {
-			// await Promise.all(this.orderedSequencesReady);
 			await this.orderedSequences.ready;
 			if (this.sequence === undefined) {
 				if (this.orderedSequences.array.length > 0) {
@@ -186,10 +185,10 @@ export class TrainerComponent implements OnInit {
 			for (let i = 0; i < this.orderedSequences.array.length; i++) {
 				let seq = this.orderedSequences.array[i];
 				if (seq.name === this.sequence.name) {
-					// for (let s of this.orderedSequences) {
+					// for (let s of this.orderedSequences.array) {
 					// 	console.log("nextSequence " + s.name);
 					// }
-					if (i < this.orderedSequences.array.length) {
+					if ((i + 1) < this.orderedSequences.array.length) {
 						this.sequence
 							= this.orderedSequences.array[i + 1];
 						this.runSequence();

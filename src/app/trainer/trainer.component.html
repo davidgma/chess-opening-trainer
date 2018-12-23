@@ -17,8 +17,8 @@
 <section class="floating-box" *ngIf="record !== undefined">
     <ul class="bullets">
         <li [ngStyle]="{color: record.colour}">{{ record.name }}</li>
-        <li [ngStyle]="{color: record.colour}">{{ "Last completed correctly: " + record.lastS() }}</li>
-        <li [ngStyle]="{color: record.colour}">{{ "Next attempt due: " + record.nextS() }}</li>
+        <li [ngStyle]="{color: record.colour}">{{ "Last completed correctly: " + record.lastS }}</li>
+        <li [ngStyle]="{color: record.colour}">{{ "Next attempt due: " + record.nextS }}</li>
     </ul>
 </section>
 <section class="floating-box">

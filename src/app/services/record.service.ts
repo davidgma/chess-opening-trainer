@@ -16,63 +16,80 @@ export class Record {
 	// next: Date; // due date for next practise
 
 	public incrementFactor = 1.5;
-	private _last: Date;
-	private _next: Date;
+	private _last: Date = new Date();
+	private _next: Date = new Date();
+	public lastS: string;
+	public nextS: string;
+	public colour: OutputColour;
 
 	constructor(public name: string,
 		last: Date,
 		next: Date) {
-		this._last = last;
-		this._next = next;
-		this.setColour();
+		this.init(last, next).then(() => {
+			// Initialised
+		});
 	}
 
-	public lastS(): string {
-		return this.dateToString(this.last);
+	private async init(last: Date, next: Date) {
+		let p = new Promise(async (resolve) => {
+			await this.setLast(last);
+			await this.setNext(next);
+			await this.setColour();
+			resolve();
+		});
+		return p;
 	}
 
-	public nextS(): string {
-		return this.dateToString(this._next);
-	}
-
-	public colour: OutputColour;
-
-	public set last(value: Date) {
-		this._last = value;
+	public async setLast(value: Date) {
+		let p = new Promise<void>(async (resolve) => {
+			this._last = value;
+			this.lastS = await this.dateToString(value);
+			resolve();
+		});
+		return p;
 	}
 
 	public get last(): Date {
 		return this._last;
 	}
 
+	public async setNext(value: Date) {
+		let p = new Promise<void>(async (resolve) => {
+			this._next = value;
+			this.nextS = await this.dateToString(value);
+			resolve();
+		});
+		return p;
+	}
+
 	public get next(): Date {
 		return this._next;
 	}
 
-	public set next(value: Date) {
-		this._next = value;
-	}
-
-	private setColour(): void {
-		let now = new Date();
-		if (this._next < now) {
-			this.colour = OutputColour.red;
-		}
-		else {
-			this.colour = OutputColour.green;
-		}
+	private async setColour(): Promise<void> {
+		let p = new Promise<void>(async (resolve) => {
+			let now = new Date();
+			if (this.next < now) {
+				this.colour = OutputColour.red;
+			}
+			else {
+				this.colour = OutputColour.green;
+			}
+			resolve();
+		});
+		return p;
 	}
 
 	// Called when a mistake is made doing a sequence
-	public mistake() {
+	public async mistake() {
 		this.colour = OutputColour.red;
-		this._next = new Date();
+		this.setNext(new Date());
 	}
 
 	public success() {
 		this.colour = OutputColour.green;
 		let gap =
-			(this._next.getTime() - this._last.getTime()) * this.incrementFactor;
+			(this.next.getTime() - this.last.getTime()) * this.incrementFactor;
 		let oneDay = 1000 * 60 * 60 * 24;
 		if (gap < oneDay)
 			gap = oneDay;
@@ -82,22 +99,25 @@ export class Record {
 	}
 
 
-	private dateToString(date: Date): string {
-		let year = date.getFullYear().toString();
-		let month = (date.getMonth() + 1).toString();
-		if (month.length === 1)
-			month = "0" + month;
-		let day = date.getDate().toString();
-		if (day.length === 1)
-			day = "0" + day;
-		let hour = date.getHours().toString();
-		if (hour.length === 1)
-			hour = "0" + hour;
-		let minute = date.getMinutes().toString();
-		if (minute.length === 1)
-			minute = "0" + minute;
-		return (year + "-" + month + "-" + day + " " + hour
-			+ ":" + minute);
+	private async dateToString(date: Date): Promise<string> {
+		let p = new Promise<string>(async (resolve) => {
+			let year = date.getFullYear().toString();
+			let month = (date.getMonth() + 1).toString();
+			if (month.length === 1)
+				month = "0" + month;
+			let day = date.getDate().toString();
+			if (day.length === 1)
+				day = "0" + day;
+			let hour = date.getHours().toString();
+			if (hour.length === 1)
+				hour = "0" + hour;
+			let minute = date.getMinutes().toString();
+			if (minute.length === 1)
+				minute = "0" + minute;
+			resolve(year + "-" + month + "-" + day + " " + hour
+				+ ":" + minute);
+		});
+		return p;
 	}
 
 
