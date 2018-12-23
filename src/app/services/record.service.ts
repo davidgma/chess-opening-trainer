@@ -91,11 +91,11 @@ export class Record {
 		let gap =
 			(this.next.getTime() - this.last.getTime()) * this.incrementFactor;
 		let oneDay = 1000 * 60 * 60 * 24;
+		let now = new Date();
 		if (gap < oneDay)
 			gap = oneDay;
-		let now = new Date();
-		this._last = new Date();
-		this._next = new Date(now.getTime() + gap);
+		this.setLast(new Date());
+		this.setNext(new Date(now.getTime() + gap));
 	}
 
 
