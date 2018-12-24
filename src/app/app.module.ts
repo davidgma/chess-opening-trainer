@@ -62,7 +62,7 @@ import 'hammerjs';
     GoogleAuthService,
     DataService,
     AlaSql,
-	RecordService,
-	SpreadsheetService]
+    RecordService,
+    SpreadsheetService]
 })
 export class AppModule { }

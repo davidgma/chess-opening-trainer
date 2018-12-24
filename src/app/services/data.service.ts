@@ -1,34 +1,11 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { Move } from '../chessboard/chess-enums';
+import { Sequence } from '../shared-classes/sequence';
 import { GoogleAuthService } from './google-auth.service';
 import { Observable, BehaviorSubject, from, Subject } from 'rxjs';
 import { CollectionViewer, DataSource } from "@angular/cdk/collections";
 import { Spreadsheet } from './spreadsheet';
-// import { SpreadsheetService } from './spreadsheet.service';
 import { RecordService } from './record.service';
 import { AlaSql } from './alasql.service';
-// import { MatInputBase } from '@angular/material';
-
-export class Step {
-	// move e.g. d2d4
-	// comment on the move
-	constructor(public move: Move, public comment: string) { }
-}
-
-export class Sequence {
-	name: string; // name of the sequence
-	fen: string; // initial fen position
-	steps: Array<Step> = new Array<Step>(); // array of steps in the sequence
-
-	public addStep(move: string, comment: string) {
-		const m = new Move(move.substr(0, 2), move.substr(2, 2));
-		const s = new Step(m, comment);
-		this.steps.push(s);
-
-	}
-}
-
-
 
 @Injectable({
 	providedIn: 'root'
@@ -163,29 +140,6 @@ export class DataService implements DataSource<Sequence> {
 
 	async addRecords(): Promise<void> {
 		let p = new Promise<void>(async (resolve) => {
-
-			console.log("here1 in data.service addRecords()");
-
-			// todo: update the Trainer to show when a sequence is
-			// due with overdue shown in red and not-yet-due in green.
-			// todo: change retrieveSequences to use a new SequenceService.
-
-			// todo: continue with adding new record to the table:
-			// retrieve the table from the spreadsheet first
-			// todo: add this to the spreadsheet class:
-			// gapi.client.sheets.spreadsheets.values.get({
-			//     spreadsheetId: this.spreadsheet.id,
-			//     range: "Records!A2:C"
-			// }).then((response) => {
-			//     if (!(response.result.values === undefined)) {
-			//         for (let i = 0; i < response.result.values.length; i++) {
-			//             this.addRecord(response.result.values[i][0],
-			//                 response.result.values[i][1], response.result.values[i][2]);
-			//         }
-			//     }
-			// }, (error) => {
-			//     throw new Error(error.result.error.message);
-			// });
 			resolve();
 		});
 		return p;

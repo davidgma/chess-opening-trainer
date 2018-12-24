@@ -1,17 +1,13 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { GoogleAuthService } from '../services/google-auth.service';
 import { ChessboardComponent } from '../chessboard/chessboard.component';
-import { DataService, Sequence } from '../services/data.service';
-import { Record, RecordService } from '../services/record.service';
-import { Colour, Move } from '../chessboard/chess-enums';
+import { DataService } from '../services/data.service';
+import { RecordService } from '../services/record.service';
+import { Record, OutputColour } from '../shared-classes/record';
+import { Sequence } from '../shared-classes/sequence';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Subscription } from 'rxjs';
-
-enum OutputColour {
-	red = "#e20f0f",
-	green = "#1daf07",
-	blue = "#b7d7d9"
-}
+import { Move } from '../chessboard/chess-enums';
 
 class AsyncArray<T> {
 	array = new Array<T>();

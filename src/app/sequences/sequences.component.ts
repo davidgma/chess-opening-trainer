@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { DataService, Sequence } from '../services/data.service';
+import { DataService } from '../services/data.service';
+import { Sequence} from '../shared-classes/sequence';
 import { MatTable } from '@angular/material';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-sequences',
