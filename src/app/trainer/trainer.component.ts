@@ -30,6 +30,7 @@ export class TrainerComponent implements OnInit {
 	public output = new Array<string>();
 	public outputColour = OutputColour.blue;
 	@ViewChild(ChessboardComponent) board: ChessboardComponent;
+	public displayWidth: number;
 	public sequence: Sequence;
 	private orderedSequences = new AsyncArray<Sequence>();
 	public runningSubscription: Subscription;
@@ -42,6 +43,7 @@ export class TrainerComponent implements OnInit {
 		private recordService: RecordService) { }
 
 	async ngOnInit() {
+		this.displayWidth = this.board.wholeSize;
 		// If logged into Google, look for records of previous attempts
 		Promise.all(this.gauth.ready).then(() => {
 			// Google Drive is ready to use

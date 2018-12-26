@@ -19,7 +19,7 @@ export class BuilderComponent implements OnInit {
     public moves = new Array<Move>();
     public fens = new Array<string>();
     public model = new FenRequest();
-    public displayWidth;
+    public displayWidth: number;
 
     constructor() { }
 

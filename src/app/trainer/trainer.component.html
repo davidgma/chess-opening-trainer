@@ -14,15 +14,17 @@
 </nav>
 
 <app-chessboard class="floating-box"></app-chessboard>
-<section class="floating-box" *ngIf="record !== undefined">
-    <ul class="bullets">
-        <li [ngStyle]="{color: record.colour}">{{ record.name }}</li>
-        <li [ngStyle]="{color: record.colour}">{{ "Last completed correctly: " + record.lastS }}</li>
-        <li [ngStyle]="{color: record.colour}">{{ "Next attempt due: " + record.nextS }}</li>
-    </ul>
-</section>
-<section class="floating-box">
-    <ul class="bullets" [ngStyle]="{color: outputColour}">
-        <li *ngFor="let line of output">{{ line }}</li>
-    </ul>
+<section class="floating-box" [style.max-width.px]="displayWidth">
+    <section class="floating-box" *ngIf="record !== undefined">
+        <ul class="bullets">
+            <li [ngStyle]="{color: record.colour}">{{ record.name }}</li>
+            <li [ngStyle]="{color: record.colour}">{{ "Last completed correctly: " + record.lastS }}</li>
+            <li [ngStyle]="{color: record.colour}">{{ "Next attempt due: " + record.nextS }}</li>
+        </ul>
+    </section>
+    <section class="floating-box">
+        <ul class="bullets" [ngStyle]="{color: outputColour}">
+            <li *ngFor="let line of output">{{ line }}</li>
+        </ul>
+    </section>
 </section>
