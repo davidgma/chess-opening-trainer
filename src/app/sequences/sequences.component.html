@@ -1,5 +1,5 @@
 <br>
-<p>Select the sequence you want to practice from the list below.</p>
+<p>The sequences you can practice are listed below.</p>
 <table mat-table [dataSource]="dataSource" class="table">
     <!-- Name Column -->
     <ng-container matColumnDef="name">
@@ -11,8 +11,10 @@
     <ng-container matColumnDef="practice">
         <th mat-header-cell *matHeaderCellDef> </th>
         <td mat-cell *matCellDef="let sequence">
-            <button type="button" 
-            (click)="practice(sequence)">Practice</button>
+            <!-- <button type="button" 
+            (click)="practice(sequence)">Practice</button> -->
+            <a class="btn btn-secondary btn-sm active" role="button" aria-pressed="true" routerLink="/trainer/{{ sequence.name }}" routerLinkActive="active" matTooltip="Practice sequence">
+                Practice</a>
         </td>
     </ng-container>
 

@@ -66,7 +66,7 @@ export class TrainerComponent implements OnInit {
 				return;
 			} else {
 				this.output.length = 0;
-
+				this.output.push('Retrieving data...');
 				// Check the sequence is in the sequences data
 				this.sequence = await this.dataService.findSequence(name);
 				if (this.sequence === undefined) {
