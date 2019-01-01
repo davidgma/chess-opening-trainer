@@ -11,45 +11,64 @@ export enum OutputColour {
 
 export class Record {
 	// name: string; // name of the sequence
-	// last: Date; // date and time last practiced
+	// lastSuccess: Date; // date and time last completed successfully
 	// next: Date; // due date for next practise
+	// lastFail: Date; // date and time last completed with errors
 
 	public incrementFactor = 1.5;
-	private _last: Date = new Date();
+	private _lastSuccess: Date = new Date();
 	private _next: Date = new Date();
-	public lastS: string;
+	private _lastFail: Date = new Date();
+	
+	public lastSS: string;
 	public nextS: string;
+	public lastFS: string;
 	public colour: OutputColour;
 
 	constructor(public name: string,
-		last: Date,
-		next: Date) {
-		this.init(last, next).then(() => {
+		lastSuccess: Date,
+		next: Date,
+		lastFail) {
+		this.init(lastSuccess, next, lastFail).then(() => {
 			// Initialised
 		});
 	}
 
-	private async init(last: Date, next: Date) {
+	private async init(lastSuccess: Date, next: Date, lastFail: Date) {
 		let p = new Promise(async (resolve) => {
-			await this.setLast(last);
+			await this.setLastSuccess(lastSuccess);
 			await this.setNext(next);
+			await this.setLastFail(lastFail);
 			await this.setColour();
 			resolve();
 		});
 		return p;
 	}
 
-	public async setLast(value: Date) {
+	public async setLastSuccess(value: Date) {
 		let p = new Promise<void>(async (resolve) => {
-			this._last = value;
-			this.lastS = await this.dateToString(value);
+			this._lastSuccess = value;
+			this.lastSS = await this.dateToString(value);
 			resolve();
 		});
 		return p;
 	}
 
-	public get last(): Date {
-		return this._last;
+	public get lastSuccess(): Date {
+		return this._lastSuccess;
+	}
+
+	public async setLastFail(value: Date) {
+		let p = new Promise<void>(async (resolve) => {
+			this._lastFail = value;
+			this.lastFS = await this.dateToString(value);
+			resolve();
+		});
+		return p;
+	}
+
+	public get lastFail(): Date {
+		return this._lastFail;
 	}
 
 	public async setNext(value: Date) {
@@ -83,17 +102,19 @@ export class Record {
 	public async mistake() {
 		this.colour = OutputColour.red;
 		this.setNext(new Date());
+		this.setLastFail(new Date());
 	}
 
 	public success() {
 		this.colour = OutputColour.green;
 		let gap =
-			(this.next.getTime() - this.last.getTime()) * this.incrementFactor;
+			(this.next.getTime() - this.lastSuccess.getTime()) * this.incrementFactor;
 		let oneDay = 1000 * 60 * 60 * 24;
 		let now = new Date();
-		if (gap < oneDay)
+		if (gap < oneDay 
+			|| (this.lastFail.getTime() > this.lastSuccess.getTime() ) )
 			gap = oneDay;
-		this.setLast(new Date());
+		this.setLastSuccess(new Date());
 		this.setNext(new Date(now.getTime() + gap));
 	}
 

@@ -143,7 +143,7 @@ export class TrainerComponent implements OnInit {
 				console.log("New record. name: " + this.sequence.name
 					+ ", last: " + now
 					+ ", next: " + next);
-				this.record = new Record(this.sequence.name, now, next);
+				this.record = new Record(this.sequence.name, now, next, now);
 				await this.recordService.addRecord(this.record);
 				resolve();
 			}

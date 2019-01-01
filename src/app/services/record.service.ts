@@ -11,7 +11,7 @@ export class RecordService {
 
 	private spreadsheetName = 'Chess Opening Trainer';
 	private tableName = 't_records';
-	private columns = ['name', 'last', 'next'];
+	private columns = ['name', 'lastSuccess', 'next', 'lastFail'];
 	public ready = new Array<Promise<void>>();
 	private spreadsheet: Spreadsheet;
 
@@ -38,7 +38,7 @@ export class RecordService {
 				let tableData = await this.spreadsheet.arrayToJson([this.columns]);
 				await this.ala.createTable(this.tableName, tableData);
 				await this.spreadsheet.writeTable(this.tableName);
-				await this.spreadsheet.setBold(this.tableName + '!A1:C1');
+				await this.spreadsheet.setBold(this.tableName + '!A1:D1');
 				resolve();
 			}
 			else {
@@ -74,8 +74,9 @@ export class RecordService {
 				// console.log(res[0]['name']);
 				let record = new Record(
 					res[0]['name'],
-					await this.stringToDate(res[0]['last']),
-					await this.stringToDate(res[0]['next']));
+					await this.stringToDate(res[0]['lastSuccess']),
+					await this.stringToDate(res[0]['next']),
+					await this.stringToDate(res[0]['lastFail']));
 				// console.log('getRecord record created: ' 
 				// + JSON.stringify(record));
 				resolve(record);
@@ -96,8 +97,9 @@ export class RecordService {
 			let sqlInsert = "insert into " + this.tableName
 				+ " VALUES ("
 				+ "'" + record.name + "', "
-				+ "'" + await this.dateToString(record.last) + "', "
-				+ "'" + await this.dateToString(record.next) + "'"
+				+ "'" + await this.dateToString(record.lastSuccess) + "', "
+				+ "'" + await this.dateToString(record.next) + "', "
+				+ "'" + await this.dateToString(record.lastFail) + "'"
 				+ ")";
 			await this.ala.exec(sqlInsert);
 			// console.log("new record added");
@@ -132,6 +134,7 @@ export class RecordService {
 
 	async stringToDate(date: string): Promise<Date> {
 		let p = new Promise<Date>((resolve) => {
+			// console.log("stringToDate: " + date);
 			let pattern =
 				/^(\d{4})\D+(\d{1,2})\D+(\d{1,2})\D+(\d{1,2})\D+(\d{1,2})/;
 			let matches = pattern.exec(date);
