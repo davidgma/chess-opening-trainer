@@ -1,20 +1,23 @@
 
 import {
     Component, OnInit, ChangeDetectorRef,
-    EventEmitter, ElementRef, ViewChild
+    EventEmitter, ElementRef, ViewChild, AfterViewInit
 } from '@angular/core';
 import { ChessSquare } from './chess-square';
-import { files, Move, Colour } from './chess-enums';
+import { files, Move, Colour, PieceType } from './chess-enums';
 import { Chess, FenValidationResult, ChessPiece } from './chess';
+import { PromotionComponent } from './promotion/promotion.component';
 
 @Component({
     selector: 'app-chessboard',
     templateUrl: './chessboard.component.html',
     styleUrls: ['./chessboard.component.css']
 })
-export class ChessboardComponent implements OnInit {
+export class ChessboardComponent implements OnInit, AfterViewInit {
 
     @ViewChild('svgRegion') svgRegion: ElementRef;
+    @ViewChild(PromotionComponent) promotion: PromotionComponent;
+    public tempPiece: PieceType;
 
     constructor(private cd: ChangeDetectorRef) {
         this.calculateSizes();
@@ -35,6 +38,21 @@ export class ChessboardComponent implements OnInit {
 
     }
 
+    async ngAfterViewInit() {
+        // The ViewChild component is available now
+    }
+
+    async showPromotionDialog() {
+        console.log("showPromotionDialog piece: " 
+        + await this.promotion.getPromotedPiece());
+        this.promotion.showMe = ! this.promotion.showMe;
+        // todo: put the 4 squares onto the promotion template
+        // put the queen, rook, bishop and knight onto the promotion t
+        // set the position of the component relative to the prom square 
+        // return the piece selected
+        // add that selection to the move instance
+        // check that the board updates correctly
+    }
 
     get viewBox(): string {
         return '0 0 '

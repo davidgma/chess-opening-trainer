@@ -29,6 +29,7 @@ import {
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import 'hammerjs';
+import { PromotionComponent } from './chessboard/promotion/promotion.component';
 
 @NgModule({
   imports: [
@@ -54,7 +55,8 @@ import 'hammerjs';
     PageNotFoundComponent,
     ChessboardComponent,
     HeaderComponent,
-    BuilderComponent
+    BuilderComponent,
+    PromotionComponent
   ],
   bootstrap: [AppComponent],
   providers: [
