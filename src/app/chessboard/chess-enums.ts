@@ -1,3 +1,5 @@
+import { EventEmitter } from '@angular/core';
+import { ChessSquare } from './chess-square';
 
 export enum Colour {
     WHITE = 'w',
@@ -19,6 +21,19 @@ export { files };
 export class Move {
     constructor(public from: string, public to: string,
         public promotion?: string) {}
+}
+
+export interface IChessBoardParent {
+    resize: EventEmitter<void>;
+    squareSize: number;
+    boardSide: Colour;
+    wholeSize: number;
+    moving: boolean;
+    movingFrom: ChessSquare;
+    mouseMoveLocal: EventEmitter<MouseEvent>;
+    mouseUpLocal: EventEmitter<MouseEvent>;
+    touchMoveLocal: EventEmitter<TouchEvent>;
+    touchEndLocal: EventEmitter<TouchEvent>
 }
 
 // export enum Coordinate {

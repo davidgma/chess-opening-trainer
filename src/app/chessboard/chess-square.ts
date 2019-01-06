@@ -4,14 +4,22 @@ It keeps track of what piece is on it.
 */
 
 import { SvgData, SvgPath, SvgCircle, SvgPieces } from './svg-data';
-import { Colour, PieceType, files } from './chess-enums';
-import { ChessboardComponent } from './chessboard.component';
+import { Colour, PieceType, files, IChessBoardParent } from './chess-enums';
 // import { EventEmitter } from '@angular/core';
 
 export class ChessSquare {
+    
+    public squareColour: Colour;
+    public pieceColour: Colour = Colour.WHITE;
+    public row: number;
+    public column: number;
+    public scale: number; // amount to scale pieces by
+    public transform: string; // transform applied to whole piece
+    public svgData = new SvgData();
+    private _pieceType: PieceType;
 
     // coordinate must be in form a1
-    constructor(public coordinate: string, public parent: ChessboardComponent) {
+    constructor(public coordinate: string, public parent: IChessBoardParent) {
         // Listen for a change in screen size
         this.parent.resize.subscribe(() => {
             this.adjustPosition();
@@ -110,15 +118,6 @@ export class ChessSquare {
         this._pieceType = value;
     }
 
-    public squareColour: Colour;
-    public pieceColour: Colour = Colour.WHITE;
-    public row: number;
-    public column: number;
-    public scale: number; // amount to scale pieces by
-    public transform: string; // transform applied to whole piece
-    public svgData = new SvgData();
-
-    private _pieceType: PieceType;
 
     public calculateRowColumn() {
         // Work out which vertical column (file) of the board the square is on (0 - 7)

@@ -4,7 +4,7 @@ import {
     EventEmitter, ElementRef, ViewChild, AfterViewInit
 } from '@angular/core';
 import { ChessSquare } from './chess-square';
-import { files, Move, Colour, PieceType } from './chess-enums';
+import { files, Move, Colour, PieceType, IChessBoardParent } from './chess-enums';
 import { Chess, FenValidationResult, ChessPiece } from './chess';
 import { PromotionComponent } from './promotion/promotion.component';
 
@@ -13,11 +13,21 @@ import { PromotionComponent } from './promotion/promotion.component';
     templateUrl: './chessboard.component.html',
     styleUrls: ['./chessboard.component.css']
 })
-export class ChessboardComponent implements OnInit, AfterViewInit {
-
+export class ChessboardComponent implements OnInit, AfterViewInit, IChessBoardParent {
+    
+    public squaresMap = new Map<string, ChessSquare>();
+    public mouseMoveLocal = new EventEmitter<MouseEvent>();
+    public touchMoveLocal = new EventEmitter<TouchEvent>();
+    public mouseUpLocal = new EventEmitter<MouseEvent>();
+    public touchEndLocal = new EventEmitter<TouchEvent>();
+    public moving = false;
+    public movingFrom: ChessSquare;
+    public chess: Chess;
+    public boardSide: Colour = Colour.WHITE;
+    public moveMade: EventEmitter<Move> = new EventEmitter<Move>();
     @ViewChild('svgRegion') svgRegion: ElementRef;
     @ViewChild(PromotionComponent) promotion: PromotionComponent;
-    public tempPiece: PieceType;
+    // private tempPiece: PieceType;
 
     constructor(private cd: ChangeDetectorRef) {
         this.calculateSizes();
@@ -43,11 +53,21 @@ export class ChessboardComponent implements OnInit, AfterViewInit {
     }
 
     async showPromotionDialog() {
+        // this.promotion.wholeSize = this.wholeSize;
+        this.promotion.boardSide = this.boardSide;
+        this.promotion.squaresMap.get('a8').pieceColour = this.boardSide;
+        this.promotion.squaresMap.get('a8').pieceType = PieceType.QUEEN;
+        this.promotion.squaresMap.get('a7').pieceColour = this.boardSide;
+        this.promotion.squaresMap.get('a7').pieceType = PieceType.ROOK;
+        this.promotion.squaresMap.get('a6').pieceColour = this.boardSide;
+        this.promotion.squaresMap.get('a6').pieceType = PieceType.BISHOP;
+        this.promotion.squaresMap.get('a5').pieceColour = this.boardSide;
+        this.promotion.squaresMap.get('a5').pieceType = PieceType.KNIGHT;
+        this.promotion.showMe = ! this.promotion.showMe;
+
         console.log("showPromotionDialog piece: " 
         + await this.promotion.getPromotedPiece());
-        this.promotion.showMe = ! this.promotion.showMe;
-        // todo: put the 4 squares onto the promotion template
-        // put the queen, rook, bishop and knight onto the promotion t
+
         // set the position of the component relative to the prom square 
         // return the piece selected
         // add that selection to the move instance
@@ -61,16 +81,6 @@ export class ChessboardComponent implements OnInit, AfterViewInit {
 
     }
 
-    public squaresMap = new Map<string, ChessSquare>();
-    public mouseMoveLocal = new EventEmitter<MouseEvent>();
-    public touchMoveLocal = new EventEmitter<TouchEvent>();
-    public mouseUpLocal = new EventEmitter<MouseEvent>();
-    public touchEndLocal = new EventEmitter<TouchEvent>();
-    public moving = false;
-    public movingFrom: ChessSquare;
-    public chess: Chess;
-    public boardSide: Colour = Colour.WHITE;
-    public moveMade: EventEmitter<Move> = new EventEmitter<Move>();
 
     // this is needed in the component because the template
     // needs it to calculate the total svg size of the area.
