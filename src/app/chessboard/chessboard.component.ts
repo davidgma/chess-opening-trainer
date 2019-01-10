@@ -6,7 +6,6 @@ import {
 import { ChessSquare } from './chess-square';
 import { files, Move, Colour, PieceType, IChessBoardParent } from './chess-enums';
 import { Chess, FenValidationResult, ChessPiece } from './chess';
-import { PromotionComponent } from './promotion/promotion.component';
 
 @Component({
     selector: 'app-chessboard',
@@ -14,7 +13,7 @@ import { PromotionComponent } from './promotion/promotion.component';
     styleUrls: ['./chessboard.component.css']
 })
 export class ChessboardComponent implements OnInit, AfterViewInit, IChessBoardParent {
-    
+
     public squaresMap = new Map<string, ChessSquare>();
     public mouseMoveLocal = new EventEmitter<MouseEvent>();
     public touchMoveLocal = new EventEmitter<TouchEvent>();
@@ -26,8 +25,12 @@ export class ChessboardComponent implements OnInit, AfterViewInit, IChessBoardPa
     public boardSide: Colour = Colour.WHITE;
     public moveMade: EventEmitter<Move> = new EventEmitter<Move>();
     @ViewChild('svgRegion') svgRegion: ElementRef;
-    @ViewChild(PromotionComponent) promotion: PromotionComponent;
+    // @ViewChild(PromotionComponent) promotion: PromotionComponent;
     // private tempPiece: PieceType;
+
+    // For piece promotion
+    // public promSquaresMap = new Map<string, ChessSquare>();
+    public showProm = false;
 
     constructor(private cd: ChangeDetectorRef) {
         this.calculateSizes();
@@ -46,6 +49,14 @@ export class ChessboardComponent implements OnInit, AfterViewInit, IChessBoardPa
             this.positionPieces();
         });
 
+        // For promotion dialog
+        // const promotionSquares = ['a8', 'a7', 'a6', 'a5'];
+        // for (let coord of promotionSquares) {
+        //     const cs = new ChessSquare(coord, this);
+        //     cs.init();
+        //     this.promSquaresMap.set(coord, cs);
+        // }
+
     }
 
     async ngAfterViewInit() {
@@ -54,24 +65,54 @@ export class ChessboardComponent implements OnInit, AfterViewInit, IChessBoardPa
 
     async showPromotionDialog() {
         // this.promotion.wholeSize = this.wholeSize;
-        this.promotion.boardSide = this.boardSide;
-        this.promotion.squaresMap.get('a8').pieceColour = this.boardSide;
-        this.promotion.squaresMap.get('a8').pieceType = PieceType.QUEEN;
-        this.promotion.squaresMap.get('a7').pieceColour = this.boardSide;
-        this.promotion.squaresMap.get('a7').pieceType = PieceType.ROOK;
-        this.promotion.squaresMap.get('a6').pieceColour = this.boardSide;
-        this.promotion.squaresMap.get('a6').pieceType = PieceType.BISHOP;
-        this.promotion.squaresMap.get('a5').pieceColour = this.boardSide;
-        this.promotion.squaresMap.get('a5').pieceType = PieceType.KNIGHT;
-        this.promotion.showMe = ! this.promotion.showMe;
+        // this.promotion.boardSide = this.boardSide;
+        this.showProm = !this.showProm;
+        if (this.showProm) {
+            this.showPromotionChoices(this.squaresMap.get('d1'));
+        }
+        else {
+            this.positionPieces();
+        }
 
-        console.log("showPromotionDialog piece: " 
-        + await this.promotion.getPromotedPiece());
+        console.log("showPromotionDialog piece: "
+            + await this.getPromotedPiece());
 
-        // set the position of the component relative to the prom square 
         // return the piece selected
         // add that selection to the move instance
         // check that the board updates correctly
+    }
+
+    showPromotionChoices(promSquare: ChessSquare) {
+        let useSquares: string[];
+        let boardSide: Colour;
+        let file = promSquare.coordinate.substr(0, 1);
+        if (promSquare.coordinate.endsWith('8')) {
+            boardSide = Colour.WHITE;
+            useSquares = [file + 8, file + 7, file + 6, file + 5];
+        }
+        else {
+            boardSide = Colour.BLACK;
+            useSquares = [file + 1, file + 2, file + 3, file + 4];
+        }
+
+        this.squaresMap.get(useSquares[0]).pieceColour = boardSide;
+        this.squaresMap.get(useSquares[0]).pieceType = PieceType.QUEEN;
+        this.squaresMap.get(useSquares[1]).pieceColour = boardSide;
+        this.squaresMap.get(useSquares[1]).pieceType = PieceType.ROOK;
+        this.squaresMap.get(useSquares[2]).pieceColour = boardSide;
+        this.squaresMap.get(useSquares[2]).pieceType = PieceType.BISHOP;
+        this.squaresMap.get(useSquares[3]).pieceColour = boardSide;
+        this.squaresMap.get(useSquares[3]).pieceType = PieceType.KNIGHT;
+
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++) {
+                const coord = files[i]
+                    + (j + 1).toString();
+                if (!useSquares.includes(coord)) {
+                    this.squaresMap.get(coord).removePiece();
+                }
+            }
+        }
     }
 
     get viewBox(): string {
@@ -233,6 +274,13 @@ export class ChessboardComponent implements OnInit, AfterViewInit, IChessBoardPa
         } else { // valid move
             this.moveMade.emit(move);
         }
+    }
+
+    public async getPromotedPiece(): Promise<PieceType> {
+        let p = new Promise<PieceType>((resolve) => {
+            resolve(PieceType.QUEEN);
+        });
+        return p;
     }
 
 } // End of class TrainerComponent
