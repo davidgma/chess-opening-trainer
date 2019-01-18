@@ -23,18 +23,18 @@ export class Move {
         public promotion?: string) {}
 }
 
-export interface IChessBoardParent {
-    resize: EventEmitter<void>;
-    squareSize: number;
-    boardSide: Colour;
-    wholeSize: number;
-    moving: boolean;
-    movingFrom: ChessSquare;
-    mouseMoveLocal: EventEmitter<MouseEvent>;
-    mouseUpLocal: EventEmitter<MouseEvent>;
-    touchMoveLocal: EventEmitter<TouchEvent>;
-    touchEndLocal: EventEmitter<TouchEvent>
-}
+// export interface IChessBoardParent {
+//     resize: EventEmitter<void>;
+//     squareSize: number;
+//     boardSide: Colour;
+//     wholeSize: number;
+//     moving: boolean;
+//     movingFrom: ChessSquare;
+//     mouseMoveLocal: EventEmitter<MouseEvent>;
+//     mouseUpLocal: EventEmitter<MouseEvent>;
+//     touchMoveLocal: EventEmitter<TouchEvent>;
+//     touchEndLocal: EventEmitter<TouchEvent>
+// }
 
 // export enum Coordinate {
 //     "a8" = 0, "b8" = 1, "c8" = 2, "d8" = 3,

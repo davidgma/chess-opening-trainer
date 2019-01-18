@@ -4,7 +4,8 @@ It keeps track of what piece is on it.
 */
 
 import { SvgData, SvgPath, SvgCircle, SvgPieces } from './svg-data';
-import { Colour, PieceType, files, IChessBoardParent } from './chess-enums';
+import { Colour, PieceType, files } from './chess-enums';
+import { ChessboardComponent } from './chessboard.component';
 // import { EventEmitter } from '@angular/core';
 
 export class ChessSquare {
@@ -19,7 +20,7 @@ export class ChessSquare {
     private _pieceType: PieceType;
 
     // coordinate must be in form a1
-    constructor(public coordinate: string, public parent: IChessBoardParent) {
+    constructor(public coordinate: string, public parent: ChessboardComponent) {
         // Listen for a change in screen size
         this.parent.resize.subscribe(() => {
             this.adjustPosition();
@@ -254,8 +255,8 @@ export class ChessSquare {
 
         const initialClientX = eventD.clientX;
         const initialClientY = eventD.clientY;
-        this.parent.moving = true;
-        this.parent.movingFrom = this;
+        this.parent.movingByDrag = true;
+        this.parent.movingFromByDrag = this;
         // subscribe to the move event from the parent
         const sub = this.parent.mouseMoveLocal.subscribe((eventM) => {
             this.movePiece(
@@ -280,8 +281,8 @@ export class ChessSquare {
         // console.log("mouse pressed down for " + this.coordinate);
         const initialClientX = t.clientX;
         const initialClientY = t.clientY;
-        this.parent.moving = true;
-        this.parent.movingFrom = this;
+        this.parent.movingByDrag = true;
+        this.parent.movingFromByDrag = this;
         // subscribe to the move event from the parent
         const sub = this.parent.touchMoveLocal
             .subscribe((eventM: TouchEvent) => {
@@ -301,6 +302,30 @@ export class ChessSquare {
             sub.unsubscribe();
             sub2.unsubscribe();
         });
+    }
+
+    public squareClicked() {
+        if (this.pieceType === undefined) {
+            if (this.parent.showProm) {
+                console.log("squareClicked " + this.coordinate);
+            }
+            else if (this.parent.movingByClick) {
+                this.parent.endMoveByClick(this);
+            }
+        }
+    }
+
+    public pieceClicked() {
+        if (this.parent.showProm) {
+            console.log("pieceClicked " + this.coordinate);
+        }
+        else if (this.parent.movingByClick) {
+            this.parent.endMoveByClick(this);
+        }
+        else {
+            this.parent.movingByClick = true;
+            this.parent.movingFromByClick = this;
+        }
     }
 
 } // End of ChessSquare class

@@ -4,7 +4,7 @@ import {
     EventEmitter, ElementRef, ViewChild, AfterViewInit
 } from '@angular/core';
 import { ChessSquare } from './chess-square';
-import { files, Move, Colour, PieceType, IChessBoardParent } from './chess-enums';
+import { files, Move, Colour, PieceType } from './chess-enums';
 import { Chess, FenValidationResult, ChessPiece } from './chess';
 
 @Component({
@@ -12,15 +12,17 @@ import { Chess, FenValidationResult, ChessPiece } from './chess';
     templateUrl: './chessboard.component.html',
     styleUrls: ['./chessboard.component.css']
 })
-export class ChessboardComponent implements OnInit, AfterViewInit, IChessBoardParent {
+export class ChessboardComponent implements OnInit, AfterViewInit {
 
     public squaresMap = new Map<string, ChessSquare>();
     public mouseMoveLocal = new EventEmitter<MouseEvent>();
     public touchMoveLocal = new EventEmitter<TouchEvent>();
     public mouseUpLocal = new EventEmitter<MouseEvent>();
     public touchEndLocal = new EventEmitter<TouchEvent>();
-    public moving = false;
-    public movingFrom: ChessSquare;
+    public movingByDrag = false;
+    public movingByClick = false;
+    public movingFromByDrag: ChessSquare;
+    public movingFromByClick: ChessSquare;
     public chess: Chess;
     public boardSide: Colour = Colour.WHITE;
     public moveMade: EventEmitter<Move> = new EventEmitter<Move>();
@@ -78,6 +80,7 @@ export class ChessboardComponent implements OnInit, AfterViewInit, IChessBoardPa
             + await this.getPromotedPiece());
 
         // return the piece selected
+
         // add that selection to the move instance
         // check that the board updates correctly
     }
@@ -220,7 +223,7 @@ export class ChessboardComponent implements OnInit, AfterViewInit, IChessBoardPa
 
     touchEnd(event: TouchEvent) {
 
-        if (this.moving) {
+        if (this.movingByDrag) {
             event.preventDefault();
             let t: Touch;
             if (event.targetTouches.length > 0)
@@ -230,21 +233,21 @@ export class ChessboardComponent implements OnInit, AfterViewInit, IChessBoardPa
             console.log("touchEnd ended at "
                 + Math.round(t.clientX)
                 + "," + Math.round(t.clientY));
-            this.endMove(t.clientX, t.clientY);
+            this.endMoveByDrag(t.clientX, t.clientY);
 
         }
         this.touchEndLocal.emit(event);
     }
 
     mouseUp(event: MouseEvent) {
-        if (this.moving) {
-            this.endMove(event.clientX, event.clientY);
+        if (this.movingByDrag) {
+            this.endMoveByDrag(event.clientX, event.clientY);
 
         }
         this.mouseUpLocal.emit(event);
     }
 
-    endMove(clientX: number, clientY: number) {
+    endMoveByDrag(clientX: number, clientY: number) {
         let boardClientX = this.svgRegion.nativeElement.getBoundingClientRect().left;
         let boardClientY = this.svgRegion.nativeElement.getBoundingClientRect().top;
         // console.log('board x: ' + boardClientX + ', board y: ' + boardClientY);
@@ -261,13 +264,30 @@ export class ChessboardComponent implements OnInit, AfterViewInit, IChessBoardPa
         }
 
         const coord = column + row.toString();
+        // check whether no move was actually made
+        if (this.movingFromByDrag.coordinate === coord) {
+            // If there's a piece on the square
+            if (this.movingFromByDrag.pieceType !== undefined) {
+                this.movingFromByDrag.pieceClicked();
+            }
+            return;
+        }
+        console.log("endMove calling makeMoveTo");
+        this.movingByDrag = false;
+        this.makeMoveTo(this.movingFromByDrag.coordinate, coord);
+        
 
-        this.moving = false;
+    }
+
+    public endMoveByClick(toSquare: ChessSquare) {
+        this.movingByClick = false;
+        this.makeMoveTo(this.movingFromByClick.coordinate, toSquare.coordinate);
+    }
+
+    public makeMoveTo(fromCoord: string, toCoord: string) {
         // check whether the move is valid
-        const move = new Move(this.movingFrom.coordinate,
-            coord);
+        const move = new Move(fromCoord,toCoord);
         const chessMove = this.chess.move(move);
-        // console.log("chessmove: " + JSON.stringify(chessMove));
         if (chessMove === undefined) {
             this.positionPieces();
             console.log('invalid move');
@@ -283,5 +303,6 @@ export class ChessboardComponent implements OnInit, AfterViewInit, IChessBoardPa
         return p;
     }
 
-} // End of class TrainerComponent
+
+} // End of class ChessBoardComponent
 
