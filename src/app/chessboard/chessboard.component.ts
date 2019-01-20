@@ -6,6 +6,7 @@ import {
 import { ChessSquare } from './chess-square';
 import { files, Move, Colour, PieceType } from './chess-enums';
 import { Chess, FenValidationResult, ChessPiece } from './chess';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-chessboard',
@@ -33,6 +34,8 @@ export class ChessboardComponent implements OnInit, AfterViewInit {
     // For piece promotion
     // public promSquaresMap = new Map<string, ChessSquare>();
     public showProm = false;
+    public promPieceSelected = new EventEmitter<PieceType>();
+    // private promPieceSubject: Subscription;
 
     constructor(private cd: ChangeDetectorRef) {
         this.calculateSizes();
@@ -65,27 +68,24 @@ export class ChessboardComponent implements OnInit, AfterViewInit {
         // The ViewChild component is available now
     }
 
-    async showPromotionDialog() {
-        // this.promotion.wholeSize = this.wholeSize;
-        // this.promotion.boardSide = this.boardSide;
-        this.showProm = !this.showProm;
-        if (this.showProm) {
-            this.showPromotionChoices(this.squaresMap.get('d1'));
-        }
-        else {
-            this.positionPieces();
-        }
+    async getPromotionPiece(square: ChessSquare): Promise<PieceType> {
+        let p = new Promise<PieceType>((resolve) => {
+            // console.log("getPromotionPiece");
+            this.showProm = true;
+            this.showPromotionChoices(this.squaresMap.get(square.coordinate));
+            let promPieceSubject = this.promPieceSelected.subscribe((pt: PieceType) => {
+                // console.log("showPromotionDialog: "
+                //     + pt);
+                resolve(pt);
+                promPieceSubject.unsubscribe();
+            });
 
-        console.log("showPromotionDialog piece: "
-            + await this.getPromotedPiece());
-
-        // return the piece selected
-
-        // add that selection to the move instance
-        // check that the board updates correctly
+        });
+        return p;
     }
 
     showPromotionChoices(promSquare: ChessSquare) {
+        // console.log("showPromotionChoices");
         let useSquares: string[];
         let boardSide: Colour;
         let file = promSquare.coordinate.substr(0, 1);
@@ -272,35 +272,63 @@ export class ChessboardComponent implements OnInit, AfterViewInit {
             }
             return;
         }
-        console.log("endMove calling makeMoveTo");
+        // console.log("endMove calling makeMoveTo");
         this.movingByDrag = false;
-        this.makeMoveTo(this.movingFromByDrag.coordinate, coord);
-        
+        this.makeMoveTo(this.movingFromByDrag,
+            this.squaresMap.get(coord));
+
 
     }
 
     public endMoveByClick(toSquare: ChessSquare) {
         this.movingByClick = false;
-        this.makeMoveTo(this.movingFromByClick.coordinate, toSquare.coordinate);
+        this.makeMoveTo(this.movingFromByClick, toSquare);
     }
 
-    public makeMoveTo(fromCoord: string, toCoord: string) {
-        // check whether the move is valid
-        const move = new Move(fromCoord,toCoord);
-        const chessMove = this.chess.move(move);
-        if (chessMove === undefined) {
-            this.positionPieces();
-            console.log('invalid move');
-        } else { // valid move
-            this.moveMade.emit(move);
+    public makeMoveTo(fromSquare: ChessSquare, toSquare: ChessSquare) {
+        // check if it needs a pawn promotion
+        let isPromotion = false;
+        if (fromSquare.pieceType === PieceType.PAWN) {
+            if (
+                (fromSquare.pieceColour === Colour.WHITE
+                    && toSquare.coordinate.substr(1, 1) === '8')
+                ||
+                (fromSquare.pieceColour === Colour.BLACK
+                    && toSquare.coordinate.substr(1, 1) === '1')
+            ) {
+                isPromotion = true;
+            }
         }
-    }
+        if (isPromotion) {
+            // console.log("makeMoveTo: pawn promotion");
+            this.getPromotionPiece(toSquare).then((pieceType) => {
+                // console.log("makeMoveTo: piece chosen: " + pieceType);
+                // check whether the move is valid
+                const move = new Move(fromSquare.coordinate,
+                    toSquare.coordinate, pieceType);
+                const chessMove = this.chess.move(move);
+                if (chessMove === undefined) {
+                    this.positionPieces();
+                    console.log('invalid move');
+                } else { // valid move
+                    this.moveMade.emit(move);
+                }
+            });
 
-    public async getPromotedPiece(): Promise<PieceType> {
-        let p = new Promise<PieceType>((resolve) => {
-            resolve(PieceType.QUEEN);
-        });
-        return p;
+        }
+        else {
+
+            // check whether the move is valid
+            const move = new Move(fromSquare.coordinate,
+                toSquare.coordinate);
+            const chessMove = this.chess.move(move);
+            if (chessMove === undefined) {
+                this.positionPieces();
+                console.log('invalid move');
+            } else { // valid move
+                this.moveMade.emit(move);
+            }
+        }
     }
 
 

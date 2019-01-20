@@ -252,7 +252,6 @@ export class ChessSquare {
     // The mouseDown event is only activated for a chess piece, so
     // in effect it always signals the start of the move of a piece
     mouseDown(eventD: MouseEvent) {
-
         const initialClientX = eventD.clientX;
         const initialClientY = eventD.clientY;
         this.parent.movingByDrag = true;
@@ -317,7 +316,8 @@ export class ChessSquare {
 
     public pieceClicked() {
         if (this.parent.showProm) {
-            console.log("pieceClicked " + this.coordinate);
+            // console.log("pieceClicked " + this.coordinate);
+            this.parent.promPieceSelected.emit(this.pieceType);
         }
         else if (this.parent.movingByClick) {
             this.parent.endMoveByClick(this);
