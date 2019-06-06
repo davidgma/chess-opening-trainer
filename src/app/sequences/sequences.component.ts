@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 export class SequencesComponent implements OnInit {
     public dataSource: DataService;
     displayedColumns: string[] = ['name', 'practice'];
-    @ViewChild(MatTable) table: MatTable<any>;
+    @ViewChild(MatTable, null) table: MatTable<any>;
 
     constructor(public dataService: DataService, private router: Router) {
         

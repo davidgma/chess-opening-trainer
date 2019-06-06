@@ -29,7 +29,7 @@ export class TrainerComponent implements OnInit {
 
 	public output = new Array<string>();
 	public outputColour = OutputColour.blue;
-	@ViewChild(ChessboardComponent) board: ChessboardComponent;
+	@ViewChild(ChessboardComponent, null) board: ChessboardComponent;
 	public displayWidth: number;
 	public sequence: Sequence;
 	private orderedSequences = new AsyncArray<Sequence>();

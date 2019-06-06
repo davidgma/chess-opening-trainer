@@ -27,7 +27,7 @@ export class ChessboardComponent implements OnInit, AfterViewInit {
     public chess: Chess;
     public boardSide: Colour = Colour.WHITE;
     public moveMade: EventEmitter<Move> = new EventEmitter<Move>();
-    @ViewChild('svgRegion') svgRegion: ElementRef;
+    @ViewChild('svgRegion', null) svgRegion: ElementRef;
     // @ViewChild(PromotionComponent) promotion: PromotionComponent;
     // private tempPiece: PieceType;
 

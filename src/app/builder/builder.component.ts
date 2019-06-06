@@ -14,7 +14,7 @@ class FenRequest {
 export class BuilderComponent implements OnInit {
 
     public output: Array<string> = new Array<string>();
-    @ViewChild(ChessboardComponent) board: ChessboardComponent;
+    @ViewChild(ChessboardComponent, null) board: ChessboardComponent;
 
     public moves = new Array<Move>();
     public fens = new Array<string>();
