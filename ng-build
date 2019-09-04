@@ -21,7 +21,8 @@ mkdir -p ~/local/web/chess-opening-trainer
 cp ./dist/*  ~/local/web/chess-opening-trainer
 
 # Build for github
-ng build --base-href "https://chess.davidgma.com"
+#ng build --base-href "https://chess.davidgma.com"
+ng build --base-href "https://davidgma.github.io/chess-opening-trainer/"
 git add *
 git commit -a -m "${message}"
 git push
