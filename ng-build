@@ -15,13 +15,13 @@ fi
 echo $message
 
 # Create a local copy for nginx to serve
-#ng build
-#rm -r ~/local/web/chess-opening-trainer
-#mkdir -p ~/local/web/chess-opening-trainer
-#cp ./dist/*  ~/local/web/chess-opening-trainer
+ng build
+rm -r ~/local/web/chess-opening-trainer
+mkdir -p ~/local/web/chess-opening-trainer
+cp ./dist/*  ~/local/web/chess-opening-trainer
 
 # Build for github
-ng build --base-href "https://chess.davidgma.com/chess-opening-trainer/"
+ng build --base-href "https://chess.davidgma.com"
 git add *
 git commit -a -m "${message}"
 git push
