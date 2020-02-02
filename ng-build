@@ -26,5 +26,5 @@ ng build --base-href "https://chess.davidgma.com/"
 git add *
 git commit -a -m "${message}"
 git push
-ngh
+ngh --cname=chess.davidgma.com
 
