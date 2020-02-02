@@ -172,7 +172,10 @@ export class TrainerComponent implements OnInit {
 			this.runningSubscription.unsubscribe();
 		}
 		let p = new Promise<void>(async (resolve) => {
+			//console.log("here1");
 			await this.orderedSequences.ready;
+			//console.log("here2");
+			//console.log("number of sequences: " + this.orderedSequences.array.length);
 			if (this.sequence === undefined) {
 				if (this.orderedSequences.array.length > 0) {
 					this.sequence = this.orderedSequences.array[0];

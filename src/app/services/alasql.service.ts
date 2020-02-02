@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as alasql from 'alasql';
+//import { AlaSql } from 'alasql';
 
 // Wrapper around alasql
 
@@ -11,7 +12,7 @@ export class AlaSql {
 	public async exec(sql: string) {
 		let p = new Promise<string>(async (resolve) => {
 			// console.log('Sql: ' + sql);
-			alasql.promise(sql)
+			alasql.default.promise(sql)
 				.then((res) => {
 					// console.log('Result: ' + JSON.stringify(res));
 					resolve(res);
@@ -24,7 +25,7 @@ export class AlaSql {
 	public async execSelect(sql: string): Promise<Object[]> {
 		let p = new Promise<Object[]>(async (resolve) => {
 			// console.log('Sql: ' + sql);
-			alasql.promise(sql)
+			alasql.default.promise(sql)
 				.then((res) => {
 					// console.log('Result: ' + JSON.stringify(res));
 					resolve(res);
@@ -59,7 +60,7 @@ export class AlaSql {
 			sql += ")";
 			// console.log("createTable sql: " + sql);
 			// Create the table
-			alasql.promise(sql).then((res) => {
+			alasql.default.promise(sql).then((res) => {
 				// If there's data then add it in
 				// console.log("data: " + JSON.stringify(data));
 				// console.log("createTable data[0]: " 
