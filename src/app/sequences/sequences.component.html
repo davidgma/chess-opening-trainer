@@ -1,0 +1,23 @@
+<br>
+<p>The sequences you can practice are listed below.</p>
+<table mat-table [dataSource]="dataSource" class="table">
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let sequence"> {{sequence.name}} </td>
+    </ng-container>
+
+    <!-- Practice Column -->
+    <ng-container matColumnDef="practice">
+        <th mat-header-cell *matHeaderCellDef> </th>
+        <td mat-cell *matCellDef="let sequence">
+            <!-- <button type="button" 
+            (click)="practice(sequence)">Practice</button> -->
+            <a class="btn btn-secondary btn-sm active" role="button" aria-pressed="true" routerLink="/trainer/{{ sequence.name }}" routerLinkActive="active" matTooltip="Practice sequence">
+                Practice</a>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (dblclick)="dblclick()"></tr>
+</table>

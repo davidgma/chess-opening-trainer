@@ -1,0 +1,22 @@
+<h1><a routerLink=''>
+        Chess Opening Trainer</a></h1>
+
+<div >
+    <button class="sign-out" matTooltip="Sign out" (click)="signOut()" *ngIf="isSignedIn">Sign out
+    </button>
+</div>
+<div [style.display]="googleDisplay">
+    <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark">
+    </div>
+</div>
+<nav>
+    <a routerLink="/trainer" routerLinkActive="active" matTooltip="Practice sequences">
+        Trainer</a>
+    <a routerLink="/sequences" routerLinkActive="active" matTooltip="View sequences">
+        Sequences</a>
+    <a routerLink="/about" routerLinkActive="active">
+        About</a>
+    <a routerLink="/builder" routerLinkActive="active" matTooltip="Prepare new sequences">
+        Builder</a>
+</nav>
+<router-outlet></router-outlet>

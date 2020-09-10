@@ -1,0 +1,35 @@
+<br>
+<app-chessboard class="floating-box"></app-chessboard>
+<section class="floating-box" [style.max-width.px]="displayWidth">
+	<div class="nav">
+		<button class="icon" mat-icon-button matTooltip="Flip" (click)="flipBoard()">
+			<mat-icon>cached
+			</mat-icon>
+		</button>
+		<button mat-icon-button matTooltip="Restart from here" (click)="restart()">
+			<mat-icon>flight_takeoff
+			</mat-icon>
+		</button>
+		<button [disabled]="moves.length === 0" mat-icon-button matTooltip="Undo" (click)="undoMove()">
+			<mat-icon>undo
+			</mat-icon>
+		</button>
+	</div>
+
+	<ul class="bullets">
+		<li *ngFor="let line of output">{{ line }}</li>
+	</ul>
+</section>
+<!-- <pre>{{ output }}</pre> -->
+<br>
+<form (ngSubmit)="onFenSubmit()" #fenForm="ngForm">
+	<div class="form-group">
+		<label>Enter a fen to start sequence.</label>
+		<input type="text" class="form-control" id="fen" required [(ngModel)]="model.fen" name="fen" #fen="ngModel">
+	</div>
+
+
+
+	<button type="submit" class="btn btn-success">Submit</button>
+
+</form>

@@ -1,0 +1,20 @@
+.bullets {
+    list-style-type: none;
+    display: inline-block; 
+    font-weight: bold;
+    padding-left: 5px;
+    word-break: break-all;
+}
+
+.floating-box {
+    margin: 1px;
+    display: inline-block; 
+    vertical-align: top;
+}
+
+.trainerToolbar {
+    color: black;
+    display: inline-block;
+    background-color: white;
+  }
+

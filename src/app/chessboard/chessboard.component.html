@@ -1,0 +1,32 @@
+<svg (mousemove)="mouseMove($event)"
+(touchmove)="touchMove($event)"
+(touchend)="touchEnd($event)"
+(mouseup)="mouseUp($event)"
+[attr.viewBox]="viewBox" [attr.width]="wholeSize"
+  [attr.height]="wholeSize" #svgRegion>
+  <g *ngFor="let square of squaresMap | keyvalue" 
+  (mousedown)="square.value.mouseDown($event)" 
+  (touchstart)="square.value.touchStart($event)"
+  (click)="square.value.squareClicked()"
+  >
+    <rect [attr.class]="square.value.cssClass" [attr.width]="square.value.parent.squareSize" [attr.height]="square.value.parent.squareSize"
+      [attr.x]="square.value.squareXOffset" [attr.y]="square.value.squareYOffset"
+      >
+    </rect>
+  </g>
+  <g *ngFor="let square of squaresMap | keyvalue" 
+  class="draggable" (mousedown)="square.value.mouseDown($event)" (touchstart)="square.value.touchStart($event)"
+    [attr.transform]="square.value.transform">
+    <path *ngFor="let svgPath of square.value.svgData.paths" 
+    [attr.d]="svgPath.d" [attr.class]="svgPath.className"
+      [attr.transform]="svgPath.transform" />
+    <circle *ngFor="let circle of square.value.svgData.circles" [attr.cx]="circle.cx" [attr.cy]="circle.cy" [attr.r]="circle.r"
+      [attr.classname]="circle.className" />
+  </g>
+
+</svg>
+<br>
+<button mat-icon-button matTooltip="Show promotion dialog" (click)="getPromotionPiece()">
+  <mat-icon>skip_next
+  </mat-icon>
+</button>
