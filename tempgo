@@ -1,9 +1,0 @@
-#!/bin/bash
-# start busybox httpd server
-
-server="busybox httpd -p 4201"
-pids=`ps -e -o pid,args | grep "$server" | cut -d' ' -f2`
-pid=$( echo $pids | cut -d' ' -f1)
-echo $pid
-kill $pid
-$server -h ~/local/web/chess-opening-trainer
